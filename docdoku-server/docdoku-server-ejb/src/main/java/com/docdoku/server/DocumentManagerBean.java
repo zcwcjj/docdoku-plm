@@ -39,6 +39,8 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.interceptor.CheckActivity;
+import com.docdoku.server.interceptor.LogDocument;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
