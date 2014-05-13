@@ -21,6 +21,8 @@
 package com.docdoku.core.document;
 
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -28,7 +30,7 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class DocumentRevisionKey implements Serializable, Comparable<DocumentRevisionKey>, Cloneable {
+public class DocumentRevisionKey implements Serializable, EntityKey, Comparable<DocumentRevisionKey>, Cloneable {
 
     private DocumentMasterKey documentMaster;
     private String version;
@@ -98,7 +100,7 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
 
     @Override
     public DocumentRevisionKey clone() {
-        DocumentRevisionKey clone = null;
+        DocumentRevisionKey clone;
         try {
             clone = (DocumentRevisionKey) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -108,9 +110,7 @@ public class DocumentRevisionKey implements Serializable, Comparable<DocumentRev
     }
 
 
-    public String getWorkspaceId() {
-        return documentMaster.getWorkspace();
-    }
+    public String getWorkspaceId() {return documentMaster.getWorkspace();}
 
     public String getDocumentMasterId() {
         return documentMaster.getId();

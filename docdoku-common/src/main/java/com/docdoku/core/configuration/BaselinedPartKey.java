@@ -20,6 +20,8 @@
 
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.common.EntityKey;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -31,7 +33,7 @@ import java.io.Serializable;
  * @author Florent Garin
  */
 @Embeddable
-public class BaselinedPartKey implements Serializable{
+public class BaselinedPartKey implements Serializable, EntityKey{
 
 
 
@@ -85,9 +87,7 @@ public class BaselinedPartKey implements Serializable{
 
         BaselinedPartKey that = (BaselinedPartKey) o;
 
-        if (partCollectionId != that.partCollectionId) return false;
-        if (!targetPartNumber.equals(that.targetPartNumber)) return false;
-        return targetPartWorkspaceId.equals(that.targetPartWorkspaceId);
+        return partCollectionId == that.partCollectionId && targetPartNumber.equals(that.targetPartNumber) && targetPartWorkspaceId.equals(that.targetPartWorkspaceId);
 
     }
 
@@ -98,4 +98,7 @@ public class BaselinedPartKey implements Serializable{
         result = 31 * result + targetPartNumber.hashCode();
         return result;
     }
+
+    @Override
+    public String getWorkspaceId() { return getTargetPartWorkspaceId();}
 }

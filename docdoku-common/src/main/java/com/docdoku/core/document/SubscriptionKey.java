@@ -19,13 +19,15 @@
  */
 package com.docdoku.core.document;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public class SubscriptionKey implements Serializable {
+public class SubscriptionKey implements Serializable, EntityKey {
 
     private String subscriberWorkspaceId;
     private String subscriberLogin;
@@ -110,5 +112,10 @@ public class SubscriptionKey implements Serializable {
         hash = 31 * hash + observedDocumentRevisionId.hashCode();
         hash = 31 * hash + observedDocumentRevisionVersion.hashCode();
         return hash;
+    }
+
+    @Override
+    public String getWorkspaceId() {
+        return getSubscriberWorkspaceId();
     }
 }

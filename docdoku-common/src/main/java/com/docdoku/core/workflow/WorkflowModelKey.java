@@ -20,6 +20,8 @@
 
 package com.docdoku.core.workflow;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -27,7 +29,7 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class WorkflowModelKey implements Serializable {
+public class WorkflowModelKey implements Serializable, EntityKey {
     
     private String workspaceId;
     private String id;

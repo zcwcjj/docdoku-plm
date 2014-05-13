@@ -20,6 +20,8 @@
 
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -27,7 +29,7 @@ import java.io.Serializable;
  * 
  * @author Florent Garin
  */
-public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, Cloneable {
+public class PartMasterKey implements Serializable, EntityKey, Comparable<PartMasterKey>, Cloneable {
 
     private String workspace;
     private String number;
@@ -93,7 +95,7 @@ public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, C
     
     @Override
     public PartMasterKey clone() {
-        PartMasterKey clone = null;
+        PartMasterKey clone;
         try {
             clone = (PartMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -101,4 +103,7 @@ public class PartMasterKey implements Serializable, Comparable<PartMasterKey>, C
         }
         return clone;
     }
+
+    @Override
+    public String getWorkspaceId() {return getWorkspace();}
 }

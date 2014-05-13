@@ -20,6 +20,8 @@
 
 package com.docdoku.core.document;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -27,7 +29,7 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class DocumentMasterKey implements Serializable, Comparable<DocumentMasterKey>, Cloneable {
+public class DocumentMasterKey implements Serializable, EntityKey, Comparable<DocumentMasterKey>, Cloneable {
 
     private String workspace;
     private String id;
@@ -72,10 +74,8 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
 
         DocumentMasterKey that = (DocumentMasterKey) o;
 
-        if (!id.equals(that.id)) return false;
-        if (!workspace.equals(that.workspace)) return false;
+        return id.equals(that.id) && workspace.equals(that.workspace);
 
-        return true;
     }
 
     @Override
@@ -96,7 +96,7 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
 
     @Override
     public DocumentMasterKey clone() {
-        DocumentMasterKey clone = null;
+        DocumentMasterKey clone;
         try {
             clone = (DocumentMasterKey) super.clone();
         } catch (CloneNotSupportedException e) {
@@ -104,4 +104,7 @@ public class DocumentMasterKey implements Serializable, Comparable<DocumentMaste
         }
         return clone;
     }
+
+    @Override
+    public String getWorkspaceId() {return getWorkspace();}
 }

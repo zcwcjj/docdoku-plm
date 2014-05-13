@@ -20,13 +20,15 @@
 
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public class PartMasterTemplateKey implements Serializable {
+public class PartMasterTemplateKey implements Serializable, EntityKey {
 
     private String workspaceId;
     private String id;

@@ -26,7 +26,7 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class UserGroupKey implements Serializable {
+public class UserGroupKey implements Serializable, EntityKey {
     
     private String workspaceId;
     private String id;

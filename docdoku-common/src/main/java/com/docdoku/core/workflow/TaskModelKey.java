@@ -20,13 +20,15 @@
 
 package com.docdoku.core.workflow;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public class TaskModelKey implements Serializable {
+public class TaskModelKey implements Serializable, EntityKey {
     
 
     private String workspaceId;

@@ -20,6 +20,8 @@
 
 package com.docdoku.core.document;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -27,7 +29,7 @@ import java.io.Serializable;
  *
  * @author Florent Garin
  */
-public class DocumentIterationKey implements Serializable {
+public class DocumentIterationKey implements Serializable, EntityKey {
 
     private DocumentRevisionKey documentRevision;
     private int iteration;

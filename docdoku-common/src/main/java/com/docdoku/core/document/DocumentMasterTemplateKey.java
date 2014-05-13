@@ -20,13 +20,15 @@
 
 package com.docdoku.core.document;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
  *
  * @author Florent Garin
  */
-public class DocumentMasterTemplateKey implements Serializable {
+public class DocumentMasterTemplateKey implements Serializable, EntityKey {
     
     private String workspaceId;
     private String id;

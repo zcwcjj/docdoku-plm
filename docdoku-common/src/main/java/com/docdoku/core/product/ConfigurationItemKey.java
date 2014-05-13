@@ -20,6 +20,8 @@
 
 package com.docdoku.core.product;
 
+import com.docdoku.core.common.EntityKey;
+
 import java.io.Serializable;
 
 /**
@@ -28,7 +30,7 @@ import java.io.Serializable;
  * 
  * @author Florent Garin
  */
-public class ConfigurationItemKey implements Serializable {
+public class ConfigurationItemKey implements Serializable, EntityKey {
     
     private String workspace;
     private String id;
@@ -80,6 +82,8 @@ public class ConfigurationItemKey implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-    
-    
+
+
+    @Override
+    public String getWorkspaceId() {return getWorkspace();}
 }
