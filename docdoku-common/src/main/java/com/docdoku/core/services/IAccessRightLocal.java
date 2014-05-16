@@ -40,6 +40,8 @@ public interface IAccessRightLocal {
     @RolesAllowed({"users"})
     public User checkChangeItemWriteAccess(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
     @RolesAllowed({"users"})
+    public User checkChangeItemGrantAccess(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException;
+    @RolesAllowed({"users"})
     public User checkDocumentIterationReadAccess(DocumentIterationKey pDocumentIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException;
     @RolesAllowed({"users"})
     public User checkDocumentIterationWriteAccess(DocumentIterationKey pDocumentIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, DocumentRevisionNotFoundException;

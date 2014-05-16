@@ -67,6 +67,17 @@ public class AccessRightBean implements IAccessRightLocal {
 
     @Override
     @RolesAllowed({"users"})
+    public User checkChangeItemGrantAccess(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
+        User user = checkWorkspaceReadAccess(pChangeItem.getWorkspaceId());                                             // Check if the user have read access on the workspace
+        if(user.isAdministrator() || pChangeItem.getAuthor().getLogin().equals(user.getLogin())){                       // If it is the workspace's owner, give it access
+            return user;
+        }else{
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        }
+    }
+
+    @Override
+    @RolesAllowed({"users"})
     public User checkDocumentIterationReadAccess(DocumentIterationKey pDocumentIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException {
         DocumentRevisionKey documentRevisionKey= pDocumentIterationKey.getDocumentRevision();
         User user = checkDocumentRevisionReadAccess(documentRevisionKey);

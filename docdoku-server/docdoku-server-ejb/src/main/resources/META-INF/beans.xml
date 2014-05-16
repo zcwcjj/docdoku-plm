@@ -5,6 +5,12 @@
     <interceptors>
         <class>com.docdoku.server.interceptor.DocumentLoggerInterceptor</class>
         <class>com.docdoku.server.interceptor.ActivityCheckerInterceptor</class>
+        <class>com.docdoku.server.interceptor.ChangeItemAccessInterceptor</class>
+        <class>com.docdoku.server.interceptor.DocumentIterationAccessInterceptor</class>
+        <class>com.docdoku.server.interceptor.DocumentRevisionAccessInterceptor</class>
+        <class>com.docdoku.server.interceptor.PartIterationAccessInterceptor</class>
+        <class>com.docdoku.server.interceptor.PartRevisionAccessInterceptor</class>
+        <class>com.docdoku.server.interceptor.WorkspaceAccessInterceptor</class>
     </interceptors>
 </beans>
 

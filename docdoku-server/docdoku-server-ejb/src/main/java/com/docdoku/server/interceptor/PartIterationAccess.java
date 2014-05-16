@@ -31,9 +31,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @InterceptorBinding
 @Target({TYPE,METHOD})
 @Retention(RUNTIME)
-public @interface WorkspaceAccess {
-    public static enum Right {READ, WRITE, ADMIN}
-    public static enum ParseType {NONE,FOLDER}
+public @interface PartIterationAccess {
+    public static enum Right {READ, WRITE}
+    public static enum ParseType {NONE}
 
     @Nonbinding Right right() default Right.READ;
     @Nonbinding ParseType parseType() default ParseType.NONE;
