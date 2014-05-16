@@ -21,6 +21,9 @@
             <ejb-name>ChangeManagerBean</ejb-name>
         </session>
         <session>
+            <ejb-name>AccessRightBean</ejb-name>
+        </session>
+        <session>
             <ejb-name>DataManagerBean</ejb-name>
             <env-entry>
                 <env-entry-name>vaultPath</env-entry-name>
