@@ -60,10 +60,6 @@ import java.util.logging.Logger;
 @RunWith(Arquillian.class)
 @FixMethodOrder(value = MethodSorters.NAME_ASCENDING )
 public class AccessRightsTest {
-
-    @EJB
-    private ESIndexer esIndexer;
-
     @EJB
     private TestDocumentManagerBean documentManagerBean;
     @EJB

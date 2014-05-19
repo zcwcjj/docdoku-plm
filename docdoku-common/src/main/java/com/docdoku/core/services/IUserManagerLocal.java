@@ -59,9 +59,7 @@ public interface IUserManagerLocal{
     UserGroup[] getUserGroups(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
     UserGroup getUserGroup(UserGroupKey pKey) throws WorkspaceNotFoundException, UserGroupNotFoundException, UserNotFoundException, UserNotActiveException, AccountNotFoundException;
     void addUserInGroup(UserGroupKey pGroupKey, String pLogin) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException;
-    void removeUserFromGroup(UserGroupKey pGroupKey, String[] pLogins) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException; 
-    User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
-    User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
+    void removeUserFromGroup(UserGroupKey pGroupKey, String[] pLogins) throws AccessRightException, UserGroupNotFoundException, AccountNotFoundException, WorkspaceNotFoundException;
     boolean hasCommonWorkspace(String user1, String user2);
     boolean isCallerInRole(String role);
     UserGroup[] getUserGroupsForUser(UserKey userKey) throws UserNotFoundException;
@@ -70,4 +68,9 @@ public interface IUserManagerLocal{
     void deleteGCMAccount() throws AccountNotFoundException, GCMAccountNotFoundException;
     Account checkAdmin(String pWorkspaceId) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
     Account checkAdmin(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException;
+    User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException;
+    User getCurrentUser(String pWorkspaceId) throws UserNotFoundException;
+    Account getCurrentAccount() throws AccountNotFoundException;
+    User whoAmI(String pWorkspaceId) throws UserNotFoundException;
 }

@@ -430,7 +430,7 @@ public class DocumentResource {
                     groupEntries.put(entry.getKey(), entry.getValue().name());
                 }
 
-                documentService.updateDocumentACL(pWorkspaceId, documentRevisionKey, userEntries, groupEntries);
+                documentService.updateDocumentACL(documentRevisionKey, userEntries, groupEntries);
             }else{
                 documentService.removeACLFromDocumentRevision(documentRevisionKey);
             }

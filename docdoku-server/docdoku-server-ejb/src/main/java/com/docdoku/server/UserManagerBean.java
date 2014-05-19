@@ -30,6 +30,7 @@ import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.services.IUserManagerWS;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
+import com.docdoku.server.interceptor.WorkspaceAccess;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -399,61 +400,6 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         return passwdRR;
     }
 
-    @RolesAllowed({"users"})
-    @Override
-    public User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        String login = ctx.getCallerPrincipal().toString();
-
-        UserDAO userDAO = new UserDAO(em);
-        WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
-        if (userMS != null) {
-            return userMS.getMember();
-        }
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
-        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-        if (wks.getAdmin().getLogin().equals(login)) {
-            return user;
-        }
-        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
-        if (groupMS.length > 0) {
-            return user;
-        } else {
-            throw new UserNotActiveException(Locale.getDefault(), login);
-        }
-    }
-
-    @RolesAllowed({"users"})
-    @Override
-    public User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
-        String login = ctx.getCallerPrincipal().toString();
-
-        UserDAO userDAO = new UserDAO(em);
-
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
-        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
-        if (wks.getAdmin().getLogin().equals(login)) {
-            return user;
-        }
-
-        WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
-        if (userMS != null) {
-            if (userMS.isReadOnly()) {
-                throw new AccessRightException(new Locale(user.getLanguage()), user);
-            } else {
-                return userMS.getMember();
-            }
-        }
-
-        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
-        for (WorkspaceUserGroupMembership ms : groupMS) {
-            if (!ms.isReadOnly()) {
-                return user;
-            }
-        }
-        throw new AccessRightException(new Locale(user.getLanguage()), user);
-    }
-
-
 
     /*
     * Don't expose this method on remote.
@@ -537,5 +483,78 @@ public class UserManagerBean implements IUserManagerLocal, IUserManagerWS {
         }
 
         return account;
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public User checkWorkspaceReadAccess(String pWorkspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+        String login = ctx.getCallerPrincipal().toString();
+
+        UserDAO userDAO = new UserDAO(em);
+        WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
+        if (userMS != null) {
+            return userMS.getMember();
+        }
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
+        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
+        if (wks.getAdmin().getLogin().equals(login)) {
+            return user;
+        }
+        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
+        if (groupMS.length > 0) {
+            return user;
+        } else {
+            throw new UserNotActiveException(Locale.getDefault(), login);
+        }
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public User checkWorkspaceWriteAccess(String pWorkspaceId) throws UserNotFoundException, WorkspaceNotFoundException, AccessRightException {
+        String login = ctx.getCallerPrincipal().toString();
+
+        UserDAO userDAO = new UserDAO(em);
+        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
+        User user = userDAO.loadUser(new UserKey(pWorkspaceId, login));
+        if (wks.getAdmin().getLogin().equals(login)) {
+            return user;
+        }
+
+        WorkspaceUserMembership userMS = userDAO.loadUserMembership(new WorkspaceUserMembershipKey(pWorkspaceId, pWorkspaceId, login));
+        if (userMS != null) {
+            if (userMS.isReadOnly()) {
+                throw new AccessRightException(new Locale(user.getLanguage()), user);
+            } else {
+                return userMS.getMember();
+            }
+        }
+
+        WorkspaceUserGroupMembership[] groupMS = new UserGroupDAO(em).getUserGroupMemberships(pWorkspaceId, user);
+        for (WorkspaceUserGroupMembership ms : groupMS) {
+            if (!ms.isReadOnly()) {
+                return user;
+            }
+        }
+        throw new AccessRightException(new Locale(user.getLanguage()), user);
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public User getCurrentUser(String pWorkspaceId) throws UserNotFoundException {
+        String login = ctx.getCallerPrincipal().toString();
+        return new UserDAO(em).loadUser(new UserKey(pWorkspaceId, login));
+    }
+
+    @RolesAllowed({"users"})
+    @Override
+    public Account getCurrentAccount() throws AccountNotFoundException {
+        return new AccountDAO(em).loadAccount(ctx.getCallerPrincipal().toString());
+    }
+
+    @RolesAllowed({"users"})
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
+    @Override
+    public User whoAmI(String pWorkspaceId) throws UserNotFoundException {
+        return getCurrentUser(pWorkspaceId);
     }
 }

@@ -33,7 +33,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface DocumentIterationAccess {
     public static enum Right {READ, WRITE}
-    public static enum ParseType {NONE,BINARY}
+    public static enum ParseType {NONE}
 
     @Nonbinding Right right() default Right.READ;
     @Nonbinding ParseType parseType() default ParseType.NONE;

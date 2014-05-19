@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.interceptor;
 
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IAccessRightLocal;
@@ -43,6 +44,8 @@ public class DocumentRevisionAccessInterceptor {
                 case NONE:
                     if(ctx.getParameters()[0] instanceof DocumentRevisionKey){
                         documentRevisionKey =(DocumentRevisionKey) ctx.getParameters()[0];
+                    }else if(ctx.getParameters()[0] instanceof DocumentIterationKey){
+                        documentRevisionKey = ((DocumentIterationKey)ctx.getParameters()[0]).getDocumentRevision();
                     }else{
                         throw new NotAllowedException("NotAllowedException42");
                     }

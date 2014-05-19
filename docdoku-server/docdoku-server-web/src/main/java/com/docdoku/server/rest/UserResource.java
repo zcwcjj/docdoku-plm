@@ -86,7 +86,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public UserDTO whoami(@PathParam("workspaceId") String workspaceId){
         try {
-            User  user = documentService.whoAmI(workspaceId);
+            User  user = userManager.whoAmI(workspaceId);
             return mapper.map(user, UserDTO.class);
         } catch (ApplicationException ex) {
             throw new RestApiException(ex.toString(), ex.getMessage());

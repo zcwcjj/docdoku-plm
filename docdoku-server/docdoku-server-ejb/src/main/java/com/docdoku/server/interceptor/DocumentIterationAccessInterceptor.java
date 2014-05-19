@@ -47,13 +47,6 @@ public class DocumentIterationAccessInterceptor {
                         throw new NotAllowedException("NotAllowedException42");
                     }
                     break;
-                case BINARY:
-                    if(ctx.getParameters()[0] instanceof String) {
-                        documentIterationKey = null;
-                    }else{
-                        throw new NotAllowedException("NotAllowedException42");
-                    }
-                    break;
                 default:
                     throw new NotAllowedException("NotAllowedException42");
             }

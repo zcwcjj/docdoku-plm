@@ -39,8 +39,7 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.interceptor.CheckActivity;
-import com.docdoku.server.interceptor.LogDocument;
+import com.docdoku.server.interceptor.*;
 
 import javax.annotation.Resource;
 import javax.annotation.security.DeclareRoles;
@@ -88,10 +87,9 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     private final static Logger LOGGER = Logger.getLogger(DocumentManagerBean.class.getName());
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.WRITE)
     @Override
     public BinaryResource saveFileInTemplate(DocumentMasterTemplateKey pDocMTemplateKey, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        userManager.checkWorkspaceWriteAccess(pDocMTemplateKey.getWorkspaceId());
-
         if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
@@ -120,9 +118,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     @RolesAllowed("users")
+    @DocumentRevisionAccess(right = DocumentRevisionAccess.Right.WRITE)
     @Override
     public BinaryResource saveFileInDocument(DocumentIterationKey pDocPK, String pName, long pSize) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, AccessRightException {
-        User user = checkDocumentRevisionWriteAccess(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
+        // Todo Use specific Error for this function ("NotAllowedException4")
         if (!NamingConvention.correctNameFile(pName)) {
             throw new NotAllowedException(Locale.getDefault(), "NotAllowedException9");
         }
@@ -131,35 +130,31 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR = docRDAO.loadDocR(new DocumentRevisionKey(pDocPK.getWorkspaceId(), pDocPK.getDocumentMasterId(), pDocPK.getDocumentRevisionVersion()));
         DocumentIteration document = docR.getIteration(pDocPK.getIteration());
 
-        if (docR.isCheckedOut() && docR.getCheckOutUser().equals(user) && docR.getLastIteration().equals(document)) {
-            BinaryResource binaryResource = null;
-            String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/" + document.getIteration() + "/" + pName;
+        BinaryResource binaryResource = null;
+        String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/" + document.getIteration() + "/" + pName;
 
-            for (BinaryResource bin : document.getAttachedFiles()) {
-                if (bin.getFullName().equals(fullName)) {
-                    binaryResource = bin;
-                    break;
-                }
+        for (BinaryResource bin : document.getAttachedFiles()) {
+            if (bin.getFullName().equals(fullName)) {
+                binaryResource = bin;
+                break;
             }
-            if (binaryResource == null) {
-                binaryResource = new BinaryResource(fullName, pSize, new Date());
-                new BinaryResourceDAO(em).createBinaryResource(binaryResource);
-                document.addFile(binaryResource);
-            } else {
-                binaryResource.setContentLength(pSize);
-                binaryResource.setLastModified(new Date());
-            }
-            return binaryResource;
-        } else {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException4");
         }
+        if (binaryResource == null) {
+            binaryResource = new BinaryResource(fullName, pSize, new Date());
+            new BinaryResourceDAO(em).createBinaryResource(binaryResource);
+            document.addFile(binaryResource);
+        } else {
+            binaryResource.setContentLength(pSize);
+            binaryResource.setLastModified(new Date());
+        }
+        return binaryResource;
     }
 
     @LogDocument
     @RolesAllowed({"users","guest-proxy"})
     @Override
     public BinaryResource getBinaryResource(String pFullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException {
-
+        // ToDo a BinaryResource Access Interceptor || Multiple function getBinaryResource
         if(ctx.isCallerInRole("guest-proxy")){
             return new BinaryResourceDAO(em).loadBinaryResource(pFullName);
         }
@@ -172,6 +167,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentIteration document = binDAO.getDocumentOwner(binaryResource);
         if (document != null) {
             DocumentRevision docR = document.getDocumentRevision();
+
 
             if((docR.getACL() != null && docR.getACL().hasReadAccess(user)) || docR.getACL() == null){
                 String owner = docR.getLocation().getOwner();
@@ -190,23 +186,11 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-    @RolesAllowed({"users"})
-    @Override
-    public User whoAmI(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-         return userManager.checkWorkspaceReadAccess(pWorkspaceId);
-    }
-
     @RolesAllowed("users")
-    @Override
-    public Workspace getWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return user.getWorkspace();
-    }
-
-    @RolesAllowed("users")
+    @WorkspaceAccess(right= WorkspaceAccess.Right.READ,parseType = WorkspaceAccess.ParseType.FOLDER)
     @Override
     public String [] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(Folder.parseWorkspaceId(pCompletePath));
+        User user = userManager.getCurrentUser(Folder.parseWorkspaceId(pCompletePath));
         Folder[] subFolders = new FolderDAO(new Locale(user.getLanguage()), em).getSubFolders(pCompletePath);
         String[] shortNames = new String[subFolders.length];
         int i = 0;
@@ -217,50 +201,23 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ, parseType = WorkspaceAccess.ParseType.FOLDER)
     @Override
     public DocumentRevision[] findDocumentRevisionsByFolder(String pCompletePath) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         String workspaceId = Folder.parseWorkspaceId(pCompletePath);
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        User user = userManager.getCurrentUser(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByFolder(pCompletePath);
-        ListIterator<DocumentRevision> ite = docRs.listIterator();
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-            if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {
-                ite.remove();
-            }else if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
-                docR = docR.clone();
-                docR.removeLastIteration();
-                ite.set(docR);
-            }
+        List<DocumentRevision> visibleDocRs = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            try{
+                visibleDocRs.add(getDocumentRevision(docR.getKey()));
+            }catch (Exception ignored){}
         }
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
-    }
-
-    @RolesAllowed("users")
-    @Override
-    public DocumentRevision[] findDocumentRevisionsByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        String workspaceId = pKey.getWorkspaceId();
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
-        ListIterator<DocumentRevision> ite = docRs.listIterator();
-        Workspace wks = new WorkspaceDAO(new Locale(user.getLanguage()), em).loadWorkspace(workspaceId);
-        boolean isAdmin = wks.getAdmin().getLogin().equals(user.getLogin());
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-            if (!isAdmin && docR.getACL() != null && !docR.getACL().hasReadAccess(user)) {
-                ite.remove();
-            }else if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
-                docR = docR.clone();
-                docR.removeLastIteration();
-                ite.set(docR);
-            }
-        }
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        return visibleDocRs.toArray(new DocumentRevision[visibleDocRs.size()]);
     }
 
     @RolesAllowed({"users","guest-proxy"})
+    @DocumentRevisionAccess(right = DocumentRevisionAccess.Right.READ)
     @Override
     public DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException{
         if(ctx.isCallerInRole("guest-proxy")){
@@ -272,204 +229,222 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             return documentRevision;
         }
 
-        User user = userManager.checkWorkspaceReadAccess(pDocRPK.getWorkspaceId());
+        User user = userManager.getCurrentUser(pDocRPK.getWorkspaceId());
         DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(pDocRPK);
-        String owner = docR.getLocation().getOwner();
-        if ((owner != null) && (!owner.equals(user.getLogin()))) {
-            throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
+        try{
+            getDocumentIteration(docR.getLastIteration().getKey());
+        }catch (Exception e){
+            docR = docR.clone();
+            docR.removeLastIteration();
         }
+        return docR;
+    }
 
-        if((docR.getACL() != null && docR.getACL().hasReadAccess(user)) || docR.getACL() == null){
-
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
-                docR = docR.clone();
-                docR.removeLastIteration();
-            }
-            return docR;
-
-        }else{
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+    @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
+    @Override
+    public DocumentRevision[] findDocumentRevisionsByTag(TagKey pKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
+        String workspaceId = pKey.getWorkspaceId();
+        User user = userManager.getCurrentUser(workspaceId);
+        List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocRsByTag(new Tag(user.getWorkspace(), pKey.getLabel()));
+        List<DocumentRevision> visibleDocRs = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            try{
+                visibleDocRs.add(getDocumentRevision(docR.getKey()));
+            }catch (Exception ignored){}
         }
-
+        return visibleDocRs.toArray(new DocumentRevision[visibleDocRs.size()]);
     }
 
     @RolesAllowed({"users","guest-proxy"})
     @Override
-    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-
+    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
         if(ctx.isCallerInRole("guest-proxy")){
-            return  new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
+            return new DocumentRevisionDAO(em).findDocumentIterationByBinaryResource(pBinaryResource);
         }
 
         User user = userManager.checkWorkspaceReadAccess(pBinaryResource.getWorkspaceId());
         DocumentRevisionDAO documentMasterDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()),em);
-        return  documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource);
+
+        return getDocumentIteration(documentMasterDAO.findDocumentIterationByBinaryResource(pBinaryResource).getKey());
     }
 
     @RolesAllowed("users")
+    @DocumentRevisionAccess(right = DocumentRevisionAccess.Right.GRANT)
     @Override
-    public void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> pACLUserEntries, Map<String,String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
-
-        User user = checkDocumentRevisionWriteAccess(docKey);                                                           // Todo Just check if the user is document's or workspace's owner
+    public void updateDocumentACL(DocumentRevisionKey docKey, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
+        String workspaceId = docKey.getWorkspaceId();
+        User user = userManager.getCurrentUser(workspaceId);
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = documentRevisionDAO.loadDocR(docKey);
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(pWorkspaceId);
 
-        if (docR.getAuthor().getLogin().equals(user.getLogin())                                                         // Check if the user is the document owner
-            || wks.getAdmin().getLogin().equals(user.getLogin())) {                                                     // Check if the user is the workspace owner
-
-            if (docR.getACL() == null) {
-                ACL acl = new ACL();
-                if (pACLUserEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
-                        acl.addEntry(em.getReference(User.class,new UserKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
+        if (docR.getACL() == null) {
+            ACL acl = new ACL();
+            if (pACLUserEntries != null) {
+                for (Map.Entry<String, String> entry : pACLUserEntries.entrySet()) {
+                    acl.addEntry(em.getReference(User.class,new UserKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                 }
+            }
 
-                if (pACLUserGroupEntries != null) {
-                    for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
-                        acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(pWorkspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
-                    }
+            if (pACLUserGroupEntries != null) {
+                for (Map.Entry<String, String> entry : pACLUserGroupEntries.entrySet()) {
+                    acl.addEntry(em.getReference(UserGroup.class,new UserGroupKey(workspaceId,entry.getKey())),ACL.Permission.valueOf(entry.getValue()));
                 }
+            }
 
-                new ACLDAO(em).createACL(acl);
-                docR.setACL(acl);
+            new ACLDAO(em).createACL(acl);
+            docR.setACL(acl);
 
-            }else{
-                if (pACLUserEntries != null) {
-                    for (ACLUserEntry entry : docR.getACL().getUserEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
-                    }
-                }
-
-                if (pACLUserGroupEntries != null) {
-                    for (ACLUserGroupEntry entry : docR.getACL().getGroupEntries().values()) {
-                        ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
-                        if(newPermission != null){
-                            entry.setPermission(newPermission);
-                        }
+        }else{
+            if (pACLUserEntries != null) {
+                for (ACLUserEntry entry : docR.getACL().getUserEntries().values()) {
+                    ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserEntries.get(entry.getPrincipalLogin()));
+                    if(newPermission != null){
+                        entry.setPermission(newPermission);
                     }
                 }
             }
 
-        }else {
-                throw new AccessRightException(new Locale(user.getLanguage()), user);
+            if (pACLUserGroupEntries != null) {
+                for (ACLUserGroupEntry entry : docR.getACL().getGroupEntries().values()) {
+                    ACL.Permission newPermission = ACL.Permission.valueOf(pACLUserGroupEntries.get(entry.getPrincipalId()));
+                    if(newPermission != null){
+                        entry.setPermission(newPermission);
+                    }
+                }
+            }
         }
     }
 
     @RolesAllowed("users")
+    @DocumentRevisionAccess(right = DocumentRevisionAccess.Right.GRANT)
     @Override
     public void removeACLFromDocumentRevision(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException {
-
-        User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());       // Todo Just check if the user is document's or workspace's owner
-
+        User user = userManager.getCurrentUser(documentRevisionKey.getWorkspaceId());
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(user.getLanguage()), em);
         DocumentRevision docR = documentRevisionDAO.getDocRRef(documentRevisionKey);
-        Workspace wks = new WorkspaceDAO(em).loadWorkspace(documentRevisionKey.getDocumentMaster().getWorkspace());
 
-        if (docR.getAuthor().getLogin().equals(user.getLogin()) || wks.getAdmin().getLogin().equals(user.getLogin())) {
-            ACL acl = docR.getACL();
-            if (acl != null) {
-                new ACLDAO(em).removeACLEntries(acl);
-                docR.setACL(null);
-            }
-        }else{
-            throw new AccessRightException(new Locale(user.getLanguage()), user);
+        ACL acl = docR.getACL();
+        if (acl != null) {
+            new ACLDAO(em).removeACLEntries(acl);
+            docR.setACL(null);
         }
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId, int start, int pMaxResults) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        User user = userManager.getCurrentUser(workspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsFiltered(user, workspaceId, start, pMaxResults);
-        ListIterator<DocumentRevision> ite = docRs.listIterator();
-
-        while (ite.hasNext()) {
-            DocumentRevision docR = ite.next();
-
-            if ((docR.isCheckedOut()) && (!docR.getCheckOutUser().equals(user))) {
-                docR = docR.clone();
-                docR.removeLastIteration();
-                ite.set(docR);
-            }
-
+        List<DocumentRevision> visibleDocRs = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            try{
+                visibleDocRs.add(getDocumentRevision(docR.getKey()));
+            }catch (Exception ignored){}
         }
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        return visibleDocRs.toArray(new DocumentRevision[visibleDocRs.size()]);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        return new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsCountFiltered(user, workspaceId);
+        User user = userManager.getCurrentUser(workspaceId);
+        return new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsCountFiltered(user, workspaceId);    // ToDo Check if count take care of ACL
     }
 
     @RolesAllowed({"users","admin"})
+    @WorkspaceAccess(right = WorkspaceAccess.Right.ADMIN)
     @Override
     public int getTotalNumberOfDocuments(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
+        Account account = userManager.getCurrentAccount();
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(account.getLanguage()),em);
         return documentRevisionDAO.getTotalNumberOfDocuments(pWorkspaceId);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public DocumentRevision[] getCheckedOutDocumentRevisions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException{
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = userManager.getCurrentUser(pWorkspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findCheckedOutDocRs(user);
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        List<DocumentRevision> visibleDocRs = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            try{
+                visibleDocRs.add(getDocumentRevision(docR.getKey()));
+            }catch (Exception ignored){}
+        }
+        return visibleDocRs.toArray(new DocumentRevision[visibleDocRs.size()]);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
-    public Task[] getTasks(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+    public Task[] getTasks(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {  //Todo Check if it's used
+        User user = userManager.getCurrentUser(pWorkspaceId);
         return new TaskDAO(new Locale(user.getLanguage()), em).findTasks(user);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public DocumentRevisionKey[] getIterationChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = userManager.getCurrentUser(pWorkspaceId);
         return new SubscriptionDAO(em).getIterationChangeEventSubscriptions(user);
     }
 
     @RolesAllowed({"users"})
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public DocumentRevisionKey[] getStateChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = userManager.getCurrentUser(pWorkspaceId);
         return new SubscriptionDAO(em).getStateChangeEventSubscriptions(user);
     }
 
-
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public boolean isUserStateChangeEventSubscribedForGivenDocument(String pWorkspaceId, DocumentRevision docR) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = userManager.getCurrentUser(pWorkspaceId);
         return new SubscriptionDAO(em).isUserStateChangeEventSubscribedForGivenDocument(user, docR);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public boolean isUserIterationChangeEventSubscribedForGivenDocument(String pWorkspaceId, DocumentRevision docR) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+        User user = userManager.getCurrentUser(pWorkspaceId);
         return  new SubscriptionDAO(em).isUserIterationChangeEventSubscribedForGivenDocument(user, docR);
     }
 
     @RolesAllowed("users")
+    @WorkspaceAccess(right = WorkspaceAccess.Right.READ)
     @Override
     public DocumentRevision[] getDocumentRevisionsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         List<DocumentRevision> docRs = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).findDocsWithAssignedTasksForGivenUser(pWorkspaceId, assignedUserLogin);
-        return docRs.toArray(new DocumentRevision[docRs.size()]);
+        List<DocumentRevision> visibleDocRs = new ArrayList<>();
+        for(DocumentRevision docR : docRs){
+            try{
+                visibleDocRs.add(getDocumentRevision(docR.getKey()));
+            }catch (Exception ignored){}
+        }
+        return visibleDocRs.toArray(new DocumentRevision[visibleDocRs.size()]);
     }
 
+    @DocumentIterationAccess(right = DocumentIterationAccess.Right.READ)
+    private DocumentIteration getDocumentIteration(DocumentIterationKey pDocIKey) throws UserNotFoundException, DocumentRevisionNotFoundException {
+        User user = userManager.getCurrentUser(pDocIKey.getWorkspaceId());
+        DocumentRevision docR = new DocumentRevisionDAO(new Locale(user.getLanguage()), em).loadDocR(pDocIKey.getDocumentRevision());
+        return docR.getIteration(pDocIKey.getIteration());
+    }
+
+
+
+
+    // Todo Next function where we must
     @RolesAllowed("users")
     @Override
     public DocumentRevision[] getDocumentRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException {

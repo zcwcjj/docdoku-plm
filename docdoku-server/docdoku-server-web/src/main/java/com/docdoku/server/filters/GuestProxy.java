@@ -60,7 +60,7 @@ public class GuestProxy{
         return productService.getBinaryResource(fullName);
     }
 
-    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource binaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
+    public DocumentIteration findDocumentIterationByBinaryResource(BinaryResource binaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException {
         return documentService.findDocumentIterationByBinaryResource(binaryResource);
     }
 

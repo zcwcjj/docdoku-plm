@@ -37,7 +37,7 @@ public class AccessRightBean implements IAccessRightLocal {
 
 
     @Override
-    @RolesAllowed({"users"})
+    @RolesAllowed({"users","guest-proxy"})
     public User checkChangeItemReadAccess(ChangeItem pChangeItem) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         User user = checkWorkspaceReadAccess(pChangeItem.getWorkspaceId());                                             // Check if the user have read access on the workspace
         if(user.isAdministrator()                                                                                       // Check if it is the workspace's administrator
@@ -77,7 +77,7 @@ public class AccessRightBean implements IAccessRightLocal {
     }
 
     @Override
-    @RolesAllowed({"users"})
+    @RolesAllowed({"users","guest-proxy"})
     public User checkDocumentIterationReadAccess(DocumentIterationKey pDocumentIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException {
         DocumentRevisionKey documentRevisionKey= pDocumentIterationKey.getDocumentRevision();
         User user = checkDocumentRevisionReadAccess(documentRevisionKey);
@@ -86,7 +86,7 @@ public class AccessRightBean implements IAccessRightLocal {
             return user;
         }else if(!(documentRevision.getLastIteration().getKey().equals(pDocumentIterationKey))){
             return user;
-        } else if(!documentRevision.getCheckOutUser().equals(user)){
+        } else if(ctx.isCallerInRole("guest-proxy") || (!documentRevision.getCheckOutUser().equals(user))){
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         return user;
@@ -107,8 +107,12 @@ public class AccessRightBean implements IAccessRightLocal {
     }
 
     @Override
-    @RolesAllowed({"users"})
+    @RolesAllowed({"users","guest-proxy"})
     public User checkDocumentRevisionReadAccess(DocumentRevisionKey pDocumentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException {
+        if(ctx.isCallerInRole("guest-proxy")){
+            return new User("en");
+        }
+
         User user = checkWorkspaceReadAccess(pDocumentRevisionKey.getDocumentMaster().getWorkspace());
         DocumentRevision documentRevision = new DocumentRevisionDAO(em).loadDocR(pDocumentRevisionKey);
         String owner = documentRevision.getLocation().getOwner();
@@ -167,11 +171,11 @@ public class AccessRightBean implements IAccessRightLocal {
         if ((owner != null) && (!owner.equals(user.getLogin()))) {
             throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException5");
         }
-        if(user.isAdministrator() || documentRevision.getAuthor().getLogin().equals(user.getLogin())){                                                                                     // If it is the workspace's owner, give it access
-            return user;
-        }else{
+        if((!user.isAdministrator())                                                                                    // Check if it is the workspace's admin
+                && (!documentRevision.getAuthor().getLogin().equals(user.getLogin()))){                                 // Check iff it is the document's owner, give it access
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
+        return user;
     }
 
     @Override

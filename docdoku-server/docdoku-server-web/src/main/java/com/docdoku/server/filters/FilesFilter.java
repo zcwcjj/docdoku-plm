@@ -153,7 +153,7 @@ public class FilesFilter implements Filter {
                     if(account != null){
                         binaryResource = documentService.getBinaryResource(fullName);
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-                        user = documentService.whoAmI(workspaceId);
+                        user = userManager.whoAmI(workspaceId);
                     }else{
                         DocumentRevisionKey docRK = new DocumentRevisionKey(workspaceId, docMId, docMVersion);
                         binaryResource = guestProxy.getPublicBinaryResourceForDocument(docRK,fullName);
@@ -230,7 +230,6 @@ public class FilesFilter implements Filter {
             try {
 
                 String uuid = URLDecoder.decode(pathInfo[offset], "UTF-8");
-                iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
 
                 SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
                 workspaceId = sharedEntity.getWorkspace().getId();
@@ -243,7 +242,6 @@ public class FilesFilter implements Filter {
 
                 if(sharedEntity instanceof SharedDocument){
                     DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
-                    docI =  documentRevision.getLastIteration();
                     String id = documentRevision.getId();
                     String version = documentRevision.getVersion();
                     iteration = Integer.valueOf(URLDecoder.decode(pathInfo[offset + 1], "UTF-8"));
@@ -254,7 +252,7 @@ public class FilesFilter implements Filter {
                     if(account != null){
                         binaryResource = documentService.getBinaryResource(fullName);
                         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-                        user = documentService.whoAmI(workspaceId);
+                        user = userManager.whoAmI(workspaceId);
                     }else{
                         binaryResource = guestProxy.getBinaryResourceForSharedDocument(fullName);
                         docI = guestProxy.findDocumentIterationByBinaryResource(binaryResource);
@@ -311,7 +309,7 @@ public class FilesFilter implements Filter {
     }
 
     private static String[] removeEmptyEntries(String[] entries) {
-        List<String> elements = new LinkedList<String>(Arrays.asList(entries));
+        List<String> elements = new LinkedList<>(Arrays.asList(entries));
 
         for (Iterator<String> it = elements.iterator(); it.hasNext(); ) {
             if (it.next().isEmpty()) {
