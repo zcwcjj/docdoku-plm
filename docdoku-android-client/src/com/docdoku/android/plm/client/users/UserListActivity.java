@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -34,9 +34,9 @@ import android.view.*;
 import android.widget.*;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -671,33 +671,30 @@ public class UserListActivity extends SearchActionBarActivity {
          */
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                view = inflater.inflate(R.layout.adapter_user, null);
-                User user = users.get(i);
-                final TextView username = (TextView) view.findViewById(R.id.username);
-                username.setText(user.getName());
-                username.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        username.setSingleLine(false);
-                    }
-                });
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-                if (user.existsOnPhone()) {
-                    checkBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.user_highlighted, 0);
+            View userRowView = inflater.inflate(R.layout.adapter_user, null);
+            User user = users.get(i);
+            final TextView username = (TextView) userRowView.findViewById(R.id.username);
+            username.setText(user.getName());
+            username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    username.setSingleLine(false);
                 }
-                if (userListView.isItemChecked(i)) {
-                    checkBox.setChecked(true);
-                }
-                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                        userListView.setItemChecked(i, b);
-                    }
-                });
-
+            });
+            CheckBox checkBox = (CheckBox) userRowView.findViewById(R.id.checkBox);
+            if (user.existsOnPhone()) {
+                checkBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.user_highlighted, 0);
             }
-            return view;
+            if (userListView.isItemChecked(i)) {
+                checkBox.setChecked(true);
+            }
+            checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    userListView.setItemChecked(i, b);
+                }
+            });
+            return userRowView;
         }
     }
 }

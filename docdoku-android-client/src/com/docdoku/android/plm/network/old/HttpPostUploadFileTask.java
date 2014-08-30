@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.network.old;
+package com.docdoku.android.plm.network;
 
 import android.util.Log;
 
@@ -37,7 +37,7 @@ import java.net.URISyntaxException;
  * @author: Martin Devillers
  */
 public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean> {
-    private static final String LOG_TAG = "com.docdoku.android.plm.network.old.HttpPostUploadFileTask";
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPostUploadFileTask";
 
     private final static int CHUNK_SIZE      = 1024 * 8;
     private final static int BUFFER_CAPACITY = 1024 * 32;

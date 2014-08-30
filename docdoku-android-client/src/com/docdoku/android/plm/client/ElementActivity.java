@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -35,12 +35,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
-import com.docdoku.android.plm.client.gdx.GDXActivity;
-import com.docdoku.android.plm.network.HTTPDownloadTask;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPPutTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HttpGetDownloadFileTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPPutTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,7 +54,7 @@ import java.util.Calendar;
  * @version 1.0
  * @author: Martin Devillers
  */
-public abstract class ElementActivity extends SimpleActionBarActivity {
+public abstract class ElementActivity extends SimpleActionBarActivity implements HttpGetDownloadFileTask.HttpGetDownloadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
     protected Button         checkInOutButton;
     private   Element        element;
@@ -239,6 +238,73 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
                 .create().show();
     }
 
+//    /**
+//     * Handles the result of an checkin/checkout task.
+//     * <p>If the result is <code>false</code>, shows a <code>AlertDialog</code> to indicate a connection error.
+//     * <p>If the result is <code>true</code>, checks the chek in/out status of the <code>Element</code>, and shows
+//     * a <code>Toast</code> indicating that the operation was successful. The document is also updated with this new
+//     * check in/out operation.
+//     *
+//     * @param result          If the Http request return a code 200, indicating that the task was successful
+//     * @param responseContent The String of the updated <code>JSONObject</code>
+//     * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//     */
+
+    /**
+     * When a file download begins, opens a <code>ProgressDialog</code>.
+     *
+     * @see com.docdoku.android.plm.network.HttpGetDownloadFileTask.HttpGetDownloadFileListener
+     */
+    @Override
+    public void onFileDownloadStart() {
+        fileDownloadProgressDialog = new ProgressDialog(this);
+        fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
+        fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        fileDownloadProgressDialog.show();
+    }
+
+    //    /**
+//     * Closes the <code>ProgressDialog</code> when the file download task is finished
+//     * <p>If the download was successful, shows a <code>Toast</code> indicating where the file was saved, and creates a <code>chooser</code>
+//     * for the user to open the file.
+//     * <p>If the download failed, show a <code>Toast</code> indicating a download error to the user.
+//     *
+//     * @param result whether the download was successful
+//     * @param path   the path on the device to the downloaded file
+//     */
+    @Override
+    public void onFileDownloaded(boolean result, String path) {
+        fileDownloadProgressDialog.dismiss();
+        if (result) {
+            Toast.makeText(this, getResources().getString(R.string.downloadSuccessToPath, path), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent();
+            intent.setAction(android.content.Intent.ACTION_VIEW);
+            File file = new File(path);
+
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+            String type = mime.getMimeTypeFromExtension(ext);
+
+            intent.setDataAndType(Uri.fromFile(file), type);
+
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+        }
+        else {
+            Toast.makeText(this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Updates the <code>ProgressDialog</code> during the file download.
+     *
+     * @param progress the percentage of file download completed
+     * @see com.docdoku.android.plm.network.HttpGetDownloadFileTask.HttpGetDownloadFileListener
+     */
+    @Override
+    public void onProgressUpdate(int progress) {
+        fileDownloadProgressDialog.setProgress(progress);
+    }
+
     /**
      * Inflates a layout for an attribute having a name and a value.
      * <p>Layout file: {@link /res/layout/adapter_name_value_pair.xml adapter_name_value_pair}
@@ -296,7 +362,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
 
     /**
      * Inflates a layout for an linked file, showing its name.
-     * Sets the <code>OnClickListener</code> that starts the download of the file with an {@link com.docdoku.android.plm.network.HTTPDownloadTask}.
+     * Sets the <code>OnClickListener</code> that starts the download of the file with an {@link HttpGetDownloadFileTask}.
      * <p>Layout file: {@link /res/layout/adapter_dowloadable_file.xml adapter_downloadable_file}
      *
      * @param fileName the name of the downloadable file
@@ -311,43 +377,33 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
             @Override
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
-
-                fileDownloadProgressDialog = new ProgressDialog(ElementActivity.this);
-                fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
-                fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                fileDownloadProgressDialog.show();
-
-                final String dest = getExternalCacheDir() + "/" + fileUrl.replaceAll(fileName, "");
-                new HTTPDownloadTask(new HTTPTaskDoneListener() {
-                    @Override
-                    public void onDone(HTTPResultTask result) {
-                        fileDownloadProgressDialog.dismiss();
-                        if (result.isSucceed()) {
-                            Toast.makeText(ElementActivity.this, getResources().getString(R.string.downloadSuccessToPath, getExternalCacheDir() + fileUrl), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent();
-                            intent.setAction(android.content.Intent.ACTION_VIEW);
-
-                            if (fileName.endsWith(".obj")) {
-                                startActivity(new Intent(ElementActivity.this, GDXActivity.class));
-                            }
-                            else {
-                                File file = new File(dest + fileName);
-
-                                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                                String ext = file.getName().substring(file.getName().indexOf(".") + 1);
-                                String type = mime.getMimeTypeFromExtension(ext);
-
-                                intent.setDataAndType(Uri.fromFile(file), type);
-
-                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
-                            }
-
-                        }
-                        else {
-                            Toast.makeText(ElementActivity.this, R.string.fileDownloadFail, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }).execute("files/" + fileUrl, dest, fileName);
+                new HttpGetDownloadFileTask(ElementActivity.this).execute("files/" + fileUrl, fileName);
+//                HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
+//                    @Override
+//                    public void onDone(HTTPResultTask result) {
+//                        fileDownloadProgressDialog.dismiss();
+//                        if (result.isSucceed()) {
+//                            Toast.makeText(this, getResources().getString(R.string.downloadSuccessToPath, path), Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent();
+//                            intent.setAction(android.content.Intent.ACTION_VIEW);
+//                            File file = new File(path);
+//
+//                            MimeTypeMap mime = MimeTypeMap.getSingleton();
+//                            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+//                            String type = mime.getMimeTypeFromExtension(ext);
+//
+//                            intent.setDataAndType(Uri.fromFile(file), type);
+//
+//                            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+//                        }
+//                        else {
+//                            Toast.makeText(ElementActivity.this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//
+//
+//                        task.execute("files/" + fileUrl, fileName);
             }
         });
         return rowView;

@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -31,9 +31,9 @@ import android.widget.*;
 import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,6 +47,7 @@ import java.util.List;
 /**
  * Base class for {@code Activities} representing a list of {@link Part Parts}. This class contains:
  * <br>The {@link PartAdapter} used to represent the parts in a {@code ListView}
+ * <br>The {@link #onPartClick(Part) onPartClick()} method used to handle click events on parts
  * <br>The {@link #getSearchQueryHintId()} and {@link #executeSearch(String) executeSearch()} methods used to handle
  * searches made by the user in the {@code ActionBar}.
  *
@@ -88,17 +89,23 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         partListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Adds its id to the {@link NavigationHistory} and create an {@code Intent} to start a new {@link PartActivity}.
-                Part part = (Part) partListView.getAdapter().getItem(i);
-
-                navigationHistory.add(part.getKey());
-                Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-                intent.putExtra(PartActivity.PART_EXTRA, part);
-                startActivity(intent);
+                onPartClick((Part) partListView.getAdapter().getItem(i));
             }
         });
     }
 
+    /**
+     * Handles a click on a {@link Part}. Adds its id to the {@link NavigationHistory} and create an {@code Intent}
+     * to start a new {@link PartActivity}.
+     *
+     * @param part the part whose row was clicked
+     */
+    private void onPartClick(Part part) {
+        navigationHistory.add(part.getKey());
+        Intent intent = new Intent(PartListActivity.this, PartActivity.class);
+        intent.putExtra(PartActivity.PART_EXTRA, part);
+        startActivity(intent);
+    }
 
     /**
      * Method that converts a date into a {@code String} that is easier to read for the user. The possible scenarios are:
@@ -161,7 +168,7 @@ public abstract class PartListActivity extends SearchActionBarActivity {
             searchTask.cancel(true);
         }
         if (query.length() > 0) {
-            partSearchResultArray = new ArrayList<>();
+            partSearchResultArray = new ArrayList<Part>();
             partSearchResultAdapter = new PartAdapter(partSearchResultArray);
             partListView.setAdapter(partSearchResultAdapter);
             searchTask = new HTTPGetTask(new HTTPTaskDoneListener() {
@@ -211,7 +218,6 @@ public abstract class PartListActivity extends SearchActionBarActivity {
 
         @Override
         public Object getItem(int i) {
-            Log.d(LOG_TAG, "getItem item ! " + i);
             return parts.get(i);
         }
 
@@ -239,48 +245,47 @@ public abstract class PartListActivity extends SearchActionBarActivity {
          */
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-//            if (view == null) {
+            final View partRowView;
             final Part part = parts.get(i);
             if (part == null) {
-                view = new ProgressBar(PartListActivity.this);
+                partRowView = new ProgressBar(PartListActivity.this);
+            }
+            else if (part.getAuthor() == null) {
+                partRowView = inflater.inflate(R.layout.adapter_part, null);
+                TextView identification = (TextView) partRowView.findViewById(R.id.identification);
+                identification.setText(part.getKey());
+                ImageView checkedInOutImage = (ImageView) partRowView.findViewById(R.id.checkedInOutImage);
+                checkedInOutImage.setImageResource(R.drawable.error_light);
+                View iterationNumberBox = partRowView.findViewById(R.id.iterationNumberBox);
+                ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
             }
             else {
-                view = inflater.inflate(R.layout.adapter_part, null);
-                TextView identification = (TextView) view.findViewById(R.id.identification);
-                identification.setText(part.getKey());
-                ImageView checkedInOutImage = (ImageView) view.findViewById(R.id.checkedInOutImage);
-
-                if (part.getAuthor() == null) {
-                    checkedInOutImage.setImageResource(R.drawable.error_light);
-                    View iterationNumberBox = view.findViewById(R.id.iterationNumberBox);
-                    ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
+                partRowView = inflater.inflate(R.layout.adapter_part, null);
+                TextView reference = (TextView) partRowView.findViewById(R.id.identification);
+                reference.setText(part.getKey());
+                ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.checkedInOutImage);
+                String reservedByName = part.getCheckOutUserName();
+                if (reservedByName != null) {
+                    String reservedByLogin = part.getCheckOutUserLogin();
+                    if (reservedByLogin.equals(getCurrentUserLogin())) {
+                        reservedPart.setImageResource(R.drawable.checked_out_current_user_light);
+                    }
                 }
                 else {
-                    String reservedByName = part.getCheckOutUserName();
-                    if (reservedByName != null) {
-                        String reservedByLogin = part.getCheckOutUserLogin();
-                        if (reservedByLogin.equals(getCurrentUserLogin())) {
-                            checkedInOutImage.setImageResource(R.drawable.checked_out_current_user_light);
-                        }
-                    }
-                    else {
-                        checkedInOutImage.setImageResource(R.drawable.checked_in_light);
-                    }
-                    TextView lastIteration = (TextView) view.findViewById(R.id.lastIteration);
-                    try {
-                        lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase), simplifyDate(part.getLastIterationDate()), part.getLastIterationAuthorName()));
-                    }
-                    catch (ParseException e) {
-                        lastIteration.setText("");
-                    }
-                    catch (NullPointerException e) {
-                        lastIteration.setText("");
-                    }
+                    reservedPart.setImageResource(R.drawable.checked_in_light);
+                }
+                TextView lastIteration = (TextView) partRowView.findViewById(R.id.lastIteration);
+                try {
+                    lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(part.getLastIterationDate()), part.getLastIterationAuthorName())));
+                }
+                catch (ParseException e) {
+                    lastIteration.setText("");
+                }
+                catch (NullPointerException e) {
+                    lastIteration.setText("");
                 }
             }
-//            }
-
-            return view;
+            return partRowView;
         }
 
         /**

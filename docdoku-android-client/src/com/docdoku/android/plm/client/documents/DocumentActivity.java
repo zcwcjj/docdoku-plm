@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2014 DocDoku SARL
+ * Copyright 2006 - 2013 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -39,10 +39,10 @@ import android.widget.*;
 import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPPutTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
-import com.docdoku.android.plm.network.old.HttpPostUploadFileTask;
+import com.docdoku.android.plm.network.HttpPostUploadFileTask;
+import com.docdoku.android.plm.network.rest.HTTPPutTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +79,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     /**
      * Opens a <code>ProgressDialog</code> to show progress while uploading a file to the server.
      *
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
      */
     @Override
     public void onUploadStart() {
@@ -93,7 +93,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
      * Changes the progress on the progress dialog
      *
      * @param progress the percentage of the upload progress
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
      */
     @Override
     public void onUploadProgressUpdate(int progress) {
@@ -109,7 +109,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
      *
      * @param result
      * @param fileName
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     * @see com.docdoku.android.plm.network.HttpPostUploadFileTask.HttpPostUploadFileListener
      */
     @Override
     public void onUploadResult(boolean result, final String fileName) {
