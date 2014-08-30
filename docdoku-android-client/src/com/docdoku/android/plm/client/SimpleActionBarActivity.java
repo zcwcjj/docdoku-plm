@@ -51,8 +51,8 @@ import com.docdoku.android.plm.client.users.UserListActivity;
  * {@link #getUrlWorkspaceApi()},
  * {@link #getCurrentUserName()})
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public abstract class SimpleActionBarActivity extends FragmentActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SimpleActionBarActivity";
@@ -62,52 +62,58 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     private ActionBarDrawerToggle drawerToggle;
 
     /**
+     * Returns the url used to access the current workspace in Http requests
+     *
+     * @return the url path to the current workspace
+     */
+    protected String getUrlWorkspaceApi() {
+        return URL_API + getCurrentWorkspace();
+    }
+
+    /**
      * Returns the current workspace being used by the user, loading it from the <code>SharedPreferences</code> if it
      * can't be found in memory.
+     *
      * @return the current workspace.
      */
-    protected String getCurrentWorkspace(){
+    protected String getCurrentWorkspace() {
         try {
             return Session.getSession(this).getCurrentWorkspace(this);
-        } catch (Session.SessionLoadException e) {
+        }
+        catch (Session.SessionLoadException e) {
             Log.e(LOG_TAG, "Unable to get current workspace because no session was found");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return null;
     }
 
     /**
-     * Returns the url used to access the current workspace in Http requests
-     * @return the url path to the current workspace
-     */
-    protected String getUrlWorkspaceApi(){
-        return URL_API + getCurrentWorkspace();
-    }
-
-    /**
      * Returns the login of the current user, loading it from the <code>SharedPreferences</code> if it can't be found in memory.
+     *
      * @return the current users's login
      */
-    protected String getCurrentUserLogin(){
-        try{
+    protected String getCurrentUserLogin() {
+        try {
             return Session.getSession(this).getUserLogin();
-        } catch (Session.SessionLoadException e) {
+        }
+        catch (Session.SessionLoadException e) {
             Log.e(LOG_TAG, "Unable to get current user login because no session was found");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return null;
     }
 
     /**
      * Returns the name of the current user, loading it from the <code>SharedPreferences</code> if it can't be found in memory.
+     *
      * @return the current users's name
      */
-    String getCurrentUserName(){
-        try{
+    String getCurrentUserName() {
+        try {
             return Session.getSession(this).getUserName();
-        } catch (Session.SessionLoadException e) {
+        }
+        catch (Session.SessionLoadException e) {
             Log.e(LOG_TAG, "Unable to get current user login because no session was found");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return null;
     }
@@ -117,18 +123,19 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
      * <p> - Sets the <code>ActionBar</code> "Home" button to open the navigation drawer.
      * <br> Sets a <code>Listener</code> that calls {@link #restartActivity()} if the selected workspace has changed while the
      * drawer menu was visible to the user.
+     *
      * @see android.app.Activity
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         final MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
         menuFragment.setCurrentActivity(getActivityButtonId());
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.navigation_drawer, 0, 0){
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.navigation_drawer, 0, 0) {
             @Override
             public void onDrawerClosed(View view) {
-                if (menuFragment.isWorkspaceChanged()){
+                if (menuFragment.isWorkspaceChanged()) {
                     restartActivity();
                 }
             }
@@ -136,9 +143,25 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         drawerToggle.setDrawerIndicatorEnabled(true);
         drawerLayout.setDrawerListener(drawerToggle);
         ActionBar actionBar = getActionBar();
-        actionBar.setHomeButtonEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         drawerToggle.syncState();
+    }
+
+    /**
+     * Returns the Id of the <code>Button</code> leading to the current {@code Activity}. This {@code Button} is highlighted
+     * in the side menu to show that this is the {@code Activity} that the user is currently viewing.
+     *
+     * @return the id of the {@code Button} linking to the current {@code Activity}
+     */
+    protected abstract int getActivityButtonId();
+
+    void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     /**
@@ -177,29 +200,30 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
                 return true;
             case R.id.menu_logout:
                 new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.logout_light)
-                    .setTitle(" ")
-                    .setMessage(getResources().getString(R.string.confirmDisconnect))
-                    .setNegativeButton(getResources().getString(R.string.no), null)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            try {
-                                if (Session.getSession(SimpleActionBarActivity.this).isPermanentSession()) {
-                                    Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
-                                    GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
-                                    startService(GCMLogoutIntent);
+                        .setIcon(R.drawable.logout_light)
+                        .setTitle(" ")
+                        .setMessage(getResources().getString(R.string.confirmDisconnect))
+                        .setNegativeButton(getResources().getString(R.string.no), null)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                try {
+                                    if (Session.getSession(SimpleActionBarActivity.this).isPermanentSession()) {
+                                        Intent GCMLogoutIntent = new Intent(SimpleActionBarActivity.this, GCMRegisterService.class);
+                                        GCMLogoutIntent.putExtra(GCMRegisterService.INTENT_KEY_ACTION, GCMRegisterService.ACTION_ERASE_ID);
+                                        startService(GCMLogoutIntent);
+                                    }
                                 }
-                            } catch (Session.SessionLoadException e) {
-                                Log.w(LOG_TAG, "Could not remove gcm id from server because session information was unavailable");
-                                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                catch (Session.SessionLoadException e) {
+                                    Log.w(LOG_TAG, "Could not remove gcm id from server because session information was unavailable");
+                                    e.printStackTrace();
+                                }
+                                Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
+                                intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
+                                startActivity(intent);
                             }
-                            Intent intent = new Intent(SimpleActionBarActivity.this, ConnectionActivity.class);
-                            intent.putExtra(ConnectionActivity.INTENT_KEY_ERASE_ID, true);
-                            startActivity(intent);
-                        }
-                    })
-                    .create().show();
+                        })
+                        .create().show();
                 return true;
             default:
                 Log.i(LOG_TAG, "Could not identify title bar button click");
@@ -207,17 +231,4 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         }
 
     }
-
-    void restartActivity(){
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-    }
-
-    /**
-     * Returns the Id of the <code>Button</code> leading to the current {@code Activity}. This {@code Button} is highlighted
-     * in the side menu to show that this is the {@code Activity} that the user is currently viewing.
-     * @return the id of the {@code Button} linking to the current {@code Activity}
-     */
-    protected abstract int getActivityButtonId();
 }

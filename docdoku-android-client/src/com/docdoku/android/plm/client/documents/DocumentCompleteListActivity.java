@@ -21,7 +21,6 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -29,7 +28,9 @@ import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,15 +43,15 @@ import java.util.List;
  * <p>The documents are loaded asynchronously by pages of 20 items using a <code>Loader</code>.
  * <p>Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class DocumentCompleteListActivity extends DocumentListActivity implements HttpGetTask.HttpGetListener, LoaderManager.LoaderCallbacks<List<Document>> {
+public class DocumentCompleteListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<List<Document>> {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentCompleteListActivity";
 
-    private int numDocumentsAvailable;
+    private int         numDocumentsAvailable;
     private ProgressBar footerProgressBar;
-    private int numPagesDownloaded;
+    private int         numPagesDownloaded;
 
     /**
      * Called when the <code>Activity</code> is created.
@@ -60,7 +61,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
      * becomes visible.
      * <p>Initializes the <code>ArrayList</code> containing the <code>Document</code>s and the <code>Adapter</code> for the
      * <code>ListView</code>, as well as the number of documents downloaded.
-     * <p>Starts an {@link HttpGetTask} to download the number of documents in the workspace.
+     * <p>Starts an {@link HTTPGetTask} to download the number of documents in the workspace.
      *
      * @param savedInstanceState
      * @see android.app.Activity
@@ -73,14 +74,41 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         footerProgressBar = new ProgressBar(this);
         documentListView.addFooterView(footerProgressBar);
 
-        documentArray = new ArrayList<Document>();
-        documentAdapter = new DocumentAdapter(documentArray);
+        documentArray = new ArrayList<>();
+        documentAdapter = new DocumentAdapter(documentArray, this);
         documentListView.setAdapter(documentAdapter);
 
         numDocumentsAvailable = 0;
         numPagesDownloaded = 0;
 
-        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/count");
+//        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/count");
+
+        HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
+            @Override
+            public void onDone(HTTPResultTask result) {
+                try {
+                    JSONArray jsonArray = new JSONArray(result.getResultContent());
+                    numDocumentsAvailable = jsonArray.length();
+
+                    removeLoadingView();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("page", 0);
+                    bundle.putString("workspace", getCurrentWorkspace());
+                    Log.i(LOG_TAG, "Loading first part page");
+                    getSupportLoaderManager().initLoader(0, bundle, DocumentCompleteListActivity.this);
+                }
+                catch (NumberFormatException e) {
+                    Log.e(LOG_TAG, "NumberFormatException: didn't correctly download number of pages of documents");
+                    Log.e(LOG_TAG, "Number of pages result: " + result);
+                }
+                catch (JSONException e) {
+                    Log.e(LOG_TAG, "JSONException: didn't correctly download json object");
+                    Log.e(LOG_TAG, "Number of pages result: " + result);
+                }
+            }
+        });
+        task.execute("api/workspaces/" + getCurrentWorkspace() + "/documents");
+
 
         documentListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -101,34 +129,16 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         });
     }
 
-    /**
-     * Handles the result of the query for the number of documents in the workspace.
-     * <p>Registers the result. Removes the <code>View</code> that indicated that a loading was taking place. Starts
-     * the <code>Loader</code> for the first page of documents.
-     *
-     * @param result The number of <code>Document</code>s in the workspace
-     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
-     */
-    @Override
-    public void onHttpGetResult(String result) {
-        try{
-            result = result.substring(0, result.length() - 1);
-            numDocumentsAvailable = Integer.parseInt(result);
-            removeLoadingView();
-            Bundle bundle = new Bundle();
-            bundle.putInt("page", 0);
-            bundle.putString("workspace", getCurrentWorkspace());
-            Log.i(LOG_TAG, "Loading first part page");
-            getSupportLoaderManager().initLoader(0, bundle, this);
-        } catch (NumberFormatException e) {
-            Log.e(LOG_TAG, "NumberFormatException: didn't correctly download number of pages of documents");
-            Log.e(LOG_TAG, "Number of pages result: " + result);
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * Handles the result of the query for the number of documents in the workspace.
+//     * <p>Registers the result. Removes the <code>View</code> that indicated that a loading was taking place. Starts
+//     * the <code>Loader</code> for the first page of documents.
+//     *
+//     * @param result The number of <code>Document</code>s in the workspace
+//     * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//     */
 
     /**
-     *
      * @return
      * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
@@ -157,7 +167,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
      * <p>If there are no more documents to download, removes the <code>FooterView</code>.
      *
      * @param loader the <code>Loader</code> that provided the result
-     * @param data the {@code List<Document>} provided by the <code>Loader</code>
+     * @param data   the {@code List<Document>} provided by the <code>Loader</code>
      * @see LoaderManager.LoaderCallbacks
      */
     @Override
@@ -167,13 +177,12 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         numPagesDownloaded++;
 
         Log.i(LOG_TAG, "Finished loading a page. \nNumber of parts available: " + numDocumentsAvailable + "; \nNumber of parts downloaded: " + documentAdapter.getCount());
-        if (documentAdapter.getCount() == numDocumentsAvailable){
+        if (documentAdapter.getCount() == numDocumentsAvailable) {
             documentListView.removeFooterView(footerProgressBar);
         }
     }
 
     /**
-     *
      * @param loader
      * @see LoaderManager.LoaderCallbacks
      */
@@ -185,12 +194,12 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
     /**
      * Class that handles the loading of documents asynchronously.
      */
-    private static class DocumentLoaderByPage extends Loader<List<Document>> implements HttpGetTask.HttpGetListener {
+    private static class DocumentLoaderByPage extends Loader<List<Document>> {
 
-        private final int startIndex;
-        private final String workspace;
-        private AsyncTask asyncTask;
-        private List<Document> downloadedParts;
+        private final int            startIndex;
+        private final String         workspace;
+        private       HTTPGetTask    asyncTask;
+        private       List<Document> downloadedParts;
 
         /**
          * Constructor called by the <code>LoaderManager.LoaderCallbacks</code> to start loading a page of documents.
@@ -203,95 +212,108 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
          */
         public DocumentLoaderByPage(Context context, int page, String workspace) {
             super(context);
-            startIndex = page*20;
-            downloadedParts = new ArrayList<Document>();
+            startIndex = page * 20;
+            downloadedParts = new ArrayList<>();
             this.workspace = workspace;
         }
 
         /**
-         * Starts an {@link HttpGetTask} to download the page of documents If the documents have already been downloaded,
+         * Starts an {@link HTTPGetTask} to download the page of documents If the documents have already been downloaded,
          * passes them as a result.
          *
          * @see Loader
          */
         @Override
-        protected void onStartLoading (){
-            Log.i(LOG_TAG, "Starting DocumentLoader load for page " + startIndex/20);
-            if (downloadedParts.size() == 0){
-                asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" +  startIndex);
-            } else {
+        protected void onStartLoading() {
+            Log.i(LOG_TAG, "Starting DocumentLoader load for page " + startIndex / 20);
+            if (downloadedParts.size() == 0) {
+//                asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" + startIndex);
+                createTask();
+            }
+            else {
                 deliverResult(downloadedParts);
             }
         }
 
         /**
-         * Cancels the {@link HttpGetTask} that was downloading the document page.
+         * @see Loader
+         */
+        @Override
+        protected void onForceLoad() {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        /**
+         * Cancels the {@link HTTPGetTask} that was downloading the document page.
          *
          * @see Loader
          */
         @Override
-        protected void onStopLoading (){
-            if (asyncTask != null){
+        protected void onStopLoading() {
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
         }
 
         /**
-         * Restarts the {@link HttpGetTask} that was downloading the document page.
+         * @see Loader
+         */
+        @Override
+        protected void onAbandon() {
+            //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        /**
+         * Restarts the {@link HTTPGetTask} that was downloading the document page.
          *
          * @see Loader
          */
         @Override
-        protected void onReset (){
-            Log.i(LOG_TAG, "Restarting DocumentLoader load for page " + startIndex/20);
+        protected void onReset() {
+            Log.i(LOG_TAG, "Restarting DocumentLoader load for page " + startIndex / 20);
             downloadedParts = new ArrayList<Document>();
-            if (asyncTask != null){
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" +  startIndex);
+//            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents?start=" + startIndex);
+            createTask();
+
         }
 
-        /**
-         * @see Loader
-         */
-        @Override
-        protected void onForceLoad (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        /**
-         * @see Loader
-         */
-        @Override
-        protected void onAbandon (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        /**
-         * Handles the result of the {@link HttpGetTask} containing a <code>JSONArray</code> of documents.
-         * <p>Creates <code>Document</code> instances from the result and adds them to an {@code ArrayList<Document>}
-         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
-         *
-         * @param result the query <code>String</code> result
-         * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
-         * @see Loader
-         */
-        @Override
-        public void onHttpGetResult(String result) {
-            try {
-                JSONArray partsJSON = new JSONArray(result);
-                for (int i=0; i<partsJSON.length(); i++){
-                    JSONObject partJSON = partsJSON.getJSONObject(i);
-                    Document part = new Document(partJSON.getString("id"));
-                    part.updateFromJSON(partJSON, getContext().getResources());
-                    downloadedParts.add(part);
+        private void createTask() {
+            asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+                @Override
+                public void onDone(HTTPResultTask result) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(result.getResultContent());
+                        Log.d(LOG_TAG, " jsonArray.length() === " + jsonArray.length());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject partJSON = jsonArray.getJSONObject(i);
+                            Document part = new Document(partJSON.getString("id"));
+                            part.updateFromJSON(partJSON, getContext().getResources());
+                            downloadedParts.add(part);
+                        }
+                    }
+                    catch (JSONException e) {
+                        Log.e(LOG_TAG, "Error handling json array of workspace's documents");
+                        Log.d(LOG_TAG, " result === " + result);
+                        e.printStackTrace();
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
+                    }
+                    deliverResult(downloadedParts);
                 }
-            }catch (JSONException e){
-                Log.e(LOG_TAG, "Error handling json array of workspace's documents");
-                e.printStackTrace();
-                Log.i(LOG_TAG, "Error message: " + e.getMessage());
-            }
-            deliverResult(downloadedParts);
+            });
+            asyncTask.execute("api/workspaces/" + workspace + "/documents?start=" + startIndex);
         }
+
+//        /**
+//         * Handles the result of the {@link HttpGetTask} containing a <code>JSONArray</code> of documents.
+//         * <p>Creates <code>Document</code> instances from the result and adds them to an {@code ArrayList<Document>}
+//         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
+//         *
+//         * @param result the query <code>String</code> result
+//         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//         * @see Loader
+//         */
     }
 }

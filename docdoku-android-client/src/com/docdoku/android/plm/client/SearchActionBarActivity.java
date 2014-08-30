@@ -30,8 +30,8 @@ import android.widget.TextView;
  * Extends the {@link SimpleActionBarActivity} for <code>Activities</code> that require a search <code>Button</code> that
  * launches a <code>SearchActionBar</code>
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActionBarActivity";
@@ -53,10 +53,10 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
         int searchTextViewId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView searchTextView = (TextView) searchView.findViewById(searchTextViewId);
         searchTextView.setHintTextColor(getResources().getColor(R.color.darkGrey));
-        searchTextView.setTextColor(R.color.darkGrey);
+        searchTextView.setTextColor(getResources().getColor(R.color.darkGrey));
 
         int queryHintId = getSearchQueryHintId();
-        if (queryHintId != 0){
+        if (queryHintId != 0) {
             searchView.setQueryHint(getResources().getString(queryHintId));
         }
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -78,12 +78,14 @@ public abstract class SearchActionBarActivity extends SimpleActionBarActivity {
 
     /**
      * Returns the id of the message to display as a hint in the <code>SearchActionBar</code> when it is opened.
+     *
      * @return the <code>String</code> resource id for the hint
      */
     protected abstract int getSearchQueryHintId();
 
     /**
      * Called to do a search
+     *
      * @param query the text entered in the <code>SearchActionBar</code>
      */
     protected abstract void executeSearch(String query);

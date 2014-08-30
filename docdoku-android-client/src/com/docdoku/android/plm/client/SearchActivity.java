@@ -32,7 +32,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import com.docdoku.android.plm.client.users.User;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,25 +47,25 @@ import java.util.Calendar;
  * Basic structure for {@link com.docdoku.android.plm.client.documents.DocumentSearchActivity DocumentSearchActivity}
  * and {@link com.docdoku.android.plm.client.parts.PartSearchActivity PartSeachActivity}.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public abstract class SearchActivity extends SimpleActionBarActivity implements HttpGetTask.HttpGetListener {
+public abstract class SearchActivity extends SimpleActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.SearchActivity";
-
-    private Button author;
-    protected Button minCreationDate;
-    protected Button maxCreationDate;
-
-    private ArrayList<User> users;
-    protected User selectedUser;
+    protected Button   minCreationDate;
+    protected Button   maxCreationDate;
+    protected User     selectedUser;
     protected Calendar minDate, maxDate;
-    private AsyncTask<String, Void, String> userLoadTask;
+    private Button          author;
+    private ArrayList<User> users;
+    //    private AsyncTask<String, Void, String> userLoadTask;
+    private HTTPGetTask     userLoadTask;
 
     /**
      * Called when the <code>Activity</code> is created
-     * <p>Starts an {@link HttpGetTask} to request the list of users for the current workspace
+     * <p>Starts an {@link HTTPGetTask} to request the list of users for the current workspace
      * <br>Sets the listeners for the search criterion that open a <code>Dialog</code> when choosing them (author, maxDate, minDate)
+     *
      * @param savedInstanceState
      * @see android.app.Activity
      */
@@ -71,8 +73,26 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        userLoadTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+            @Override
+            public void onDone(HTTPResultTask result) {
+                users = new ArrayList<User>();
+                try {
+                    JSONArray usersJSON = new JSONArray(result.getResultContent());
+                    for (int i = 0; i < usersJSON.length(); i++) {
+                        JSONObject userJSON = usersJSON.getJSONObject(i);
+                        User user = new User(userJSON.getString("name"), userJSON.getString("email"), userJSON.getString("login"));
+                        users.add(user);
+                    }
+                }
+                catch (JSONException e) {
+                    Log.e(LOG_TAG, "Error handling json of workspace's users");
+                    e.printStackTrace();
+                }
+            }
+        });
 
-        userLoadTask  = new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
+        userLoadTask.execute("api/workspaces/" + getCurrentWorkspace() + "/users/");
 
         author = (Button) findViewById(R.id.author);
         author.setOnClickListener(new View.OnClickListener() {
@@ -102,11 +122,11 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
 
     /**
      * Shows a {@code AlertDialog} with the list of users so that the current can pick one.
-     * <p>If the {@code ArrayList} of users has not yet been downloaded, the method checks if the {@link HttpGetTask} user download task is still running.
+     * <p>If the {@code ArrayList} of users has not yet been downloaded, the method checks if the {@link HTTPGetTask} user download task is still running.
      * <br>If it is, then the dialog indicates to the user that the workspace's users have not yet been downloaded.
      * <br>If it isn't, then the task is assumed to have failed, and an error message is shown to the user.
      */
-    private void showUserPickerDialog(){
+    private void showUserPickerDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this)
                 .setTitle(R.string.documentPickAuthor);
         if (users != null) {
@@ -117,40 +137,19 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
                     author.setCompoundDrawables(null, null, null, null);
                 }
             });
-        }else if (AsyncTask.Status.FINISHED.equals(userLoadTask.getStatus())){
+        }
+        else if (AsyncTask.Status.FINISHED.equals(userLoadTask.getStatus())) {
             builder.setMessage(R.string.userLoadError);
-        }else{
+        }
+        else {
             builder.setMessage(R.string.userLoadInProgress);
         }
         builder.create().show();
     }
 
-    /**
-     * Called when the result of the <code>HttpGetTask</code> is obtained.
-     * If the request was successful, the result is a <code>JSONArray</code> of the users of the workspace.
-     *
-     * @param result
-     * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
-     */
-    @Override
-    public void onHttpGetResult(String result) {
-        users = new ArrayList<User>();
-        try {
-            JSONArray usersJSON = new JSONArray(result);
-            for (int i=0; i<usersJSON.length(); i++){
-                JSONObject userJSON = usersJSON.getJSONObject(i);
-                User user = new User(userJSON.getString("name"),userJSON.getString("email"),userJSON.getString("login"));
-                users.add(user);
-            }
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "Error handling json of workspace's users");
-            e.printStackTrace();
-        }
-    }
-
-    String[] getUserNames(ArrayList<User> userArray){
+    String[] getUserNames(ArrayList<User> userArray) {
         String[] userNames = new String[userArray.size()];
-        for (int i=0; i<userNames.length; i++){
+        for (int i = 0; i < userNames.length; i++) {
             userNames[i] = userArray.get(i).getName();
         }
         return userNames;
@@ -162,20 +161,20 @@ public abstract class SearchActivity extends SimpleActionBarActivity implements 
     static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
-        Button button;
+        Button   button;
         Calendar date;
 
-        public DatePickerFragment(Button button, Calendar date){
+        public DatePickerFragment(Button button, Calendar date) {
             this.button = button;
             this.date = date;
         }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            if (!button.getText().equals("")){
+            if (!button.getText().equals("")) {
                 return new DatePickerDialog(getActivity(), this, date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
             }
-            else{
+            else {
                 // Use the current date as the default date in the picker
                 final Calendar c = Calendar.getInstance();
                 int year = c.get(Calendar.YEAR);
