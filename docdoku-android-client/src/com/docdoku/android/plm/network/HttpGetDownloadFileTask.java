@@ -24,7 +24,10 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.*;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URISyntaxException;
 
 /**
  * Sends an Http GET request to the server, receiving a <code>File</code> as a result.
@@ -33,16 +36,16 @@ import java.net.*;
  * <p>The second parameter in the <code>execute()</code> method is the name that will be used to save the <code>File</code>,
  * inside of the Downloads directory.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean> {
+public class HttpGetDownloadFileTask extends HttpTask<String, Integer, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpGetDownloadFileTask";
 
     private HttpGetDownloadFileListener httpGetDownloadFileListener;
-    private String fileSavePath;
+    private String                      fileSavePath;
 
-    public HttpGetDownloadFileTask(HttpGetDownloadFileListener httpGetDownloadFileListener){
+    public HttpGetDownloadFileTask(HttpGetDownloadFileListener httpGetDownloadFileListener) {
         super();
         this.httpGetDownloadFileListener = httpGetDownloadFileListener;
     }
@@ -53,19 +56,18 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
         HttpURLConnection conn = null;
         String filename = strings[1];
         try {
-            URL url = createURL(strings[0]);
-            Log.i(LOG_TAG, "Sending HttpGet request to download_light file at url: " + url);
+            Log.i(LOG_TAG, "Sending HttpGet request to download_light file at url: " + strings[0]);
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
             fileSavePath = file.getAbsolutePath();
             Log.i(LOG_TAG, "Path to which file is being saved: " + fileSavePath);
             FileOutputStream outputStream = new FileOutputStream(file);
 
-            conn = (HttpURLConnection) url.openConnection();
+            conn = getHttpUrlConnection(strings[0]);
+
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
             conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestMethod("GET");
-            conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
             conn.connect();
             Log.i(LOG_TAG, "Response code: " + conn.getResponseCode());
 
@@ -75,7 +77,7 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             byte[] buffer = new byte[1024];
             int bufferLength;
             int responseCode = conn.getResponseCode();
-            while ( (bufferLength = inputStream.read(buffer)) > 0 ) {
+            while ((bufferLength = inputStream.read(buffer)) > 0) {
                 outputStream.write(buffer, 0, bufferLength);
                 downloadedSize += bufferLength;
 
@@ -84,48 +86,49 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
             outputStream.close();
             inputStream.close();
             result = (responseCode == 200);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG,"UnsupportedEncodingException in file download");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ProtocolException e) {
-            Log.e(LOG_TAG,"ProtocolException in file download");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG,"MalformedURLException in file download");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            Log.e(LOG_TAG,"IOException in file download");
-            Log.e(LOG_TAG, "Error message: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        if(conn!=null)
+        catch (UnsupportedEncodingException e) {
+            Log.e(LOG_TAG, "UnsupportedEncodingException in file download");
+        }
+        catch (ProtocolException e) {
+            Log.e(LOG_TAG, "ProtocolException in file download");
+        }
+        catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "MalformedURLException in file download");
+        }
+        catch (IOException e) {
+            Log.e(LOG_TAG, "IOException in file download");
+            Log.e(LOG_TAG, "Error message: " + e.getMessage());
+        }
+        catch (URISyntaxException e) {
+            Log.e(LOG_TAG, "URISyntaxException: " + e.getMessage());
+        }
+        if (conn != null)
             conn.disconnect();
         return result;
     }
 
     @Override
-    public void onProgressUpdate(Integer... values){
-        float progress = values[0];
-        float size = values[1];
-        float advancement = progress/size * 100;
-        if (httpGetDownloadFileListener != null){
-            httpGetDownloadFileListener.onProgressUpdate((int) advancement);
+    public void onPreExecute() {
+        if (httpGetDownloadFileListener != null) {
+            httpGetDownloadFileListener.onFileDownloadStart();
         }
     }
 
     @Override
-    public void onPostExecute(Boolean result){
-        if (httpGetDownloadFileListener != null){
+    public void onPostExecute(Boolean result) {
+        if (httpGetDownloadFileListener != null) {
             httpGetDownloadFileListener.onFileDownloaded(result, fileSavePath);
         }
     }
 
     @Override
-    public void onPreExecute(){
-        if (httpGetDownloadFileListener != null){
-            httpGetDownloadFileListener.onFileDownloadStart();
+    public void onProgressUpdate(Integer... values) {
+        float progress = values[0];
+        float size = values[1];
+        float advancement = progress / size * 100;
+        if (httpGetDownloadFileListener != null) {
+            httpGetDownloadFileListener.onProgressUpdate((int) advancement);
         }
     }
 
@@ -135,7 +138,9 @@ public class HttpGetDownloadFileTask extends HttpTask <String, Integer, Boolean>
     public static interface HttpGetDownloadFileListener {
 
         public void onFileDownloadStart();
+
         public void onFileDownloaded(boolean result, String path);
+
         public void onProgressUpdate(int progress);
     }
 }

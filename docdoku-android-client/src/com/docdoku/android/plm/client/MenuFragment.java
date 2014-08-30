@@ -40,21 +40,21 @@ import com.docdoku.android.plm.client.parts.PartSearchActivity;
 /**
  * The <code>DrawerLayout</code> component that slides from the left side of the screen to allow users to access the menu.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public class MenuFragment extends Fragment implements View.OnClickListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.MenuFragment";
 
     private boolean workspaceChanged = false;
 
-    private View view;
+    private View       view;
     private RadioGroup workspaceRadioGroup;
-    private TextView expandRadioButtons;
+    private TextView   expandRadioButtons;
 
-    private Session session;
+    private Session  session;
     private String[] downloadedWorkspaces;
-    private String currentWorkspace;
+    private String   currentWorkspace;
 
     /**
      * Creates the <code>View</code> for the sliding menu.
@@ -72,7 +72,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @see Fragment
      */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_menu, container);
         workspaceChanged = false;
         workspaceRadioGroup = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
@@ -81,9 +81,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             currentWorkspace = session.getCurrentWorkspace(getActivity());
             addCurrentWorkspace(currentWorkspace, workspaceRadioGroup);
             downloadedWorkspaces = session.getDownloadedWorkspaces(getActivity());
-            if (downloadedWorkspaces.length == 1){
+            if (downloadedWorkspaces.length == 1) {
                 ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
-            }else{
+            }
+            else {
                 expandRadioButtons.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -101,8 +102,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                     workspaceChanged = true;
                 }
             });
-        } catch (Session.SessionLoadException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        catch (Session.SessionLoadException e) {
+            e.printStackTrace();
         }
 
         view.findViewById(R.id.documentSearch).setOnClickListener(this);
@@ -123,10 +125,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * <p>Adds a single <code>RadioButton</code>, which is selected, for the current workspace. If more than one workspace
      * have been downloaded, than add a <code>Button</code> to show the other workspaces.
      *
-     * @param workspace the selected workspace
+     * @param workspace  the selected workspace
      * @param radioGroup the empty <code>RadioGroup</code> to be populated
      */
-    void addCurrentWorkspace(String workspace, RadioGroup radioGroup){
+    void addCurrentWorkspace(String workspace, RadioGroup radioGroup) {
         RadioButton radioButton;
         radioButton = new RadioButton(getActivity());
         radioButton.setText(workspace);
@@ -151,9 +153,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param workspaces the list of downloaded workspaces
      * @param radioGroup the <code>RadioGroup</code>, containing only one child <code>View</code>, which is the selected workspace
      */
-    void addWorkspaces(String[] workspaces, RadioGroup radioGroup){
+    void addWorkspaces(String[] workspaces, RadioGroup radioGroup) {
         int selectedButtonId = radioGroup.getCheckedRadioButtonId();
-        if (selectedButtonId != -1){
+        if (selectedButtonId != -1) {
             radioGroup.removeView(view.findViewById(selectedButtonId));
         }
         workspaceChanged = false;
@@ -174,12 +176,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      *
      * @param buttonId The id of the item linking to the current <code>Activity</code>, if such an item exists.
      */
-    public void setCurrentActivity(int buttonId){
+    public void setCurrentActivity(int buttonId) {
         View activityView = view.findViewById(buttonId);
-        if (activityView != null){
+        if (activityView != null) {
             activityView.setSelected(true);
-        }else{
-            Log.i(LOG_TAG,"Current activity did not provide a correct button id. Id provided: " + buttonId);
+        }
+        else {
+            Log.i(LOG_TAG, "Current activity did not provide a correct button id. Id provided: " + buttonId);
         }
     }
 
@@ -193,7 +196,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         Intent intent = null;
-        switch (viewId){
+        switch (viewId) {
             case R.id.documentSearch:
                 intent = new Intent(getActivity(), DocumentSearchActivity.class);
                 break;
@@ -220,7 +223,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
                 intent = new Intent(getActivity(), PartCompleteListActivity.class);
                 break;
         }
-        if (intent !=null){
+        if (intent != null) {
             startActivity(intent);
         }
     }
