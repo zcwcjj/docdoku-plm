@@ -21,14 +21,15 @@
 package com.docdoku.android.plm.client.parts;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,8 +49,8 @@ import java.util.Iterator;
  * <p>
  * Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public class PartHistoryListActivity extends PartListActivity implements LoaderManager.LoaderCallbacks<Part> {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartHistoryListActivity";
@@ -70,19 +71,19 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
      * @see PartListActivity
      */
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         ((ViewGroup) loading.getParent()).removeView(loading);
 
         Log.i(LOG_TAG, "navigation history_light size: " + navigationHistory.getSize());
-        partsArray= new ArrayList<Part>();
+        partsArray = new ArrayList<Part>();
         partAdapter = new PartAdapter(partsArray);
         partListView.setAdapter(partAdapter);
 
         Iterator<String> iterator = navigationHistory.getKeyIterator();
         int i = 0;
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Bundle bundle = new Bundle();
             bundle.putString("partKey", iterator.next());
             bundle.putString("workspace", getCurrentWorkspace());
@@ -125,33 +126,30 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
     }
 
     /**
-     *
      * @param loader
      * @see LoaderManager.LoaderCallbacks
      */
     @Override
     public void onLoaderReset(Loader<Part> loader) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
-     *
      * @return
      * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.recentlyViewedParts;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.recentlyViewedParts;
     }
 
     /**
      * {@code Loader} that makes a request to the server to obtain the information about a specific part.
      */
-    private static class PartLoaderByPart extends Loader<Part> implements HttpGetTask.HttpGetListener {
+    private static class PartLoaderByPart extends Loader<Part> {
 
-        private final String elementId;
-        private final String workspace;
-        private AsyncTask asyncTask;
+        private final String      elementId;
+        private final String      workspace;
+        private       HTTPGetTask asyncTask;
 
         public PartLoaderByPart(Context context, String elementId, String workspace) {
             super(context);
@@ -160,77 +158,77 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
         }
 
         /**
-         * Start an {@link HttpGetTask} to load the information about a part.
+         * Start an {@link HTTPGetTask} to load the information about a part.
          *
          * @see Loader
          */
         @Override
-        protected void onStartLoading (){
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts/" +  elementId);
+        protected void onStartLoading() {
+            createTask("api/workspaces/" + workspace + "/parts/" + elementId);
+        }
+
+        private void createTask(String exec) {
+            asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+                @Override
+                public void onDone(HTTPResultTask result) {
+                    Part part;
+                    try {
+                        JSONObject partJSON = new JSONObject(result.getResultContent());
+                        part = new Part(partJSON.getString("partKey"));
+                        part.updateFromJSON(partJSON, getContext().getResources());
+                    }
+                    catch (JSONException e) {
+                        Log.e(LOG_TAG, "Error handling json object of a part");
+                        e.printStackTrace();
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
+                        part = new Part(elementId);
+                    }
+                    deliverResult(part);
+                }
+            });
         }
 
         /**
-         *
          * @see Loader
          */
         @Override
-        protected void onStopLoading (){
-            if (asyncTask != null){
+        protected void onForceLoad() {
+        }
+
+        /**
+         * @see Loader
+         */
+        @Override
+        protected void onStopLoading() {
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
         }
 
         /**
-         *
          * @see Loader
          */
         @Override
-        protected void onReset (){
-            if (asyncTask != null){
+        protected void onAbandon() {
+        }
+
+        /**
+         * @see Loader
+         */
+        @Override
+        protected void onReset() {
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/parts/" +  elementId);
+            createTask("api/workspaces/" + workspace + "/parts/" + elementId);
         }
 
-        /**
-         *
-         * @see Loader
-         */
-        @Override
-        protected void onForceLoad (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        /**
-         *
-         * @see Loader
-         */
-        @Override
-        protected void onAbandon (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        /**
-         * Handles the result of the {@link HttpGetTask}. The result is read to create a new instance of
-         * {@link Part} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
-         *
-         * @param result the {@code JSONObject} representing the {@link Part}.
-         * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
-         */
-        @Override
-        public void onHttpGetResult(String result) {
-            Part part;
-            try {
-                JSONObject partJSON = new JSONObject(result);
-                part = new Part(partJSON.getString("partKey"));
-                part.updateFromJSON(partJSON, getContext().getResources());
-            }catch (JSONException e){
-                Log.e(LOG_TAG, "Error handling json object of a part");
-                e.printStackTrace();
-                Log.i(LOG_TAG, "Error message: " + e.getMessage());
-                part = new Part(elementId);
-            }
-            deliverResult(part);
-        }
+//        /**
+//         * Handles the result of the {@link HTTPGetTask}. The result is read to create a new instance of
+//         * {@link Part} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
+//         *
+//         * @param result the {@code JSONObject} representing the {@link Part}.
+//         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//         */
     }
 }

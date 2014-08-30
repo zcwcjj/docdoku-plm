@@ -33,22 +33,20 @@ import java.net.*;
  * <p>Contains the data for the server connection in the form of {@code static} fields.
  * <br>Also contains some useful methods for reading and writing data on/from network connections.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
-    private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpTask";
-
-    public static final String ERROR_UNKNOWN = "Connection Error";
-    public static final String ERROR_URL = "Url error";
-    public static final String ERROR_HTTP_BAD_REQUEST = "Http Bad request";
-    public static final String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
-
-    private final static int CHUNK_SIZE = 1024*8;
-    private final static int BUFFER_CAPACITY = 1024*32;
+public abstract class HttpTask<A, B, C> extends AsyncTask<A, B, C> {
+    public static final  String ERROR_UNKNOWN           = "Connection Error";
+    public static final  String ERROR_URL               = "Url error";
+    public static final  String ERROR_HTTP_BAD_REQUEST  = "Http Bad request";
+    public static final  String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
+    private static final String LOG_TAG                 = "com.docdoku.android.plm.network.HttpTask";
+    private final static int    CHUNK_SIZE              = 1024 * 8;
+    private final static int    BUFFER_CAPACITY         = 1024 * 32;
 
     static String host;
-    static int port;
+    static int    port;
     static byte[] id;
 
     /**
@@ -57,31 +55,55 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * fetches the server connection information from it.
      * <br>If no server connection information can be found, prints a {@code Log} message.
      */
-    HttpTask(){
-        if (id == null || host == null){
+    HttpTask() {
+        if (id == null || host == null) {
             try {
                 Log.i(LOG_TAG, "attempting to retrieve server connection information from memory...");
                 Session session = Session.getSession();
                 host = session.getHost();
                 port = session.getPort();
                 id = Base64.encode((session.getUserLogin() + ":" + session.getPassword()).getBytes("ISO-8859-1"), Base64.DEFAULT);
-            } catch (Session.SessionLoadException e) {
-                Log.e(LOG_TAG, "Unable to get server connection information.");
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (UnsupportedEncodingException e) {
-                Log.e(LOG_TAG, "Unable to get server connection information. The server information loaded from memory threw an UnsupportedEncodingException.");
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-        }else{
+            catch (Session.SessionLoadException e) {
+                Log.e(LOG_TAG, "Unable to get server connection information.");
+            }
+            catch (UnsupportedEncodingException e) {
+                Log.e(LOG_TAG, "Unable to get server connection information. The server information loaded from memory threw an UnsupportedEncodingException.");
+            }
+        }
+        else {
             Log.i(LOG_TAG, "All the server connection information is correctly available");
         }
     }
 
+    protected HttpURLConnection getHttpUrlConnection(String path) throws IOException, URISyntaxException {
+        URL url = createURL(path);
+
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
+
+        return conn;
+    }
+
+//    /**
+//     * Transforms the Http error code into a {@code String} message more understandable by the programmer
+//     * @param errorCode
+//     * @return
+//     */
+//    String analyzeHttpErrorCode(int errorCode){
+//        switch (errorCode){
+//            case 400: return ERROR_HTTP_BAD_REQUEST;
+//            case 401: return ERROR_HTTP_UNAUTHORIZED;
+//        }
+//        return ERROR_UNKNOWN;
+//    }
+
     /**
      * Creates a {@code URL} to the server with the specified {@code path} appended at the end.
+     *
      * @param path the path inside the server
      * @return the {@code URL} to connect to the server
-     * @throws URISyntaxException if the specified path could not be converted into an ASCII {@code String}
+     * @throws URISyntaxException    if the specified path could not be converted into an ASCII {@code String}
      * @throws MalformedURLException
      */
     URL createURL(String path) throws URISyntaxException, MalformedURLException {
@@ -92,23 +114,10 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
                 "\n Host: " + host +
                 "\n Port: " + port +
                 "\n Path: " + path);
-        if (port == -1){
+        if (port == -1) {
             return new URL("http", host, ASCIIPath);
         }
         return new URL("http", host, port, ASCIIPath);
-    }
-
-    /**
-     * Transforms the Http error code into a {@code String} message more understandable by the programmer
-     * @param errorCode
-     * @return
-     */
-    String analyzeHttpErrorCode(int errorCode){
-        switch (errorCode){
-            case 400: return ERROR_HTTP_BAD_REQUEST;
-            case 401: return ERROR_HTTP_UNAUTHORIZED;
-        }
-        return ERROR_UNKNOWN;
     }
 
     /**
@@ -116,7 +125,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * <p>Creates an {@code OutputStream} and writes the {@code InputStream} created from the {@code byte[]} onto it.
      *
      * @param connection the Http Connection, already opened
-     * @param bytes the {@code byte[]} to write on the Http conection
+     * @param bytes      the {@code byte[]} to write on the Http conection
      * @throws IOException
      */
     void writeBytesToConnection(HttpURLConnection connection, byte[] bytes) throws IOException {
@@ -128,6 +137,7 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
             out.write(data, 0, length);
         }
         out.flush();
+        out.close();
     }
 
     /**
@@ -137,28 +147,28 @@ public abstract  class HttpTask<A, B, C> extends AsyncTask<A, B, C>{
      * @return the {@code String} read from the {@code InputStream}
      * @throws IOException
      */
-    String inputStreamToString(InputStream in) throws IOException {
-        String string;
-        InputStreamReader reader = new InputStreamReader(in);
-        BufferedReader bf = new BufferedReader(reader);
+    String inputStreamToString(InputStream in) {
+        BufferedReader bf = new BufferedReader(new InputStreamReader(in));
         StringBuilder sb = new StringBuilder();
         String line;
         try {
             while ((line = bf.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        }
+        catch (IOException e) {
+            Log.e(LOG_TAG, "ERROR: IOException in inputStreamToString method while reading");
+        }
+        finally {
             try {
                 in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                bf.close();
+            }
+            catch (IOException e) {
+                String msg = e.getMessage();
+                Log.e(LOG_TAG, "Close ERROR: IOException in inputStreamToString method" + ((msg != null) ? " : " + msg : ""));
             }
         }
-        string = sb.toString();
-        reader.close();
-        bf.close();
-        return string;
+        return sb.toString();
     }
 }

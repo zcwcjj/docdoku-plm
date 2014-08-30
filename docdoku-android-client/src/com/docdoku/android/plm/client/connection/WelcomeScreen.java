@@ -39,10 +39,10 @@ import com.docdoku.android.plm.client.R;
  * <p>
  * Layout file: {@link /res/layout/welcome_screen.xml welcome_screen}
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class WelcomeScreen extends Activity{
+public class WelcomeScreen extends Activity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.connection.WelcomeScreen";
 
     /**
@@ -71,17 +71,18 @@ public class WelcomeScreen extends Activity{
      * @see Activity
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         Log.i(LOG_TAG, "Showing Splash screen");
         super.onResume();
-        new Thread(){
+        new Thread() {
             @Override
-            public void run(){
-                synchronized (this){
+            public void run() {
+                synchronized (this) {
                     try {
                         wait(WELCOME_SCREEN_DURATION_MILLIS);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                     endActivity();
                 }
@@ -95,14 +96,14 @@ public class WelcomeScreen extends Activity{
      * The back button is disabled in this {@code Activity}, so this method does nothing.
      */
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         //Back button disabled
     }
 
     /**
      * Finishes this {@code Activity}
      */
-    private void endActivity(){
+    private void endActivity() {
         finish();
     }
 }

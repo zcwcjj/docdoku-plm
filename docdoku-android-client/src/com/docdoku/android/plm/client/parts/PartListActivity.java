@@ -21,7 +21,6 @@
 package com.docdoku.android.plm.client.parts;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -32,7 +31,9 @@ import android.widget.*;
 import com.docdoku.android.plm.client.NavigationHistory;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.SearchActionBarActivity;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,8 +51,8 @@ import java.util.List;
  * <br>The {@link #getSearchQueryHintId()} and {@link #executeSearch(String) executeSearch()} methods used to handle
  * searches made by the user in the {@code ActionBar}.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public abstract class PartListActivity extends SearchActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartListActivity";
@@ -59,13 +60,13 @@ public abstract class PartListActivity extends SearchActionBarActivity {
     private static final String PREFERENCE_PART_HISTORY = "part history";
 
     NavigationHistory navigationHistory;
-    List<Part> partsArray;
-    PartAdapter partAdapter;
-    ListView partListView;
-    View loading;
+    List<Part>        partsArray;
+    PartAdapter       partAdapter;
+    ListView          partListView;
+    View              loading;
 
-    private AsyncTask searchTask;
-    private List<Part> partSearchResultArray;
+    private HTTPGetTask searchTask;
+    private List<Part>  partSearchResultArray;
     private PartAdapter partSearchResultAdapter;
 
     /**
@@ -99,11 +100,102 @@ public abstract class PartListActivity extends SearchActionBarActivity {
      *
      * @param part the part whose row was clicked
      */
-    private void onPartClick(Part part){
+    private void onPartClick(Part part) {
         navigationHistory.add(part.getKey());
         Intent intent = new Intent(PartListActivity.this, PartActivity.class);
-        intent.putExtra(PartActivity.PART_EXTRA,part);
+        intent.putExtra(PartActivity.PART_EXTRA, part);
         startActivity(intent);
+    }
+
+    /**
+     * Method that converts a date into a {@code String} that is easier to read for the user. The possible scenarios are:
+     * today, yesterday, and the date for a previous event.
+     * <p>The {@code currentTime} is created, and compared to {@code date}, the date parsed from {@code dateString}:
+     * <br>If they are the same year and the same day of the year, then the resource at {@code R.string.today} is returned.
+     * <br>If they are the same year and {@code date} is one day before {@code currentTime}, then the resource at
+     * {@code R.string.yesterday} is returned.
+     * <br>Otherwise, {@code DateUtils.getRelativeTimeSpanString} is used to generate a {@code String} easily readable by the user.
+     * <p>Note: if we are the first day of a new year and the {@code dateString} indicates the last day of previous year,
+     * then this method will not return yesterday but instead the date. But nobody really cares.
+     *
+     * @param dateString
+     * @return the {@code String} to be displayed to the user
+     * @throws ParseException       if the {@code dateString} could not be parsed into a {@code Calendar}
+     * @throws NullPointerException
+     */
+    String simplifyDate(String dateString) throws ParseException, NullPointerException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+        Calendar date = Calendar.getInstance();
+        date.setTime(simpleDateFormat.parse(dateString));
+        Calendar currentTime = Calendar.getInstance();
+        if (currentTime.get(Calendar.YEAR) == date.get(Calendar.YEAR)) {
+            int dayDifference = currentTime.get(Calendar.DAY_OF_YEAR) - date.get(Calendar.DAY_OF_YEAR);
+            if (dayDifference == 0) {
+                return getResources().getString(R.string.today);
+            }
+            if (dayDifference == 1) {
+                return getResources().getString(R.string.yesterday);
+            }
+        }
+        String timeDifference = DateUtils.getRelativeTimeSpanString(this, date.getTimeInMillis(), true).toString();
+        return timeDifference;
+    }
+
+    /**
+     * @return
+     * @see SearchActionBarActivity#getSearchQueryHintId()
+     */
+    @Override
+    protected int getSearchQueryHintId() {
+        return R.string.partSearchByKey;
+    }
+
+    /**
+     * Handles user part searches by id.
+     * <p>Cancels the {@link #searchTask} to stop a search query that may be running.
+     * <p>If the search query is empty, the {@code Adapter} for the {@code ListView} is set to the default one contained
+     * in this class: {@link #partAdapter}.
+     * <p>If it isn't empty, starts an {@link HTTPGetTask} to send a part search by id request to server. Once the result
+     * is obtained, a new {@link PartAdapter} is created with the {@link Part Parts} found in the resulting {@code JSONArray},
+     * and is set for the {@code ListView} for this {@code Activity}.
+     *
+     * @param query the text entered in the <code>SearchActionBar</code>
+     * @see SearchActionBarActivity#executeSearch(String)
+     */
+    @Override
+    protected void executeSearch(String query) {
+        if (searchTask != null) {
+            searchTask.cancel(true);
+        }
+        if (query.length() > 0) {
+            partSearchResultArray = new ArrayList<Part>();
+            partSearchResultAdapter = new PartAdapter(partSearchResultArray);
+            partListView.setAdapter(partSearchResultAdapter);
+            searchTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+                @Override
+                public void onDone(HTTPResultTask result) {
+                    try {
+                        JSONArray partsJSON = new JSONArray(result.getResultContent());
+                        for (int i = 0; i < partsJSON.length(); i++) {
+                            JSONObject partJSON = partsJSON.getJSONObject(i);
+                            Part part = new Part(partJSON.getString("partKey"));
+                            part.updateFromJSON(partJSON, getResources());
+                            partSearchResultArray.add(part);
+                        }
+                        partSearchResultAdapter.notifyDataSetChanged();
+                    }
+                    catch (JSONException e) {
+                        Log.e(LOG_TAG, "Error handling json array of workspace's parts");
+                        e.printStackTrace();
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
+                    }
+                }
+            });
+            searchTask.execute(getUrlWorkspaceApi() + "/parts/search/number=" + query);
+        }
+        else {
+            partListView.setAdapter(partAdapter);
+        }
     }
 
     /**
@@ -111,10 +203,10 @@ public abstract class PartListActivity extends SearchActionBarActivity {
      */
     protected class PartAdapter extends BaseAdapter {
 
-        private final List<Part> parts;
-        private LayoutInflater inflater;
+        private final List<Part>     parts;
+        private       LayoutInflater inflater;
 
-        public PartAdapter(List<Part> parts){
+        public PartAdapter(List<Part> parts) {
             this.parts = parts;
             inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         }
@@ -132,25 +224,6 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         @Override
         public long getItemId(int i) {
             return i;
-        }
-
-        /**
-         * Returns if the row at {@code position} is clickable
-         * <br>If the {@code Part} at {@code position} is not {@code null} and its {@code author} is not {@code null},
-         * then it is clickable.
-         *
-         * @param position
-         * @return
-         * @see BaseAdapter
-         */
-        @Override
-        public boolean isEnabled(int position){
-            try{
-                Part part = parts.get(position);
-                return !(part == null || part.getAuthor() == null);
-            }catch (IndexOutOfBoundsException e){
-                return false;
-            }
         }
 
         /**
@@ -174,9 +247,10 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             final View partRowView;
             final Part part = parts.get(i);
-            if (part == null){
+            if (part == null) {
                 partRowView = new ProgressBar(PartListActivity.this);
-            }else if(part.getAuthor() == null){
+            }
+            else if (part.getAuthor() == null) {
                 partRowView = inflater.inflate(R.layout.adapter_part, null);
                 TextView identification = (TextView) partRowView.findViewById(R.id.identification);
                 identification.setText(part.getKey());
@@ -184,121 +258,54 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                 checkedInOutImage.setImageResource(R.drawable.error_light);
                 View iterationNumberBox = partRowView.findViewById(R.id.iterationNumberBox);
                 ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
-            }else{
+            }
+            else {
                 partRowView = inflater.inflate(R.layout.adapter_part, null);
                 TextView reference = (TextView) partRowView.findViewById(R.id.identification);
                 reference.setText(part.getKey());
                 ImageView reservedPart = (ImageView) partRowView.findViewById(R.id.checkedInOutImage);
                 String reservedByName = part.getCheckOutUserName();
-                if (reservedByName != null){
+                if (reservedByName != null) {
                     String reservedByLogin = part.getCheckOutUserLogin();
-                    if (reservedByLogin.equals(getCurrentUserLogin())){
+                    if (reservedByLogin.equals(getCurrentUserLogin())) {
                         reservedPart.setImageResource(R.drawable.checked_out_current_user_light);
                     }
                 }
-                else{
+                else {
                     reservedPart.setImageResource(R.drawable.checked_in_light);
                 }
                 TextView lastIteration = (TextView) partRowView.findViewById(R.id.lastIteration);
                 try {
                     lastIteration.setText(String.format(getResources().getString(R.string.documentIterationPhrase, simplifyDate(part.getLastIterationDate()), part.getLastIterationAuthorName())));
-                }catch (ParseException e) {
+                }
+                catch (ParseException e) {
                     lastIteration.setText("");
-                }catch (NullPointerException e){
+                }
+                catch (NullPointerException e) {
                     lastIteration.setText("");
                 }
             }
             return partRowView;
         }
-    }
 
-    /**
-     * Method that converts a date into a {@code String} that is easier to read for the user. The possible scenarios are:
-     * today, yesterday, and the date for a previous event.
-     * <p>The {@code currentTime} is created, and compared to {@code date}, the date parsed from {@code dateString}:
-     * <br>If they are the same year and the same day of the year, then the resource at {@code R.string.today} is returned.
-     * <br>If they are the same year and {@code date} is one day before {@code currentTime}, then the resource at
-     * {@code R.string.yesterday} is returned.
-     * <br>Otherwise, {@code DateUtils.getRelativeTimeSpanString} is used to generate a {@code String} easily readable by the user.
-     * <p>Note: if we are the first day of a new year and the {@code dateString} indicates the last day of previous year,
-     * then this method will not return yesterday but instead the date. But nobody really cares.
-     * @param dateString
-     * @return the {@code String} to be displayed to the user
-     * @throws ParseException if the {@code dateString} could not be parsed into a {@code Calendar}
-     * @throws NullPointerException
-     */
-    String simplifyDate(String dateString) throws ParseException, NullPointerException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-        Calendar date = Calendar.getInstance();
-        date.setTime(simpleDateFormat.parse(dateString));
-        Calendar currentTime = Calendar.getInstance();
-        if (currentTime.get(Calendar.YEAR) == date.get(Calendar.YEAR)){
-            int dayDifference = currentTime.get(Calendar.DAY_OF_YEAR) - date.get(Calendar.DAY_OF_YEAR);
-            if (dayDifference == 0){
-                return getResources().getString(R.string.today);
+        /**
+         * Returns if the row at {@code position} is clickable
+         * <br>If the {@code Part} at {@code position} is not {@code null} and its {@code author} is not {@code null},
+         * then it is clickable.
+         *
+         * @param position
+         * @return
+         * @see BaseAdapter
+         */
+        @Override
+        public boolean isEnabled(int position) {
+            try {
+                Part part = parts.get(position);
+                return !(part == null || part.getAuthor() == null);
             }
-            if (dayDifference == 1){
-                return getResources().getString(R.string.yesterday);
+            catch (IndexOutOfBoundsException e) {
+                return false;
             }
-        }
-        String timeDifference = DateUtils.getRelativeTimeSpanString(this, date.getTimeInMillis(), true).toString();
-        return timeDifference;
-    }
-
-    /**
-     *
-     * @return
-     * @see SearchActionBarActivity#getSearchQueryHintId()
-     */
-    @Override
-    protected int getSearchQueryHintId() {
-        return R.string.partSearchByKey;
-    }
-
-    /**
-     * Handles user part searches by id.
-     * <p>Cancels the {@link #searchTask} to stop a search query that may be running.
-     * <p>If the search query is empty, the {@code Adapter} for the {@code ListView} is set to the default one contained
-     * in this class: {@link #partAdapter}.
-     * <p>If it isn't empty, starts an {@link HttpGetTask} to send a part search by id request to server. Once the result
-     * is obtained, a new {@link PartAdapter} is created with the {@link Part Parts} found in the resulting {@code JSONArray},
-     * and is set for the {@code ListView} for this {@code Activity}.
-     *
-     * @param query the text entered in the <code>SearchActionBar</code>
-     * @see SearchActionBarActivity#executeSearch(String)
-     */
-    @Override
-    protected void executeSearch(String query) {
-        if (searchTask != null){
-            searchTask.cancel(true);
-        }
-        if (query.length()>0){
-            partSearchResultArray = new ArrayList<Part>();
-            partSearchResultAdapter = new PartAdapter(partSearchResultArray);
-            partListView.setAdapter(partSearchResultAdapter);
-            HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
-                @Override
-                public void onHttpGetResult(String result) {
-                    try {
-                        JSONArray partsJSON = new JSONArray(result);
-                        for (int i=0; i<partsJSON.length(); i++){
-                            JSONObject partJSON = partsJSON.getJSONObject(i);
-                            Part part = new Part(partJSON.getString("partKey"));
-                            part.updateFromJSON(partJSON, getResources());
-                            partSearchResultArray.add(part);
-                        }
-                        partSearchResultAdapter.notifyDataSetChanged();
-                    }catch (JSONException e){
-                        Log.e(LOG_TAG, "Error handling json array of workspace's parts");
-                        e.printStackTrace();
-                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
-                    }
-                }
-            };
-            searchTask = new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/parts/search/number=" + query);
-        }
-        else{
-            partListView.setAdapter(partAdapter);
         }
     }
 }

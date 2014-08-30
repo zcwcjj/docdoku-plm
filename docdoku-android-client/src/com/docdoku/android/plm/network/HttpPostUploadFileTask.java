@@ -26,7 +26,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 /**
  * Sends an Http POST request to the server.
@@ -34,20 +33,20 @@ import java.net.URL;
  * <p>The host's url path is  the first <code>String</code> parameter in the <code>execute()</code> method.
  * <p>The second parameter in the <code>execute()</code> method is the path on the phone to the <code>File</code> to be uploaded
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
+public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean> {
     private static final String LOG_TAG = "com.docdoku.android.plm.network.HttpPostUploadFileTask";
 
-    private final static int CHUNK_SIZE = 1024*8;
-    private final static int BUFFER_CAPACITY = 1024*32;
+    private final static int CHUNK_SIZE      = 1024 * 8;
+    private final static int BUFFER_CAPACITY = 1024 * 32;
 
     private String fileName;
 
     private HttpPostUploadFileListener listener;
-    
-    public HttpPostUploadFileTask(HttpPostUploadFileListener listener){
+
+    public HttpPostUploadFileTask(HttpPostUploadFileListener listener) {
         super();
         this.listener = listener;
     }
@@ -56,14 +55,13 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
     protected Boolean doInBackground(String... strings) {
         boolean result = false;
         HttpURLConnection conn;
-        try{
+        try {
             fileName = strings[0];
             String filePath = strings[1];
 
-            URL url = createURL(strings[0]);
-            Log.i(LOG_TAG, "Sending HttpPost request to upload file at from path: " + filePath + " to Url: "+ url);
+            Log.i(LOG_TAG, "Sending HttpPost request to upload file at from path: " + filePath + " to Url: " + strings[0]);
             File file = new File(filePath);
-            conn = (HttpURLConnection) url.openConnection();
+            conn = getHttpUrlConnection(strings[0]);
             conn.setDoOutput(true);
             conn.setUseCaches(false);
             conn.setAllowUserInteraction(true);
@@ -76,7 +74,6 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
             byte[] footer = (lineEnd + twoHyphens + boundary + twoHyphens + lineEnd).getBytes("ISO-8859-1");
 
             conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
             conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
             long len = header.length + file.length() + footer.length;
@@ -102,46 +99,47 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
 
             result = (responseCode == 200);
             Log.i(LOG_TAG, "HttpPostUploadFileTask Response code: " + responseCode);
-        } catch (ArrayIndexOutOfBoundsException e){
-            Log.e(LOG_TAG,"ArrayIndexOutOfBoundsException: not enough arguments passed to upload file");
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            Log.e(LOG_TAG,"MalformedURLException: failed to upload file");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG,"UnsupportedEncodingException: failed to upload file");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            Log.e(LOG_TAG,"IOException: failed to upload file");
-            Log.e(LOG_TAG,"IOException message: " + e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
+            Log.e(LOG_TAG, "ArrayIndexOutOfBoundsException: not enough arguments passed to upload file");
+        }
+        catch (MalformedURLException e) {
+            Log.e(LOG_TAG, "MalformedURLException: failed to upload file");
+        }
+        catch (UnsupportedEncodingException e) {
+            Log.e(LOG_TAG, "UnsupportedEncodingException: failed to upload file");
+        }
+        catch (IOException e) {
+            Log.e(LOG_TAG, "IOException: failed to upload file");
+            Log.e(LOG_TAG, "IOException message: " + e.getMessage());
+        }
+        catch (URISyntaxException e) {
+            Log.e(LOG_TAG, "URISyntaxException: " + e.getMessage());
         }
         return result;
     }
 
     @Override
-    public void onPostExecute(Boolean result){
-        if (listener!=null){
+    public void onPreExecute() {
+        if (listener != null) {
+            listener.onUploadStart();
+        }
+    }
+
+    @Override
+    public void onPostExecute(Boolean result) {
+        if (listener != null) {
             listener.onUploadResult(result, fileName);
         }
     }
 
     @Override
-    public void onProgressUpdate(Integer... values){
+    public void onProgressUpdate(Integer... values) {
         float progress = values[0];
         float size = values[1];
-        float advancement = progress/size * 100;
-        if (listener != null){
+        float advancement = progress / size * 100;
+        if (listener != null) {
             listener.onUploadProgressUpdate((int) advancement);
-        }
-    }
-
-    @Override
-    public void onPreExecute(){
-        if (listener != null){
-            listener.onUploadStart();
         }
     }
 
@@ -151,7 +149,9 @@ public class HttpPostUploadFileTask extends HttpTask<String, Integer, Boolean>{
     public static interface HttpPostUploadFileListener {
 
         public void onUploadStart();
+
         public void onUploadProgressUpdate(int progress);
+
         public void onUploadResult(boolean result, String fileName);
     }
 }

@@ -32,59 +32,60 @@ import java.io.Serializable;
 /**
  * Model containing the data for a document
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class Document extends Element implements Serializable{
+public class Document extends Element implements Serializable {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.Document";
 
-    private static final String JSON_KEY_DOCUMENT_NAME = "title";
-    private static final String JSON_KEY_DOCUMENT_ITERATIONS = "documentIterations";
+    private static final String JSON_KEY_DOCUMENT_NAME           = "title";
+    private static final String JSON_KEY_DOCUMENT_ITERATIONS     = "documentIterations";
     private static final String JSON_KEY_DOCUMENT_ITERATION_NOTE = "revisionNote";
     private static final String JSON_KEY_DOCUMENT_ATTACHED_FILES = "attachedFiles";
 
     private final String identification;
     private final String reference;
-    private String path, type, lifeCycleState;
+    private       String path, type, lifeCycleState;
     private String[] files;
 
     private boolean iterationNotification, stateChangeNotification;
 
 
-    public int getNumberOfFiles(){
-        if (files == null){
+    public Document(String identification) {
+        this.identification = identification;
+        reference = identification.substring(0, identification.lastIndexOf("-"));
+    }
+
+    public int getNumberOfFiles() {
+        if (files == null) {
             return 0;
         }
         return files.length;
     }
 
-    public String getFileName(int i){
-        try{
-            return files[i].substring(files[i].lastIndexOf("/")+1);
-        } catch (IndexOutOfBoundsException e){
+    public String getFileName(int i) {
+        try {
+            return files[i].substring(files[i].lastIndexOf("/") + 1);
+        }
+        catch (IndexOutOfBoundsException e) {
             return files[i];
         }
     }
 
-    public String getFile(int i){
+    public String getFile(int i) {
         return files[i];
     }
 
-    public void addFile(String file){
-        String[] newFiles = new String[files.length+1];
+    public void addFile(String file) {
+        String[] newFiles = new String[files.length + 1];
         System.arraycopy(files, 0, newFiles, 0, files.length);
         newFiles[files.length] = file;
         files = newFiles;
     }
 
-    public Document(String identification){
-        this.identification = identification;
-        reference = identification.substring(0, identification.lastIndexOf("-"));
-    }
-
-    public String[] getDocumentDetails(){
+    public String[] getDocumentDetails() {
         String[] values = new String[10];
-        values[0] = path.substring(path.lastIndexOf("/")+1,path.length());
+        values[0] = path.substring(path.lastIndexOf("/") + 1, path.length());
         values[1] = reference;
         values[2] = authorName;
         values[3] = creationDate;
@@ -92,43 +93,30 @@ public class Document extends Element implements Serializable{
         values[5] = name;
         values[6] = checkOutUserName;
         values[7] = checkOutDate;
-        if (JSONObject.NULL.toString().equals(lifeCycleState)){
+        if (JSONObject.NULL.toString().equals(lifeCycleState)) {
             values[8] = "";
-        } else {
+        }
+        else {
             values[8] = lifeCycleState;
         }
         values[9] = description;
         return values;
     }
 
-    @Override
-    public String[] getLastIteration(){
-        String[] result = new String[4];
-        result[0] = identification + "-" + iterationNumber;
-        result[1] = iterationNote;
-        result[2] = iterationDate;
-        result[3] = iterationAuthor;
-        return result;
-    }
-
-    public String getIdentification(){
-        return identification;
-    }
-
-    public void setIterationNotification(boolean set){
-        iterationNotification = set;
-    }
-
-    public void setStateChangeNotification(boolean set){
-        stateChangeNotification = set;
-    }
-
-    public boolean getIterationNotification(){
+    public boolean getIterationNotification() {
         return iterationNotification;
     }
 
-    public boolean getStateChangeNotification(){
+    public void setIterationNotification(boolean set) {
+        iterationNotification = set;
+    }
+
+    public boolean getStateChangeNotification() {
         return stateChangeNotification;
+    }
+
+    public void setStateChangeNotification(boolean set) {
+        stateChangeNotification = set;
     }
 
     public Document updateFromJSON(JSONObject documentJSON, Resources resources) throws JSONException {
@@ -144,24 +132,23 @@ public class Document extends Element implements Serializable{
     }
 
     @Override
-    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException{
+    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException {
         JSONArray attachedFiles = lastIteration.getJSONArray(JSON_KEY_DOCUMENT_ATTACHED_FILES);
         String[] files = new String[attachedFiles.length()];
-        for (int i = 0; i<files.length; i++){
+        for (int i = 0; i < files.length; i++) {
             files[i] = attachedFiles.getString(i);
             Log.i(LOG_TAG, "File found: " + files[i]);
         }
         setFiles(files);
     }
 
-    private void setFiles(String[] files){
+    private void setFiles(String[] files) {
         this.files = files;
     }
 
-    private void setDocumentDetails(String path, String type, String lifeCycleState){
-        this.path = path;
-        this.type = type;
-        this.lifeCycleState = lifeCycleState;
+    @Override
+    protected String getNameJSONKey() {
+        return JSON_KEY_DOCUMENT_NAME;
     }
 
     /**
@@ -175,7 +162,7 @@ public class Document extends Element implements Serializable{
 
     @Override
     protected String getIterationNoteJSONKey() {
-        return JSON_KEY_DOCUMENT_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+        return JSON_KEY_DOCUMENT_ITERATION_NOTE;
     }
 
     @Override
@@ -184,7 +171,22 @@ public class Document extends Element implements Serializable{
     }
 
     @Override
-    protected String getNameJSONKey() {
-        return JSON_KEY_DOCUMENT_NAME;  //To change body of implemented methods use File | Settings | File Templates.
+    public String[] getLastIteration() {
+        String[] result = new String[4];
+        result[0] = identification + "-" + iterationNumber;
+        result[1] = iterationNote;
+        result[2] = iterationDate;
+        result[3] = iterationAuthor;
+        return result;
+    }
+
+    public String getIdentification() {
+        return identification;
+    }
+
+    private void setDocumentDetails(String path, String type, String lifeCycleState) {
+        this.path = path;
+        this.type = type;
+        this.lifeCycleState = lifeCycleState;
     }
 }

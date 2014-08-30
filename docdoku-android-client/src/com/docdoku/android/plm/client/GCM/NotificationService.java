@@ -30,21 +30,76 @@ import com.docdoku.android.plm.client.Session;
 import com.docdoku.android.plm.client.connection.ConnectionActivity;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * {@code Service} called when a user clicks on a {@code Notification}. Attempts to start a {@link DocumentActivity}
  * for the document whose Id was indicated in the {@code Notification}.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class NotificationService extends Service implements HttpGetTask.HttpGetListener{
+public class NotificationService extends Service {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.GCM.NotificationService";
+
+    /**
+     * Called when this {@code Service} is started.
+     * <p>
+     * Loads the {@link com.docdoku.android.plm.client.Session} information in order to be able to send a request to the server.
+     * <p>
+     * Extracts the document data from the {@code Extra}s in the {@code Intent} to start an {@link HTTPGetTask} to fetch
+     * the information about the document from the server. This {@code NotificationService} is set as {@link com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener}
+     * for the {@code HTTPGetTask}.
+     *
+     * @param intent the {@code PendingIntent} created in the {@link com.docdoku.android.plm.client.GCM.GCMIntentService}
+     * @param i
+     * @param j
+     * @return
+     * @see Service
+     */
+    @Override
+    public int onStartCommand(Intent intent, int i, int j) {
+        Log.i(LOG_TAG, "Click on notification detected. Starting NotificationService.");
+        Bundle bundle = intent.getExtras();
+        String docRef = bundle.getString("docReference");
+        String workspaceId = bundle.getString("workspaceId");
+
+        try {
+            Session session = Session.getSession(this);
+            session.setCurrentWorkspace(this, workspaceId);
+            HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
+                @Override
+                public void onDone(HTTPResultTask result) {
+                    Log.i(LOG_TAG, "Downloaded document that caused a notification");
+                    try {
+                        JSONObject documentJson = new JSONObject(result.getResultContent());
+                        Document document = new Document(documentJson.getString("id"));
+                        document.updateFromJSON(documentJson, getResources());
+                        Intent documentIntent = new Intent(NotificationService.this, DocumentActivity.class);
+                        documentIntent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(NotificationService.this, 0, documentIntent, 0);
+                        Intent intent = new Intent(NotificationService.this, ConnectionActivity.class);
+                        intent.putExtra(ConnectionActivity.INTENT_KEY_PENDING_INTENT, pendingIntent);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        stopSelf();
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            task.execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
+        }
+        catch (Session.SessionLoadException e) {
+            Log.e(LOG_TAG, "Failed to load session to start application from notification");
+        }
+        return START_NOT_STICKY;
+    }
 
     /**
      * Unused method. Useful if this {@code Service} was bound to an {@code Activity}, which it shouldn't be.
@@ -58,68 +113,13 @@ public class NotificationService extends Service implements HttpGetTask.HttpGetL
         return null;
     }
 
-    /**
-     * Called when this {@code Service} is started.
-     * <p>
-     * Loads the {@link com.docdoku.android.plm.client.Session} information in order to be able to send a request to the server.
-     * <p>
-     * Extracts the document data from the {@code Extra}s in the {@code Intent} to start an {@link HttpGetTask} to fetch
-     * the information about the document from the server. This {@code NotificationService} is set as {@link com.docdoku.android.plm.network.HttpGetTask.HttpGetListener}
-     * for the {@code HttpGetTask}.
-     *
-     * @param intent the {@code PendingIntent} created in the {@link com.docdoku.android.plm.client.GCM.GCMIntentService}
-     * @param i
-     * @param j
-     * @return
-     * @see Service
-     */
-    @Override
-    public int onStartCommand(Intent intent, int i, int j){
-        Log.i(LOG_TAG, "Click on notification detected. Starting NotificationService.");
-        Bundle bundle = intent.getExtras();
-        String docRef = bundle.getString("docReference");
-        String workspaceId = bundle.getString("workspaceId");
-
-        try {
-            Session session = Session.getSession(this);
-            session.setCurrentWorkspace(this, workspaceId);
-            new HttpGetTask(session, this).execute("/api/workspaces/" + workspaceId + "/documents/" + docRef);
-        } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG, "UnsupportedEncodingException in NotificationService");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (Session.SessionLoadException e) {
-            Log.e(LOG_TAG, "Failed to load session to start application from notification");
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return START_NOT_STICKY;
-    }
-
-    /**
-     * Handles the result of the {@link HttpGetTask}.
-     * <p>
-     * If the Http request was successful, the result is a {@code JSONObject} representing the {@code Document}.
-     * A {@code PendingIntent} is created to start the {@link DocumentActivity} for this {@link Document} and it is
-     * put inside of another {@code Intent} which starts the {@link com.docdoku.android.plm.client.connection.ConnectionActivity}.
-     *
-     * @param result
-     */
-    @Override
-    public void onHttpGetResult(String result) {
-        Log.i(LOG_TAG, "Downloaded document that caused a notification");
-        try {
-            JSONObject documentJson = new JSONObject(result);
-            Document document = new Document(documentJson.getString("id"));
-            document.updateFromJSON(documentJson, getResources());
-            Intent documentIntent = new Intent(this, DocumentActivity.class);
-            documentIntent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document);
-            PendingIntent pendingIntent =  PendingIntent.getActivity(this, 0, documentIntent, 0);
-            Intent intent = new Intent(this, ConnectionActivity.class);
-            intent.putExtra(ConnectionActivity.INTENT_KEY_PENDING_INTENT, pendingIntent);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            stopSelf();
-        } catch (JSONException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
+//    /**
+//     * Handles the result of the {@link HttpGetTask}.
+//     * <p>
+//     * If the Http request was successful, the result is a {@code JSONObject} representing the {@code Document}.
+//     * A {@code PendingIntent} is created to start the {@link DocumentActivity} for this {@link Document} and it is
+//     * put inside of another {@code Intent} which starts the {@link com.docdoku.android.plm.client.connection.ConnectionActivity}.
+//     *
+//     * @param result
+//     */
 }

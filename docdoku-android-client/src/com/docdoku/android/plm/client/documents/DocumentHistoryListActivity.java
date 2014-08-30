@@ -21,13 +21,14 @@
 package com.docdoku.android.plm.client.documents;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HttpGetTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,10 +48,10 @@ import java.util.Iterator;
  * <p>
  * Layout file: {@link /res/layout/activity_element_list.xml activity_element_list}
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class DocumentHistoryListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<Document>{
+public class DocumentHistoryListActivity extends DocumentListActivity implements LoaderManager.LoaderCallbacks<Document> {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.documents.DocumentHistoryListActivity";
 
     /**
@@ -73,13 +74,13 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         removeLoadingView();
 
         Log.i(LOG_TAG, "navigation history size: " + navigationHistory.getSize());
-        documentArray= new ArrayList<Document>();
-        documentAdapter = new DocumentAdapter(documentArray);
+        documentArray = new ArrayList<>();
+        documentAdapter = new DocumentAdapter(documentArray, this);
         documentListView.setAdapter(documentAdapter);
 
         Iterator<String> iterator = navigationHistory.getKeyIterator();
         int i = 0;
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             Bundle bundle = new Bundle();
             bundle.putString("partKey", iterator.next());
             bundle.putString("workspace", getCurrentWorkspace());
@@ -118,44 +119,41 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
      */
     @Override
     public void onLoadFinished(Loader<Document> loader, Document document) {
-        try{
+        try {
             Log.i(LOG_TAG, "Received information for part in history at position " + loader.getId() + " with reference " + document.getIdentification());
             documentArray.set(loader.getId(), document);
             documentAdapter.notifyDataSetChanged();
-        } catch (NullPointerException e){
-            e.printStackTrace();
+        }
+        catch (NullPointerException e) {
             Log.i(LOG_TAG, "Load of a document in history failed");
         }
     }
 
     /**
-     *
      * @param loader
      * @see LoaderManager.LoaderCallbacks
      */
     @Override
     public void onLoaderReset(Loader<Document> loader) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     /**
-     *
      * @return
      * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.recentlyViewedDocuments;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.recentlyViewedDocuments;
     }
 
     /**
      * {@code Loader} that makes a request to the server to obtain the information about a specific document.
      */
-    private static class DocumentLoaderByDocument extends Loader<Document> implements HttpGetTask.HttpGetListener {
+    private static class DocumentLoaderByDocument extends Loader<Document> {
 
-        private final String elementId;
-        private final String workspace;
-        private AsyncTask asyncTask;
+        private final String      elementId;
+        private final String      workspace;
+        private       HTTPGetTask asyncTask;
 
         public DocumentLoaderByDocument(Context context, String elementId, String workspace) {
             super(context);
@@ -164,22 +162,28 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
         }
 
         /**
-         * Start an {@link HttpGetTask} to load the information about a document.
+         * Start an {@link HTTPGetTask} to load the information about a document.
          *
          * @see Loader
          */
         @Override
-        protected void onStartLoading (){
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents/" +  elementId);
+        protected void onStartLoading() {
+            createTask("api/workspaces/" + workspace + "/documents/" + elementId);
         }
 
         /**
-         *
          * @see Loader
          */
         @Override
-        protected void onStopLoading (){
-            if (asyncTask != null){
+        protected void onForceLoad() {
+        }
+
+        /**
+         * @see Loader
+         */
+        @Override
+        protected void onStopLoading() {
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
         }
@@ -188,50 +192,49 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
          * @see Loader
          */
         @Override
-        protected void onReset (){
-            if (asyncTask != null){
+        protected void onAbandon() {
+        }
+
+        /**
+         * @see Loader
+         */
+        @Override
+        protected void onReset() {
+            if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
-            asyncTask = new HttpGetTask(this).execute("api/workspaces/" + workspace + "/documents/" +  elementId);
+            createTask("api/workspaces/" + workspace + "/documents/" + elementId);
         }
 
-        /**
-         * @see Loader
-         */
-        @Override
-        protected void onForceLoad (){
-            //To change body of implemented methods use File | Settings | File Templates.
+        private void createTask(String exec) {
+            asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+                /**
+                 * Handles the result of the {@link HTTPGetTask}. The result is read to create a new instance of
+                 * {@link Document} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
+                 *
+                 * @param result the {@code JSONObject} representing the {@link Document}.
+                 * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+                 */
+                @Override
+                public void onDone(HTTPResultTask result) {
+                    Document document;
+                    try {
+                        JSONObject documentJSON = new JSONObject(result.getResultContent());
+                        document = new Document(documentJSON.getString("id"));
+                        document.updateFromJSON(documentJSON, getContext().getResources());
+                    }
+                    catch (JSONException e) {
+                        Log.e(LOG_TAG, "Error handling json object of a document");
+                        e.printStackTrace();
+                        Log.i(LOG_TAG, "Error message: " + e.getMessage());
+                        document = new Document(elementId);
+                    }
+                    deliverResult(document);
+                }
+            });
+            asyncTask.execute(exec);
         }
 
-        /**
-         * @see Loader
-         */
-        @Override
-        protected void onAbandon (){
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
 
-        /**
-         * Handles the result of the {@link HttpGetTask}. The result is read to create a new instance of
-         * {@link Document} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
-         *
-         * @param result the {@code JSONObject} representing the {@link Document}.
-         * @see com.docdoku.android.plm.network.HttpGetTask.HttpGetListener
-         */
-        @Override
-        public void onHttpGetResult(String result) {
-            Document document;
-            try {
-                JSONObject documentJSON = new JSONObject(result);
-                document = new Document(documentJSON.getString("id"));
-                document.updateFromJSON(documentJSON, getContext().getResources());
-            }catch (JSONException e){
-                Log.e(LOG_TAG, "Error handling json object of a document");
-                e.printStackTrace();
-                Log.i(LOG_TAG, "Error message: " + e.getMessage());
-                document = new Document(elementId);
-            }
-            deliverResult(document);
-        }
     }
 }

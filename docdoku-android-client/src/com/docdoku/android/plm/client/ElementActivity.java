@@ -36,8 +36,10 @@ import android.widget.Toast;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
 import com.docdoku.android.plm.network.HttpGetDownloadFileTask;
-import com.docdoku.android.plm.network.HttpGetTask;
-import com.docdoku.android.plm.network.HttpPutTask;
+import com.docdoku.android.plm.network.rest.HTTPGetTask;
+import com.docdoku.android.plm.network.rest.HTTPPutTask;
+import com.docdoku.android.plm.network.rest.HTTPResultTask;
+import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,17 +51,16 @@ import java.util.Calendar;
  * Abstract class for <code>Activity</code> representing an <code>Element</code>'s data.
  * <p>Contains the methods used for operation that <code>Document</code>s and <code>Part</code>s have in common.
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public abstract class ElementActivity extends SimpleActionBarActivity implements HttpPutTask.HttpPutListener, HttpGetDownloadFileTask.HttpGetDownloadFileListener {
+public abstract class ElementActivity extends SimpleActionBarActivity implements HttpGetDownloadFileTask.HttpGetDownloadFileListener {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
-
-    private Element element;
-    protected Button checkInOutButton;
-    private boolean checkedIn;
-    private ProgressDialog fileDownloadProgressDialog;
-    private String iterationNote;
+    protected Button         checkInOutButton;
+    private   Element        element;
+    private   boolean        checkedIn;
+    private   ProgressDialog fileDownloadProgressDialog;
+    private   String         iterationNote;
 
     /**
      * Obtains the instance of the <code>Element</code> that this <code>Activity</code> is presenting to the user
@@ -67,7 +68,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * @see android.app.Activity
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         element = getElement();
     }
@@ -79,7 +80,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * <p>Set the <code>checkInOutButton OnClickListener</code>'s <code>onClick()</code> method to start the
      * {@link #checkOutElement()} method.
      */
-    protected void setElementCheckedIn(){
+    protected void setElementCheckedIn() {
         checkedIn = true;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_in_light, 0, 0);
         checkInOutButton.setText(R.string.checkOut);
@@ -92,24 +93,67 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         });
     }
 
+    private HTTPPutTask createTask() {
+        HTTPPutTask task = new HTTPPutTask(new HTTPTaskDoneListener() {
+            @Override
+            public void onDone(HTTPResultTask result) {
+                processResult(result);
+            }
+        });
+
+        return task;
+    }
+
+    private void processResult(HTTPResultTask result) {
+        Log.i(LOG_TAG, "Result of checkin/checkout: " + result.isSucceed());
+        if (result.isSucceed()) {
+            if (checkedIn) {
+                setElementCheckedOutByCurrentUser();
+                Toast.makeText(ElementActivity.this, R.string.checkOutSuccessful, Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject responseJSON = new JSONObject(result.getResultContent());
+                    element.updateFromJSON(responseJSON, getResources());
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                setElementCheckedIn();
+                Toast.makeText(ElementActivity.this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
+                SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
+                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserName(), dateFormat.format(Calendar.getInstance().getTime()));
+            }
+        }
+        else {
+            new AlertDialog.Builder(ElementActivity.this)
+                    .setIcon(R.drawable.error_light)
+                    .setTitle(" ")
+                    .setMessage(R.string.connectionError)
+                    .setPositiveButton(R.string.OK, null)
+                    .create().show();
+        }
+    }
+
     /**
      * Attempts to check out the <code>Element</code> by the current user.
      * <p>Shows an <code>AlertDialog</code> to obtain confirmation that this is what the user wants to do.
-     * If he confirms it, a new {@link HttpPutTask} is started.
+     * If he confirms it, a new {@link HTTPPutTask} is started.
      */
-    private void checkOutElement(){
+    private void checkOutElement() {
         new AlertDialog.Builder(ElementActivity.this)
-            .setIcon(R.drawable.checked_in_light)
-            .setTitle(" ")
-            .setMessage(R.string.checkOutConfirm)
-            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
-                }
-            })
-            .setNegativeButton(R.string.no, null)
-            .create().show();
+                .setIcon(R.drawable.checked_in_light)
+                .setTitle(" ")
+                .setMessage(R.string.checkOutConfirm)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
+                        createTask().execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
+                    }
+                })
+                .setNegativeButton(R.string.no, null)
+                .create().show();
     }
 
     /**
@@ -117,7 +161,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * {@link #setElementCheckedOutByCurrentUser(String) setElementCheckedOutByCurrentUser(String date)} method
      * with date set to current date.
      */
-    protected void setElementCheckedOutByCurrentUser(){
+    protected void setElementCheckedOutByCurrentUser() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
         setElementCheckedOutByCurrentUser(simpleDateFormat.format(c.getTime()));
@@ -130,7 +174,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      *
      * @param date the checkout date
      */
-    protected void setElementCheckedOutByCurrentUser(String date){
+    protected void setElementCheckedOutByCurrentUser(String date) {
         checkedIn = false;
         checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_current_user_light, 0, 0);
         checkInOutButton.setText(R.string.checkin);
@@ -147,93 +191,64 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * Attempts to check in the <code>Element</code> by the current user.
      * <p>Shows an <code>AlertDialog</code> to obtain confirmation that this is what the user wants to do and to allow
      * the user to add a revision note in an <code>EditText</code>.
-     * If he confirm without a revision  it, a new {@link HttpPutTask} is started to check in the <code>Element</code>.
-     * If he confirms with a revision, a new {@link HttpPutTask} is started to send the revision note to the server, and
+     * If he confirm without a revision  it, a new {@link HTTPPutTask} is started to check in the <code>Element</code>.
+     * If he confirms with a revision, a new {@link HTTPPutTask} is started to send the revision note to the server, and
      * if that task returns a positive result, then another task is started to do the checkin.
      */
-    private void checkInElement(){
+    private void checkInElement() {
         final EditText iterationNoteField = new EditText(ElementActivity.this);
         new AlertDialog.Builder(ElementActivity.this)
-            .setIcon(R.drawable.checked_out_current_user_light)
-            .setTitle(" ")
-            .setMessage(R.string.checkInConfirm)
-            .setMessage(R.string.iterationNotePrompt)
-            .setView(iterationNoteField)
-            .setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    iterationNote = iterationNoteField.getText().toString();
-                    if (iterationNote.length()>0){
-                        Log.i(LOG_TAG, "Iteration note for document checkin: " + iterationNote);
-                        HttpPutTask.HttpPutListener httpPutListener = new HttpPutTask.HttpPutListener() {
-                            @Override
-                            public void onHttpPutResult(boolean result, String responseContent) {
-                                if (result){
-                                    Log.i(LOG_TAG, "Checking out document after successfully uploading iteration");
-                                    new HttpPutTask(ElementActivity.this).execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath()+ "/checkin/");
-                                } else{
-                                    ElementActivity.this.onHttpPutResult(false, "");
+                .setIcon(R.drawable.checked_out_current_user_light)
+                .setTitle(" ")
+                .setMessage(R.string.checkInConfirm)
+                .setMessage(R.string.iterationNotePrompt)
+                .setView(iterationNoteField)
+                .setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        iterationNote = iterationNoteField.getText().toString();
+                        if (iterationNote.length() > 0) {
+                            Log.i(LOG_TAG, "Iteration note for document checkin: " + iterationNote);
+                            new HTTPPutTask(new HTTPTaskDoneListener() {
+                                @Override
+                                public void onDone(HTTPResultTask result) {
+                                    if (result.isSucceed()) {
+                                        Log.i(LOG_TAG, "Checking out document after successfully uploading iteration");
+                                        createTask().execute("api/workspaces/" + getCurrentWorkspace() + element.getUrlPath() + "/checkin/");
+                                    }
+                                    else {
+                                        processResult(result);
+                                    }
                                 }
-                            }
-                        };
-                        new HttpPutTask(httpPutListener).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
-                    }else {
-                        Log.i(LOG_TAG, "No iteration note was entered for document checkin");
-                        new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
+                            }).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/iterations/" + element.getIterationNumber(), element.getLastIterationJSONWithUpdateNote(iterationNote).toString());
+                        }
+                        else {
+                            Log.i(LOG_TAG, "No iteration note was entered for document checkin");
+                            createTask().execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkin/");
+                        }
                     }
-                }
-            })
-            .setNeutralButton(R.string.cancelCheckOut, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/undocheckout/");
-                }
-            })
-            .setNegativeButton(R.string.no, null)
-            .create().show();
+                })
+                .setNeutralButton(R.string.cancelCheckOut, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        createTask().execute(getUrlWorkspaceApi() + element.getUrlPath() + "/undocheckout/");
+                    }
+                })
+                .setNegativeButton(R.string.no, null)
+                .create().show();
     }
 
-    /**
-     * Handles the result of an checkin/checkout task.
-     * <p>If the result is <code>false</code>, shows a <code>AlertDialog</code> to indicate a connection error.
-     * <p>If the result is <code>true</code>, checks the chek in/out status of the <code>Element</code>, and shows
-     * a <code>Toast</code> indicating that the operation was successful. The document is also updated with this new
-     * check in/out operation.
-     *
-     * @param result If the Http request return a code 200, indicating that the task was successful
-     * @param responseContent The String of the updated <code>JSONObject</code>
-     * @see com.docdoku.android.plm.network.HttpPutTask.HttpPutListener
-     */
-    @Override
-    public void onHttpPutResult(boolean result, String responseContent) {
-        Log.i(LOG_TAG, "Result of checkin/checkout: " + result);
-        if (result){
-            if (checkedIn){
-                setElementCheckedOutByCurrentUser();
-                Toast.makeText(this, R.string.checkOutSuccessful, Toast.LENGTH_SHORT).show();
-                try {
-                    JSONObject responseJSON = new JSONObject(responseContent);
-                    element.updateFromJSON(responseJSON, getResources());
-                } catch (JSONException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-            }
-            else{
-                setElementCheckedIn();
-                Toast.makeText(this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
-                SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
-                element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserName(), dateFormat.format(Calendar.getInstance().getTime()));
-            }
-        }
-        else{
-            new AlertDialog.Builder(this)
-                .setIcon(R.drawable.error_light)
-                .setTitle(" ")
-                .setMessage(R.string.connectionError)
-                .setPositiveButton(R.string.OK, null)
-                .create().show();
-        }
-    }
+//    /**
+//     * Handles the result of an checkin/checkout task.
+//     * <p>If the result is <code>false</code>, shows a <code>AlertDialog</code> to indicate a connection error.
+//     * <p>If the result is <code>true</code>, checks the chek in/out status of the <code>Element</code>, and shows
+//     * a <code>Toast</code> indicating that the operation was successful. The document is also updated with this new
+//     * check in/out operation.
+//     *
+//     * @param result          If the Http request return a code 200, indicating that the task was successful
+//     * @param responseContent The String of the updated <code>JSONObject</code>
+//     * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//     */
 
     /**
      * When a file download begins, opens a <code>ProgressDialog</code>.
@@ -248,33 +263,33 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
         fileDownloadProgressDialog.show();
     }
 
-    /**
-     * Closes the <code>ProgressDialog</code> when the file download task is finished
-     * <p>If the download was successful, shows a <code>Toast</code> indicating where the file was saved, and creates a <code>chooser</code>
-     * for the user to open the file.
-     * <p>If the download failed, show a <code>Toast</code> indicating a download error to the user.
-     *
-     * @param result whether the download was successful
-     * @param path the path on the device to the downloaded file
-     */
+    //    /**
+//     * Closes the <code>ProgressDialog</code> when the file download task is finished
+//     * <p>If the download was successful, shows a <code>Toast</code> indicating where the file was saved, and creates a <code>chooser</code>
+//     * for the user to open the file.
+//     * <p>If the download failed, show a <code>Toast</code> indicating a download error to the user.
+//     *
+//     * @param result whether the download was successful
+//     * @param path   the path on the device to the downloaded file
+//     */
     @Override
     public void onFileDownloaded(boolean result, String path) {
         fileDownloadProgressDialog.dismiss();
-        if (result){
+        if (result) {
             Toast.makeText(this, getResources().getString(R.string.downloadSuccessToPath, path), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent();
             intent.setAction(android.content.Intent.ACTION_VIEW);
             File file = new File(path);
 
             MimeTypeMap mime = MimeTypeMap.getSingleton();
-            String ext=file.getName().substring(file.getName().indexOf(".")+1);
+            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
             String type = mime.getMimeTypeFromExtension(ext);
 
-            intent.setDataAndType(Uri.fromFile(file),type);
+            intent.setDataAndType(Uri.fromFile(file), type);
 
             startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
         }
-        else{
+        else {
             Toast.makeText(this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
         }
     }
@@ -294,11 +309,11 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * Inflates a layout for an attribute having a name and a value.
      * <p>Layout file: {@link /res/layout/adapter_name_value_pair.xml adapter_name_value_pair}
      *
-     * @param name The attribute's name
+     * @param name  The attribute's name
      * @param value The attribute's value
      * @return The <code>View</code>, which is a row presenting the name and value.
      */
-    protected View createNameValuePairRowView(String name, String value){
+    protected View createNameValuePairRowView(String name, String value) {
         View rowView = getLayoutInflater().inflate(R.layout.adapter_name_value_pair, null);
         ((TextView) rowView.findViewById(R.id.fieldName)).setText(name);
         ((TextView) rowView.findViewById(R.id.fieldValue)).setText(value);
@@ -307,14 +322,14 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
 
     /**
      * Inflates a layout for an linked document, showing its id.
-     * Sets the <code>OnClickListener</code> that starts the download of the document's information with an {@link HttpGetTask}, then, on result,
+     * Sets the <code>OnClickListener</code> that starts the download of the document's information with an {@link HTTPGetTask}, then, on result,
      * start the {@link DocumentActivity} for it.
      * <p>Layout file: {@link /res/layout/adapter_document_simple.xml adapter_document_simple}
      *
      * @param linkedDocument the id of the linked document
      * @return The <code>View</code>, which is a row with the document's id
      */
-    protected View createLinkedDocumentRowView(final String linkedDocument){
+    protected View createLinkedDocumentRowView(final String linkedDocument) {
         ViewGroup rowView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_simple, null);
         TextView docView = (TextView) rowView.findViewById(R.id.docId);
         docView.setText(linkedDocument);
@@ -322,22 +337,24 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             @Override
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "Following link to " + linkedDocument);
-                HttpGetTask.HttpGetListener httpGetListener = new HttpGetTask.HttpGetListener() {
+                HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
                     @Override
-                    public void onHttpGetResult(String result) {
+                    public void onDone(HTTPResultTask result) {
                         try {
-                            JSONObject jsonObject = new JSONObject(result);
+                            JSONObject jsonObject = new JSONObject(result.getResultContent());
                             Document document1 = new Document(jsonObject.getString("id"));
                             document1.updateFromJSON(jsonObject, getResources());
                             Intent intent = new Intent(ElementActivity.this, DocumentActivity.class);
                             intent.putExtra(DocumentActivity.EXTRA_DOCUMENT, document1);
                             startActivity(intent);
-                        } catch (JSONException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                };
-                new HttpGetTask(httpGetListener).execute(getUrlWorkspaceApi() + "/documents/" + linkedDocument);
+                });
+
+                task.execute(getUrlWorkspaceApi() + "/documents/" + linkedDocument);
             }
         });
         return rowView;
@@ -349,10 +366,10 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * <p>Layout file: {@link /res/layout/adapter_dowloadable_file.xml adapter_downloadable_file}
      *
      * @param fileName the name of the downloadable file
-     * @param fileUrl the end of the url used to download the file
+     * @param fileUrl  the end of the url used to download the file
      * @return The <code>View</code>, which is a row with the file's name
      */
-    protected View createFileRowView(final String fileName, final String fileUrl){
+    protected View createFileRowView(final String fileName, final String fileUrl) {
         View rowView = getLayoutInflater().inflate(R.layout.adapter_dowloadable_file, null);
         TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
         fileNameField.setText(fileName);
@@ -361,6 +378,32 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
                 new HttpGetDownloadFileTask(ElementActivity.this).execute("files/" + fileUrl, fileName);
+//                HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
+//                    @Override
+//                    public void onDone(HTTPResultTask result) {
+//                        fileDownloadProgressDialog.dismiss();
+//                        if (result.isSucceed()) {
+//                            Toast.makeText(this, getResources().getString(R.string.downloadSuccessToPath, path), Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent();
+//                            intent.setAction(android.content.Intent.ACTION_VIEW);
+//                            File file = new File(path);
+//
+//                            MimeTypeMap mime = MimeTypeMap.getSingleton();
+//                            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+//                            String type = mime.getMimeTypeFromExtension(ext);
+//
+//                            intent.setDataAndType(Uri.fromFile(file), type);
+//
+//                            startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+//                        }
+//                        else {
+//                            Toast.makeText(ElementActivity.this, R.string.fileDownloadFail, Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//
+//
+//                        task.execute("files/" + fileUrl, fileName);
             }
         });
         return rowView;
@@ -373,7 +416,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity implements
      * @param messageId the id of the <code>String</code> resource containing the message
      * @return The <code>View</code>, which is a row with the message
      */
-    protected View createNoContentFoundRowView(int messageId){
+    protected View createNoContentFoundRowView(int messageId) {
         View rowView = getLayoutInflater().inflate(R.layout.adapter_message, null);
         TextView message = (TextView) rowView.findViewById(R.id.message);
         message.setText(messageId);
