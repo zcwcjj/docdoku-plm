@@ -6,8 +6,7 @@
 
     <!-- Connection/Disconnection strings -->
     <string name="url">Url du serveur:</string>
-    <!--<string name="urlPrompt">docdokuplm.net</string>-->
-    <string name="urlPrompt">192.168.1.2:8080</string>
+    <string name="urlPrompt">docdokuplm.net</string>
     <string name="login">Utilisateur:</string>
     <string name="password">Mot de passe:</string>
     <string name="autoConnect">Connection Automatique</string>

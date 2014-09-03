@@ -28,10 +28,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import com.docdoku.android.plm.network.rest.HTTPDeleteTask;
-import com.docdoku.android.plm.network.rest.HTTPPutTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPDeleteTask;
+import com.docdoku.android.plm.network.HTTPPutTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -161,7 +161,7 @@ public class GCMRegisterService extends Service {
     /**
      * Start a {@link HTTPDeleteTask} to delete the GCM Id from the server.
      * <p>
-     * This {@code GCMRegisterService} is used as an {@link com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener}.
+     * This {@code GCMRegisterService} is used as an {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener}.
      */
     private void deleteGCMId() {
         new HTTPDeleteTask(new HTTPTaskDoneListener() {
@@ -231,7 +231,7 @@ public class GCMRegisterService extends Service {
     /**
      * Sends the GCM Id to the server in an {@link HTTPPutTask}.
      * <p>
-     * This {@code GCMRegisterService} is used as an {@link com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener}.
+     * This {@code GCMRegisterService} is used as an {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener}.
      *
      * @param gcmId the GCM Id sent to the server
      */
