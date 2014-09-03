@@ -55,6 +55,8 @@ public class DocumentRevisionDTO implements Serializable, Comparable<DocumentRev
     private List<DocumentIterationDTO> documentIterations;
     private WorkflowDTO workflow;
     private String path;
+
+    @XmlElement(nillable = true)
     private String lifeCycleState;
     private boolean publicShared;
     private boolean attributesLocked;
