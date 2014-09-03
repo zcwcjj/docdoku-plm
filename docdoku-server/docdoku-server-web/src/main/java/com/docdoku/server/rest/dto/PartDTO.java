@@ -31,27 +31,28 @@ import java.util.List;
 @XmlRootElement
 public class PartDTO implements Serializable {
 
-    private String partKey;
-    private String number;
-    private String version;
-    private String name;
-    private UserDTO author;
-    private Date creationDate;
-    private String description;
-    private List<PartIterationDTO> partIterations;
+    private String                      partKey;
+    private String                      number;
+    private String                      version;
+    private String                      name;
+    private UserDTO                     author;
+    private Date                        creationDate;
+    private String                      description;
+    private List<PartIterationDTO>      partIterations;
     @XmlElement(nillable = true)
-    private UserDTO checkOutUser;
+    private UserDTO                     checkOutUser;
     @XmlElement(nillable = true)
-    private Date checkOutDate;
+    private Date                        checkOutDate;
     @XmlElement(nillable = true)
-    private WorkflowDTO workflow;
-    private String lifeCycleState;
-    private boolean standardPart;
-    private String workspaceId;
-    private boolean publicShared;
+    private WorkflowDTO                 workflow;
     @XmlElement(nillable = true)
-    private ACLDTO acl;
-    private boolean attributesLocked;
+    private String                      lifeCycleState;
+    private boolean                     standardPart;
+    private String                      workspaceId;
+    private boolean                     publicShared;
+    @XmlElement(nillable = true)
+    private ACLDTO                      acl;
+    private boolean                     attributesLocked;
     @XmlElement(nillable = true)
     private PartRevision.RevisionStatus status;
     @XmlElement(nillable = true)
@@ -63,6 +64,7 @@ public class PartDTO implements Serializable {
     public String getNumber() {
         return number;
     }
+
     public void setNumber(String number) {
         this.number = number;
     }
@@ -70,6 +72,7 @@ public class PartDTO implements Serializable {
     public String getVersion() {
         return version;
     }
+
     public void setVersion(String version) {
         this.version = version;
     }
@@ -77,6 +80,7 @@ public class PartDTO implements Serializable {
     public UserDTO getAuthor() {
         return author;
     }
+
     public void setAuthor(UserDTO author) {
         this.author = author;
     }
@@ -84,6 +88,7 @@ public class PartDTO implements Serializable {
     public Date getCreationDate() {
         return creationDate;
     }
+
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -91,6 +96,7 @@ public class PartDTO implements Serializable {
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -98,6 +104,7 @@ public class PartDTO implements Serializable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -105,6 +112,7 @@ public class PartDTO implements Serializable {
     public boolean isStandardPart() {
         return standardPart;
     }
+
     public void setStandardPart(boolean standardPart) {
         this.standardPart = standardPart;
     }
@@ -112,6 +120,7 @@ public class PartDTO implements Serializable {
     public List<PartIterationDTO> getPartIterations() {
         return partIterations;
     }
+
     public void setPartIterations(List<PartIterationDTO> partIterations) {
         this.partIterations = partIterations;
     }
@@ -119,6 +128,7 @@ public class PartDTO implements Serializable {
     public UserDTO getCheckOutUser() {
         return checkOutUser;
     }
+
     public void setCheckOutUser(UserDTO checkOutUser) {
         this.checkOutUser = checkOutUser;
     }
@@ -126,6 +136,7 @@ public class PartDTO implements Serializable {
     public Date getCheckOutDate() {
         return checkOutDate;
     }
+
     public void setCheckOutDate(Date checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
@@ -133,6 +144,7 @@ public class PartDTO implements Serializable {
     public WorkflowDTO getWorkflow() {
         return workflow;
     }
+
     public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
     }
@@ -140,6 +152,7 @@ public class PartDTO implements Serializable {
     public String getPartKey() {
         return partKey;
     }
+
     public void setPartKey(String partKey) {
         this.partKey = partKey;
     }
@@ -147,6 +160,7 @@ public class PartDTO implements Serializable {
     public String getWorkspaceId() {
         return workspaceId;
     }
+
     public void setWorkspaceId(String workspaceId) {
         this.workspaceId = workspaceId;
     }
@@ -154,6 +168,7 @@ public class PartDTO implements Serializable {
     public String getLifeCycleState() {
         return lifeCycleState;
     }
+
     public void setLifeCycleState(String lifeCycleState) {
         this.lifeCycleState = lifeCycleState;
     }
@@ -161,6 +176,7 @@ public class PartDTO implements Serializable {
     public boolean isPublicShared() {
         return publicShared;
     }
+
     public void setPublicShared(boolean publicShared) {
         this.publicShared = publicShared;
     }
@@ -168,6 +184,7 @@ public class PartDTO implements Serializable {
     public ACLDTO getAcl() {
         return acl;
     }
+
     public void setAcl(ACLDTO acl) {
         this.acl = acl;
     }
@@ -175,13 +192,24 @@ public class PartDTO implements Serializable {
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
+
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
     }
 
-    public PartRevision.RevisionStatus getStatus() {return status;}
-    public void setStatus(PartRevision.RevisionStatus status) {this.status = status;}
+    public PartRevision.RevisionStatus getStatus() {
+        return status;
+    }
 
-    public int getLastIterationNumber() {return lastIterationNumber;}
-    public void setLastIterationNumber(int lastIterationNumber) {this.lastIterationNumber = lastIterationNumber;}
+    public void setStatus(PartRevision.RevisionStatus status) {
+        this.status = status;
+    }
+
+    public int getLastIterationNumber() {
+        return lastIterationNumber;
+    }
+
+    public void setLastIterationNumber(int lastIterationNumber) {
+        this.lastIterationNumber = lastIterationNumber;
+    }
 }

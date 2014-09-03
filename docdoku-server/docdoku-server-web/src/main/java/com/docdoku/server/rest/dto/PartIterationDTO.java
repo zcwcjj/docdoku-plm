@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
@@ -29,7 +30,9 @@ public class PartIterationDTO implements Serializable {
 
     private String workspaceId;
     private int iteration;
+    @XmlElement(nillable = true)
     private String nativeCADFile;
+    @XmlElement(nillable = true)
     private String iterationNote;
     private UserDTO author;
     private Date creationDate;
