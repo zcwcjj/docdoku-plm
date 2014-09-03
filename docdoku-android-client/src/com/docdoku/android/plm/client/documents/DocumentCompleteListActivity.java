@@ -28,9 +28,9 @@ import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -135,7 +135,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
 //     * the <code>Loader</code> for the first page of documents.
 //     *
 //     * @param result The number of <code>Document</code>s in the workspace
-//     * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//     * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
 //     */
 
     /**
@@ -312,7 +312,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
 //         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
 //         *
 //         * @param result the query <code>String</code> result
-//         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
 //         * @see Loader
 //         */
     }
