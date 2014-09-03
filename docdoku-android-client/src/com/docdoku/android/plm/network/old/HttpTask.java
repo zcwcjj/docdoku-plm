@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.old;
 
 import android.os.AsyncTask;
 import android.util.Base64;
@@ -41,7 +41,7 @@ public abstract class HttpTask<A, B, C> extends AsyncTask<A, B, C> {
     public static final  String ERROR_URL               = "Url error";
     public static final  String ERROR_HTTP_BAD_REQUEST  = "Http Bad request";
     public static final  String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
-    private static final String LOG_TAG                 = "com.docdoku.android.plm.network.HttpTask";
+    private static final String LOG_TAG                 = "com.docdoku.android.plm.network.old.HttpTask";
     private final static int    CHUNK_SIZE              = 1024 * 8;
     private final static int    BUFFER_CAPACITY         = 1024 * 32;
 

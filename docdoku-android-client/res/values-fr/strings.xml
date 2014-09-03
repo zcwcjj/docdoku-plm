@@ -6,8 +6,7 @@
 
     <!-- Connection/Disconnection strings -->
     <string name="url">Url du serveur:</string>
-    <!--<string name="urlPrompt">docdokuplm.net</string>-->
-    <string name="urlPrompt">192.168.1.2:8080</string>
+    <string name="urlPrompt">docdokuplm.net</string>
     <string name="login">Utilisateur:</string>
     <string name="password">Mot de passe:</string>
     <string name="autoConnect">Connection Automatique</string>
@@ -37,6 +36,7 @@
     <string name="serverUrlError">Erreur dans l\'url du serveur</string>
     <string name="loading">Chargement en cours, veuillez patienter...</string>
     <string name="downloadingFile">Téléchargement du fichier en cours...</string>
+    <string name="loadingFile">Chargement en cours...</string>
     <string name="fileDownloadFail">Echec du téléchargement du fichier</string>
     <string name="uploadingFile">Chargement du fichier en cours...</string>
     <string name="fileUploadFail">Echec du chargement du fichier</string>

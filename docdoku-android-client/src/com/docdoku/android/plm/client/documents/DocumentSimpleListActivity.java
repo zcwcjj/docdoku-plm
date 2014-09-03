@@ -24,9 +24,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,7 +123,7 @@ public class DocumentSimpleListActivity extends DocumentListActivity {
 //     * <br>Reads the array and adds the documents to the {@code Adapter}, then notifies it that its data set has changed.
 //     *
 //     * @param result a {@code JSONArray} of {@link Document Documents}
-//     * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//     * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
 //     */
 
     /**
