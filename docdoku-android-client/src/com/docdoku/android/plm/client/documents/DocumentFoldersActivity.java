@@ -27,9 +27,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +83,7 @@ public class DocumentFoldersActivity extends DocumentListActivity {
          * obtained, they are added to the {@link FolderAdapter}.
          *
          * @param result the {@code JSONArray} of sub-folders
-         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
          */
         HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
             @Override
@@ -174,80 +174,4 @@ public class DocumentFoldersActivity extends DocumentListActivity {
         return R.id.documentFolders;
     }
 
-
-//    /**
-//     * Extends the {@link DocumentAdapter} to be able to display {@link Folder Folders} and {@link Document Documents} in
-//     * the same {@code ListView}.
-//     */
-//    private class FolderAdapter extends DocumentAdapter {
-//
-//        public FolderAdapter(List<Document> documents) {
-//            super(documents);
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return folders.length + documents.size();  //To change body of implemented methods use File | Settings | File Templates.
-//        }
-//
-//        @Override
-//        public boolean isEnabled(int position) {
-//            return true;
-//        }
-//
-//        @Override
-//        public Object getItem(int i) {
-//            if (i < folders.length) {
-//                return folders[i];
-//            }
-//            else {
-//                return super.getItem(i - folders.length);
-//            }
-//        }
-//
-//        @Override
-//        public long getItemId(int i) {
-//            return i;  //To change body of implemented methods use File | Settings | File Templates.
-//        }
-//
-//        @Override
-//        public View getView(int i, View view, ViewGroup viewGroup) {
-//            if (i < folders.length) {
-//                final Folder folder = folders[i];
-//                View rowView = getLayoutInflater().inflate(R.layout.adapter_folder, null);
-//                TextView folderName = (TextView) rowView.findViewById(R.id.folderName);
-//                folderName.setText(folder.getName());
-//                return rowView;  //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//            else {
-//                return super.getView(i - folders.length, view, viewGroup);
-//            }
-//        }
-//
-//        private void addDocuments(List<Document> documents) {
-//            this.documents = documents;
-//        }
-//    }
-
-//    private class Folder {
-//
-//        public static final String JSON_KEY_FOLDER_NAME = "name";
-//        public static final String JSON_KEY_FOLDER_ID = "id";
-//
-//        private final String name;
-//        private final String id;
-//
-//        public Folder(String name, String id) {
-//            this.name = name;
-//            this.id = id;
-//        }
-//
-//        public String getName() {
-//            return name;
-//        }
-//
-//        private String getId() {
-//            return id;
-//        }
-//    }
 }

@@ -20,42 +20,55 @@
 
 package com.docdoku.android.plm.client.parts;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.*;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Array;
+import com.docdoku.PLMModel;
 import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
+import com.docdoku.android.plm.client.gdx.GDXActivity;
+import com.docdoku.android.plm.network.HTTPDownloadTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+
+import java.io.File;
 
 /**
  * <code>Activity</code> presenting the details for a {@link Part} in the form of an <code>ExpandableListView</code>
  * <p>Layout file: {@link /res/layout/activity_element.xml activity_element}
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public class PartActivity extends ElementActivity {
-    private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.PartActivity";
-
     /**
      * Key for the <code>Parcelable Intent Extra</code> which is the <code>Part</code> represented in this <code>Activity</code>
      */
-    public static final String PART_EXTRA = "part";
-
-    private static final int NUM_PAGES = 6;
-    private static final int NUM_GENERAL_INFORMATION_FIELDS = 10;
-    private static final int NUM_REVISION_FIELDS = 4;
-
-    private Part part;
+    public static final  String          PART_EXTRA                     = "part";
+    private static final String          LOG_TAG                        = "com.docdoku.android.plm.client.parts.PartActivity";
+    private static final int             NUM_PAGES                      = 6;
+    private static final int             NUM_GENERAL_INFORMATION_FIELDS = 10;
+    private static final int             NUM_REVISION_FIELDS            = 4;
+    public static        Array<PLMModel> plmmodels                      = new Array<>();
+    private Part           part;
+    private ProgressDialog fileDownloadProgressDialog;
+    ;
 
     /**
      * Called on this <code>Activity</code>'s creation.
      * Extracts the <code>Part</code> from the <code>Intent</code> and then sets the <code>Adapter</code> for the
      * <code>ExpandableListView</code>. The first group (general information) of the <code>ExpandableListView</code> is
      * expanded here.
+     *
      * @param savedInstanceState
      * @see android.app.Activity
      */
@@ -73,7 +86,7 @@ public class PartActivity extends ElementActivity {
         expandableListView.expandGroup(0);
     }
 
-    private View createHeaderView(){
+    private View createHeaderView() {
         ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
         TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
         documentReference.setText(part.getKey());
@@ -84,40 +97,109 @@ public class PartActivity extends ElementActivity {
         notifyStateChange.setVisibility(View.INVISIBLE);
 
         checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
-        if (part.getCheckOutUserLogin() != null){
-            if (getCurrentUserLogin().equals(part.getCheckOutUserLogin())){
+        if (part.getCheckOutUserLogin() != null) {
+            if (getCurrentUserLogin().equals(part.getCheckOutUserLogin())) {
                 setElementCheckedOutByCurrentUser();
             }
-            else{
+            else {
                 checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
                 checkInOutButton.setClickable(false);
                 checkInOutButton.setText(R.string.locked);
             }
         }
-        else{
+        else {
             setElementCheckedIn();
         }
         return header;
     }
 
+    /* TODO before refactor Part / PartActivity / Element / ElementActivity / Document / DocumentActivity
+          this code is Duplicated from ElementActivity */
+    protected View createFileRowView(final Part part) {
+        View rowView = getLayoutInflater().inflate(R.layout.adapter_dowloadable_file, null);
+        TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
+        fileNameField.setText(part.getCADFileName());
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fileDownloadProgressDialog = new ProgressDialog(PartActivity.this);
+                fileDownloadProgressDialog.setTitle(R.string.loadingFile);
+                fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                fileDownloadProgressDialog.setIndeterminate(true);
+
+                fileDownloadProgressDialog.show();
+
+                final String dest = getExternalCacheDir() + "/" + part.getCADFileUrl().replaceAll(part.getCADFileName(), "");
+                HTTPDownloadTask task = new HTTPDownloadTask(new HTTPTaskDoneListener() {
+                    @Override
+                    public void onDone(HTTPResultTask result) {
+                        fileDownloadProgressDialog.dismiss();
+                        if (result.isSucceed()) {
+                            Toast.makeText(PartActivity.this, getResources().getString(R.string.downloadSuccessToPath, getExternalCacheDir() + part.getCADFileUrl()), Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_VIEW);
+
+                            if (part.getCADFileName().endsWith(".obj")) {
+                                PLMModel plmmodel = new PLMModel(part.getKey(),
+                                        "partiterationID",
+                                        new Matrix4(),
+                                        part.getCADFileName(),
+                                        dest);
+                                plmmodels.clear();
+                                plmmodels.add(plmmodel);
+
+
+                                startActivity(new Intent(PartActivity.this, GDXActivity.class));
+                            }
+                            else {
+                                File file = new File(dest + part.getCADFileName());
+
+                                MimeTypeMap mime = MimeTypeMap.getSingleton();
+                                String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+                                String type = mime.getMimeTypeFromExtension(ext);
+
+                                intent.setDataAndType(Uri.fromFile(file), type);
+
+                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+                            }
+
+                        }
+                        else {
+                            Toast.makeText(PartActivity.this, R.string.fileDownloadFail, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                task.execute("files/" + part.getCADFileUrl(), dest, part.getCADFileName());
+            }
+        });
+        return rowView;
+    }
+
     /**
      * There is no {@code Button} in the menu leading directly to this activity, so 0 is returned.
+     *
      * @return
      * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
     @Override
     protected int getActivityButtonId() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     /**
-     *
      * @return
      * @see com.docdoku.android.plm.client.ElementActivity#getElement()
      */
     @Override
     protected Element getElement() {
         return part;
+    }
+
+    private View createComponentRowView(int quantity, String name) {
+        View rowView = getLayoutInflater().inflate(R.layout.adapter_component, null);
+        ((TextView) rowView.findViewById(R.id.componentQuantity)).setText("x" + quantity);
+        ((TextView) rowView.findViewById(R.id.componentName)).setText(name);
+        return rowView;
     }
 
     /**
@@ -130,7 +212,7 @@ public class PartActivity extends ElementActivity {
      * Group 5: Information about the last iteration
      * Group 6: Attributes
      */
-    private class PartDetailsExpandableListAdapter extends BaseExpandableListAdapter{
+    private class PartDetailsExpandableListAdapter extends BaseExpandableListAdapter {
 
         @Override
         public int getGroupCount() {
@@ -139,13 +221,19 @@ public class PartActivity extends ElementActivity {
 
         @Override
         public int getChildrenCount(int i) {
-            switch (i){
-                case 0: return NUM_GENERAL_INFORMATION_FIELDS;
-                case 1: return 1;
-                case 2: return Math.max(part.getNumComponents(), 1);
-                case 3: return Math.max(part.getNumberOfLinkedDocuments(), 1);
-                case 4: return NUM_REVISION_FIELDS;
-                case 5: return Math.max(part.getNumberOfAttributes(), 1);
+            switch (i) {
+                case 0:
+                    return NUM_GENERAL_INFORMATION_FIELDS;
+                case 1:
+                    return 1;
+                case 2:
+                    return Math.max(part.getNumComponents(), 1);
+                case 3:
+                    return Math.max(part.getNumberOfLinkedDocuments(), 1);
+                case 4:
+                    return NUM_REVISION_FIELDS;
+                case 5:
+                    return Math.max(part.getNumberOfAttributes(), 1);
             }
             return 0;
         }
@@ -172,18 +260,18 @@ public class PartActivity extends ElementActivity {
 
         @Override
         public boolean hasStableIds() {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            return false;
         }
 
         @Override
         public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
             ViewGroup pageView;
             pageView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
-            if (b){
+            if (b) {
                 ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
             }
             TextView title = (TextView) pageView.findViewById(R.id.page_title);
-            switch (i){
+            switch (i) {
                 case 0:
                     title.setText(R.string.partGeneralInformation);
                     break;
@@ -209,36 +297,42 @@ public class PartActivity extends ElementActivity {
         @Override
         public View getChildView(int i, int i2, boolean b, View view, ViewGroup viewGroup) {
             View rowView = null;
-            switch (i){
+            switch (i) {
                 case 0://Part general information
                     String[] fieldNames = getResources().getStringArray(R.array.partGeneralInformationFieldNames);
                     String[] fieldValues = part.getGeneralInformationValues(PartActivity.this);
                     rowView = createNameValuePairRowView(fieldNames[i2], fieldValues[i2]);
                     break;
                 case 1://CAD file
-                    try{
-                        rowView = createFileRowView(part.getCADFileName(), part.getCADFileUrl());
-                    }catch (NullPointerException e){
+                    try {
+//                        rowView = createFileRowView(part.getCADFileName(), part.getCADFileUrl());
+                        rowView = createFileRowView(part);
+                    }
+                    catch (NullPointerException e) {
                         return createNoContentFoundRowView(R.string.partNoCADFile);
                     }
                     break;
                 case 2: //Components
-                    try{
+                    try {
                         Part.Component component = part.getComponent(i2);
                         rowView = createComponentRowView(component.getAmount(), component.getNumber());
-                    }catch (NullPointerException e){
+                    }
+                    catch (NullPointerException e) {
                         return createNoContentFoundRowView(R.string.partNoComponents);
-                    }catch (ArrayIndexOutOfBoundsException e){
+                    }
+                    catch (ArrayIndexOutOfBoundsException e) {
                         return createNoContentFoundRowView(R.string.partNoComponents);
                     }
                     break;
                 case 3: //Linked documents
-                    try{
+                    try {
                         String linkedDocument = part.getLinkedDocument(i2);
                         rowView = createLinkedDocumentRowView(linkedDocument);
-                    }catch (NullPointerException e){
+                    }
+                    catch (NullPointerException e) {
                         return createNoContentFoundRowView(R.string.partNoLinkedDocuments);
-                    }catch (ArrayIndexOutOfBoundsException e){
+                    }
+                    catch (ArrayIndexOutOfBoundsException e) {
                         return createNoContentFoundRowView(R.string.partNoLinkedDocuments);
                     }
                     break;
@@ -248,12 +342,14 @@ public class PartActivity extends ElementActivity {
                     rowView = createNameValuePairRowView(fieldNames[i2], fieldValues[i2]);
                     break;
                 case 5: //Attributes
-                    try{
+                    try {
                         Element.Attribute attribute = part.getAttribute(i2);
                         rowView = createNameValuePairRowView(attribute.getName(), attribute.getValue());
-                    }catch (ArrayIndexOutOfBoundsException e){
+                    }
+                    catch (ArrayIndexOutOfBoundsException e) {
                         rowView = createNoContentFoundRowView(R.string.partNoAttributes);
-                    }catch (NullPointerException e){
+                    }
+                    catch (NullPointerException e) {
                         rowView = createNoContentFoundRowView(R.string.partNoAttributes);
                     }
                     break;
@@ -263,27 +359,20 @@ public class PartActivity extends ElementActivity {
 
         @Override
         public boolean isChildSelectable(int i, int i2) {
-            switch (i){
+            switch (i) {
                 case 1: //CAD file
-                    if (part.getCADFileUrl() != null && part.getCADFileUrl().length()>0){
+                    if (part.getCADFileUrl() != null && part.getCADFileUrl().length() > 0) {
                         Log.i(LOG_TAG, "CAD url: " + part.getCADFileUrl());
                         return true;
                     }
                     break;
                 case 3: //Linked documents
-                    if (part.getNumberOfLinkedDocuments()>0){
+                    if (part.getNumberOfLinkedDocuments() > 0) {
                         return true;
                     }
                     break;
             }
             return false;
         }
-    }
-
-    private View createComponentRowView(int quantity, String name){
-        View rowView = getLayoutInflater().inflate(R.layout.adapter_component, null);
-        ((TextView) rowView.findViewById(R.id.componentQuantity)).setText("x" + quantity);
-        ((TextView) rowView.findViewById(R.id.componentName)).setText(name);
-        return rowView;
     }
 }

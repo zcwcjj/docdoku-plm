@@ -27,9 +27,9 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -228,7 +228,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
 //         * {@link Part} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
 //         *
 //         * @param result the {@code JSONObject} representing the {@link Part}.
-//         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
+//         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
 //         */
     }
 }

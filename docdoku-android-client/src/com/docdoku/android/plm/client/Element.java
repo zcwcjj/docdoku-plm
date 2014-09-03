@@ -119,14 +119,14 @@ public abstract class Element implements Serializable {
     }
 
     public String[] getAttributeNames() {
-        String[] attributeNames = new String[0];
+        String[] attributeNames = null;
         if (attributes != null) {
             attributeNames = new String[attributes.length];
             for (int i = 0; i < attributeNames.length; i++) {
                 attributeNames[i] = attributes[i].getName();
             }
         }
-        return attributeNames;
+        return (attributeNames != null) ? attributeNames : new String[0];
     }
 
     public String[] getAttributeValues() {

@@ -41,9 +41,9 @@ import com.docdoku.android.plm.client.GCM.GCMRegisterService;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.Session;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -195,8 +195,8 @@ public class ConnectionActivity extends Activity {
     /**
      * Attempts to download workspaces from server.
      * <p/>
-     * Starts a new {@link com.docdoku.android.plm.network.rest.HTTPGetTask} to download the workspaces, with this {@code ConnectionActivity} set as the
-     * {@link com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener}.
+     * Starts a new {@link com.docdoku.android.plm.network.HTTPGetTask} to download the workspaces, with this {@code ConnectionActivity} set as the
+     * {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener}.
      * <p/>
      * Handles the result of the request to the server.
      * <p/>
@@ -205,7 +205,7 @@ public class ConnectionActivity extends Activity {
      * specified. Otherwise, a default connection error message is specified.
      * <p>If the request was successful, the result is a {@code JSONArray} of the workspaces of which the user is a member.
      * This array of workspaces is transferred to the {@link Session} so that it can be stored in memory and in the
-     * {@code Preferences}. A new {@link com.docdoku.android.plm.network.rest.HTTPGetTask} is started to load request the server for the user's name,
+     * {@code Preferences}. A new {@link com.docdoku.android.plm.network.HTTPGetTask} is started to load request the server for the user's name,
      * to be presented instead of his login once it is obtained. If the auto connect {@code CheckBox} was checked,
      * a {@link com.docdoku.android.plm.client.GCM.GCMIntentService} is started to register for GCM messaging.
      * The {@link #endConnectionActivity()} method is called.

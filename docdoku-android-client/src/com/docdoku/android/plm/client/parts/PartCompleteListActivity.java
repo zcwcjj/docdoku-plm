@@ -30,9 +30,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.rest.HTTPGetTask;
-import com.docdoku.android.plm.network.rest.HTTPResultTask;
-import com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.HTTPGetTask;
+import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,7 +79,7 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
         footerProgressBar = new ProgressBar(this);
         partListView.addFooterView(footerProgressBar);
 
-        partsArray = new ArrayList<Part>();
+        partsArray = new ArrayList<>();
         partAdapter = new PartAdapter(partsArray);
         partListView.setAdapter(partAdapter);
 
@@ -91,7 +91,10 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
                 try {
                     String rc = result.getResultContent();
                     rc = rc.substring(0, rc.length() - 1);
-                    numPartsAvailable = Integer.parseInt(rc);
+
+                    JSONObject json = new JSONObject(rc);
+//                    numPartsAvailable = Integer.parseInt(rc);
+                    numPartsAvailable = Integer.parseInt(json.getString("count"));
                     Bundle bundle = new Bundle();
                     bundle.putInt("page", 0);
                     bundle.putString("workspace", getCurrentWorkspace());
@@ -101,6 +104,9 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
                 catch (NumberFormatException e) {
                     Log.e(LOG_TAG, "NumberFormatException: didn't correctly download_light number of pages of parts");
                     Log.e(LOG_TAG, "Number of pages result: " + result);
+                }
+                catch (JSONException e) {
+                    Log.e(LOG_TAG, "JSONException: didn't correctly parse json return");
                 }
             }
         });
@@ -174,7 +180,7 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
 //     * the <code>Loader</code> for the first page of parts.
 //     *
 //     * @param result The number of <code>Part</code>s in the workspace
-//     * @see com.docdoku.android.plm.network.rest.listeners
+//     * @see com.docdoku.android.plm.network.listeners
 //     */
 
     /**
@@ -231,6 +237,14 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
 
         private void createTask(String exec) {
             asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
+
+                /**
+                 * Handles the result of the {@link HTTPGetTask} containing a <code>JSONArray</code> of parts.
+                 * <p>Creates <code>Part</code> instances from the result and adds them to an {@code ArrayList<Document>}
+                 * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
+                 *
+                 * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
+                 */
                 @Override
                 public void onDone(HTTPResultTask result) {
                     try {
@@ -286,21 +300,11 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
         @Override
         protected void onReset() {
             Log.i(LOG_TAG, "Restarting PartLoader load for page " + startIndex / 20);
-            downloadedParts = new ArrayList<Part>();
+            downloadedParts = new ArrayList<>();
             if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
             createTask("api/workspaces/" + workspace + "/parts?start=" + startIndex);
         }
-
-//        /**
-//         * Handles the result of the {@link HTTPGetTask} containing a <code>JSONArray</code> of parts.
-//         * <p>Creates <code>Part</code> instances from the result and adds them to an {@code ArrayList<Document>}
-//         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
-//         *
-//         * @param result the query <code>String</code> result
-//         * @see com.docdoku.android.plm.network.rest.listeners.HTTPTaskDoneListener
-//         * @see Loader
-//         */
     }
 }

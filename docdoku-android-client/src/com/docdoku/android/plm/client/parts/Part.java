@@ -34,52 +34,54 @@ import java.io.Serializable;
 /**
  * Model containing the data for a part
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
-public class Part extends Element implements Serializable{
+public class Part extends Element implements Serializable {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.parts.Part";
 
-    private static final String JSON_KEY_PART_NAME = "name";
-    private static final String JSON_KEY_PART_ITERATIONS = "partIterations";
-    private static final String JSON_KEY_PART_ITERATION_NOTE = "iterationNote";
-    private static final String JSON_KEY_PART_CAD_FILE = "nativeCADFile";
-    private static final String JSON_KEY_COMPONENT_ARRAY = "components";
+    private static final String JSON_KEY_PART_NAME             = "name";
+    private static final String JSON_KEY_PART_ITERATIONS       = "partIterations";
+    private static final String JSON_KEY_PART_ITERATION_NOTE   = "iterationNote";
+    private static final String JSON_KEY_PART_CAD_FILE         = "nativeCADFile";
+    private static final String JSON_KEY_COMPONENT_ARRAY       = "components";
     private static final String JSON_KEY_COMPONENT_INFORMATION = "component";
-    private static final String JSON_KEY_COMPONENT_NUMBER = "number";
-    private static final String JSON_KEY_COMPONENT_AMOUNT = "amount";
-    private static final String JSON_KEY_PART_NUMBER = "number";
-    private static final String JSON_KEY_PART_VERSION = "version";
-    private static final String JSON_KEY_PART_LIFECYCLE_STATE = "lifeCycleState";
-    private static final String JSON_KEY_PART_STANDARD_PART = "standardPart";
+    private static final String JSON_KEY_COMPONENT_NUMBER      = "number";
+    private static final String JSON_KEY_COMPONENT_AMOUNT      = "amount";
+    private static final String JSON_KEY_PART_NUMBER           = "number";
+    private static final String JSON_KEY_PART_VERSION          = "version";
+    private static final String JSON_KEY_PART_LIFECYCLE_STATE  = "lifeCycleState";
+    private static final String JSON_KEY_PART_STANDARD_PART    = "standardPart";
 
-    private final String key;
-    private String number;
-    private String version;
-    private String nativeCADFile;
-    private String lifecycleState;
-    private boolean standardPart;
-    private Component[] components;
+    private final String      key;
+    private       String      number;
+    private       String      version;
+    private       String      nativeCADFile;
+    private       String      lifecycleState;
+    private       boolean     standardPart;
+    private       Component[] components;
 
-    public Part(String key){
+    public Part(String key) {
         this.key = key;
     }
 
-    public String[] getGeneralInformationValues(Context context){
+    public String[] getGeneralInformationValues(Context context) {
         String[] generalInformationValues = new String[10];
         generalInformationValues[0] = number;
         generalInformationValues[1] = name;
-        if (standardPart){
+        if (standardPart) {
             generalInformationValues[2] = context.getResources().getString(R.string.yes);
-        }else{
+        }
+        else {
             generalInformationValues[2] = context.getResources().getString(R.string.no);
         }
         generalInformationValues[3] = version;
         generalInformationValues[4] = authorName;
         generalInformationValues[5] = creationDate;
-        if (JSONObject.NULL.toString().equals(lifecycleState)){
+        if (JSONObject.NULL.toString().equals(lifecycleState)) {
             generalInformationValues[6] = "";
-        } else {
+        }
+        else {
             generalInformationValues[6] = lifecycleState;
         }
         generalInformationValues[7] = checkOutUserName;
@@ -88,69 +90,31 @@ public class Part extends Element implements Serializable{
         return generalInformationValues;
     }
 
-    public String getCheckOutUserName(){
-        return checkOutUserName;
-    }
-
-    public String getCheckOutUserLogin(){
-        return checkOutUserLogin;
-    }
-
-    public String getCADFileName(){
-        try{
+    public String getCADFileName() {
+        try {
             return nativeCADFile.substring(nativeCADFile.lastIndexOf("/") + 1);
-        } catch (IndexOutOfBoundsException e){
+        }
+        catch (IndexOutOfBoundsException e) {
             return nativeCADFile;
         }
     }
 
-    public String getCADFileUrl(){
+    public String getCADFileUrl() {
         return nativeCADFile;
     }
 
-    public int getNumComponents(){
-        if (components == null){
+    public int getNumComponents() {
+        if (components == null) {
             return 0;
-        }else{
+        }
+        else {
             Log.i(LOG_TAG, "Number of components found: " + components.length);
             return components.length;
         }
     }
 
-    public Component getComponent(int i){
+    public Component getComponent(int i) {
         return components[i];
-    }
-
-    @Override
-    public String[] getLastIteration(){
-        String[] result = new String[4];
-        result[0] = key + "-" + iterationNumber;
-        result[1] = iterationNote;
-        result[2] = iterationDate;
-        result[3] = iterationAuthor;
-        return result;
-    }
-
-    @Override
-    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException {
-        Object CADFile = lastIteration.get(JSON_KEY_PART_CAD_FILE);
-        if (JSONObject.NULL.equals(CADFile)){
-            nativeCADFile = null;
-        }else{
-            nativeCADFile = (String) CADFile;
-            Log.i(LOG_TAG, "CAD file downloaded: " + nativeCADFile);
-        }
-        JSONArray componentArray = lastIteration.getJSONArray(JSON_KEY_COMPONENT_ARRAY);
-        components = new Component[componentArray.length()];
-        for (int i = 0; i<components.length; i++){
-            JSONObject component = componentArray.getJSONObject(i);
-            JSONObject componentInformation = component.getJSONObject(JSON_KEY_COMPONENT_INFORMATION);
-            components[i] = new Component(componentInformation.getString(JSON_KEY_COMPONENT_NUMBER), component.getInt(JSON_KEY_COMPONENT_AMOUNT));
-        }
-    }
-
-    public String getKey(){
-        return key;
     }
 
     @Override
@@ -165,11 +129,22 @@ public class Part extends Element implements Serializable{
         return this;
     }
 
-    private void setPartDetails(String number, String version, String lifecycleState, boolean standardPart){
-        this.number = number;
-        this.version = version;
-        this.lifecycleState = lifecycleState;
-        this.standardPart = standardPart;
+    public String getCheckOutUserName() {
+        return checkOutUserName;
+    }
+
+    public String getCheckOutUserLogin() {
+        return checkOutUserLogin;
+    }
+
+    @Override
+    protected String getIterationNoteJSONKey() {
+        return JSON_KEY_PART_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    protected String getNameJSONKey() {
+        return JSON_KEY_PART_NAME;
     }
 
     /**
@@ -181,8 +156,22 @@ public class Part extends Element implements Serializable{
     }
 
     @Override
-    protected String getIterationNoteJSONKey() {
-        return JSON_KEY_PART_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+    protected void updateLastIterationFromJSON(JSONObject lastIteration) throws JSONException {
+        Object CADFile = lastIteration.get(JSON_KEY_PART_CAD_FILE);
+        if (JSONObject.NULL.equals(CADFile)) {
+            nativeCADFile = null;
+        }
+        else {
+            nativeCADFile = (String) CADFile;
+            Log.i(LOG_TAG, "CAD file downloaded: " + nativeCADFile);
+        }
+        JSONArray componentArray = lastIteration.getJSONArray(JSON_KEY_COMPONENT_ARRAY);
+        components = new Component[componentArray.length()];
+        for (int i = 0; i < components.length; i++) {
+            JSONObject component = componentArray.getJSONObject(i);
+            JSONObject componentInformation = component.getJSONObject(JSON_KEY_COMPONENT_INFORMATION);
+            components[i] = new Component(componentInformation.getString(JSON_KEY_COMPONENT_NUMBER), component.getInt(JSON_KEY_COMPONENT_AMOUNT));
+        }
     }
 
     @Override
@@ -191,20 +180,36 @@ public class Part extends Element implements Serializable{
     }
 
     @Override
-    protected String getNameJSONKey() {
-        return JSON_KEY_PART_NAME;
+    public String[] getLastIteration() {
+        String[] result = new String[4];
+        result[0] = key + "-" + iterationNumber;
+        result[1] = iterationNote;
+        result[2] = iterationDate;
+        result[3] = iterationAuthor;
+        return result;
     }
 
-    public class Component implements Serializable{
-        private final String number;
-        private final int amount;
+    public String getKey() {
+        return key;
+    }
 
-        public Component(String number, int amount){
+    private void setPartDetails(String number, String version, String lifecycleState, boolean standardPart) {
+        this.number = number;
+        this.version = version;
+        this.lifecycleState = lifecycleState;
+        this.standardPart = standardPart;
+    }
+
+    public class Component implements Serializable {
+        private final String number;
+        private final int    amount;
+
+        public Component(String number, int amount) {
             this.number = number;
             this.amount = amount;
         }
 
-        public String getNumber(){
+        public String getNumber() {
             return number;
         }
 
