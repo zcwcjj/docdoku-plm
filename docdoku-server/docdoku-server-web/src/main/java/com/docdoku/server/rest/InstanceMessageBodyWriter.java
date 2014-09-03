@@ -140,6 +140,8 @@ public class InstanceMessageBodyWriter implements MessageBodyWriter<InstanceColl
                 }
                 jg.writeEnd();
 
+                jg.write("nativeCADFile", partI.getNativeCADFile().getFullName());
+
                 jg.writeStartArray("attributes");
                 for(InstanceAttributeDTO a:attributes){
                     jg.writeStartObject();
