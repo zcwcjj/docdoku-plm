@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
+    <LinearLayout android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -23,16 +23,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:text="@string/loading"/>
+                android:text="@string/net_loading"/>
 
         </LinearLayout>
 
         <ListView
-                android:layout_marginTop="2px"
+                android:layout_marginTop="2dp"
                 android:id="@+id/elementList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:listSelector="@color/background"
+                android:listSelector="@android:color/transparent"
                 android:divider="@null"/>
 
     </LinearLayout>

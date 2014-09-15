@@ -81,6 +81,8 @@ public abstract class PartListActivity extends SearchActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_list);
 
+        setTitle(getResources().getString(R.string.act_parts_list));
+
         loading = findViewById(R.id.loading);
 
         partListView = (ListView) findViewById(R.id.elementList);
@@ -239,20 +241,21 @@ public abstract class PartListActivity extends SearchActionBarActivity {
          */
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-//            if (view == null) {
             final Part part = parts.get(i);
             if (part == null) {
                 view = new ProgressBar(PartListActivity.this);
             }
             else {
                 view = inflater.inflate(R.layout.adapter_part, null);
+
                 TextView identification = (TextView) view.findViewById(R.id.identification);
                 identification.setText(part.getKey());
                 ImageView checkedInOutImage = (ImageView) view.findViewById(R.id.checkedInOutImage);
+                TextView iterationNumberBox = (TextView) view.findViewById(R.id.iterationNumber);
+                iterationNumberBox.setText(String.valueOf(part.getIterationNumber()));
 
                 if (part.getAuthor() == null) {
-                    checkedInOutImage.setImageResource(R.drawable.error_light);
-                    View iterationNumberBox = view.findViewById(R.id.iterationNumberBox);
+                    checkedInOutImage.setImageResource(R.drawable.ic_error_light);
                     ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
                 }
                 else {
@@ -260,11 +263,14 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                     if (reservedByName != null) {
                         String reservedByLogin = part.getCheckOutUserLogin();
                         if (reservedByLogin.equals(getCurrentUserLogin())) {
-                            checkedInOutImage.setImageResource(R.drawable.checked_out_current_user_light);
+                            checkedInOutImage.setImageResource(R.drawable.ic_checked_out_light);
+                        }
+                        else {
+                            checkedInOutImage.setImageResource(R.drawable.ic_checked_out_locked_light);
                         }
                     }
                     else {
-                        checkedInOutImage.setImageResource(R.drawable.checked_in_light);
+                        checkedInOutImage.setImageResource(R.drawable.ic_all_items_light);
                     }
                     TextView lastIteration = (TextView) view.findViewById(R.id.lastIteration);
                     try {
@@ -277,8 +283,15 @@ public abstract class PartListActivity extends SearchActionBarActivity {
                         lastIteration.setText("");
                     }
                 }
+
+                View numAttachedFiles = view.findViewById(R.id.attachedFilesIndicator);
+                if (part.getCADFileUrl() == null || part.getCADFileUrl().isEmpty()) {
+                    numAttachedFiles.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    numAttachedFiles.setVisibility(View.VISIBLE);
+                }
             }
-//            }
 
             return view;
         }

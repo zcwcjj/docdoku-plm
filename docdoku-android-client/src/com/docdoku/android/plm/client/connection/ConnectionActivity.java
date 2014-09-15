@@ -176,7 +176,7 @@ public class ConnectionActivity extends Activity {
             progressDialog = new ProgressDialog(ConnectionActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setMessage(getResources().getString(R.string.connectingToServer));
+            progressDialog.setMessage(getResources().getString(R.string.net_connecting_server));
             progressDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
@@ -188,7 +188,7 @@ public class ConnectionActivity extends Activity {
         }
         else {
             Log.i(LOG_TAG, "No internet connection available");
-            createErrorDialog(R.string.noConnectionAvailable);
+            createErrorDialog(R.string.net_no_connection_available);
         }
     }
 
@@ -262,13 +262,13 @@ public class ConnectionActivity extends Activity {
                     endConnectionActivity();
                 }
                 else if (result.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    createErrorDialog(R.string.wrongUsernamePassword);
+                    createErrorDialog(R.string.dialog_connection_login_error);
                 }
                 else if (result.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    createErrorDialog(R.string.serverUrlError);
+                    createErrorDialog(R.string.net_server_url_error);
                 }
                 else {
-                    createErrorDialog(R.string.connectionError);
+                    createErrorDialog(R.string.net_connection_error);
                 }
             }
         });
@@ -387,7 +387,7 @@ public class ConnectionActivity extends Activity {
      */
     private void createErrorDialog(int messageId) {
         new AlertDialog.Builder(this)
-                .setIcon(R.drawable.error_light)
+                .setIcon(R.drawable.ic_error_blue)
                 .setMessage(messageId)
                 .setNegativeButton(getResources().getString(R.string.OK), null)
                 .create().show();

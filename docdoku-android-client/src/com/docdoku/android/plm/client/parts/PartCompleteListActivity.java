@@ -174,22 +174,13 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
     public void onLoaderReset(Loader<List<Part>> partLoader) {
     }
 
-//    /**
-//     * Handles the result of the query for the number of parts in the workspace.
-//     * <p>Registers the result. Removes the <code>View</code> that indicated that a loading was taking place. Starts
-//     * the <code>Loader</code> for the first page of parts.
-//     *
-//     * @param result The number of <code>Part</code>s in the workspace
-//     * @see com.docdoku.android.plm.network.listeners
-//     */
-
     /**
      * @return
      * @see com.docdoku.android.plm.client.SimpleActionBarActivity
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.allParts;
+        return R.id.menuAllParts;
     }
 
     /**

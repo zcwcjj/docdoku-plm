@@ -132,7 +132,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
         final MenuFragment menuFragment = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
         menuFragment.setCurrentActivity(getActivityButtonId());
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.navigation_drawer, 0, 0) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_navigation_blue, 0, 0) {
             @Override
             public void onDrawerClosed(View view) {
                 if (menuFragment.isWorkspaceChanged()) {
@@ -175,7 +175,7 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_simple, menu);
+        inflater.inflate(R.menu.action_bar_search, menu);
         return true;
     }
 
@@ -194,15 +194,15 @@ public abstract class SimpleActionBarActivity extends FragmentActivity {
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.menu_users:
+            case R.id.menu_share:
                 Intent intent = new Intent(this, UserListActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.menu_logout:
                 new AlertDialog.Builder(this)
-                        .setIcon(R.drawable.logout_light)
+                        .setIcon(R.drawable.ic_logout_blue)
                         .setTitle(" ")
-                        .setMessage(getResources().getString(R.string.confirmDisconnect))
+                        .setMessage(getResources().getString(R.string.dialog_connection_confirm_disconnect))
                         .setNegativeButton(getResources().getString(R.string.no), null)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override

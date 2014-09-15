@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/imageView"
             android:layout_gravity="center"
-            android:src="@drawable/empty_attribute"/>
+            android:src="@drawable/ic_attribute_none_dark"/>
 
     <TextView
             android:id="@+id/message"

@@ -2,12 +2,11 @@
 <resources>
     <color name="background">#ff003fb8</color>
     <color name="background_light">#fff3f3f3</color>
-    <color name="transparent">#00000000</color>
     <color name="lightGrey">#ffd5d5d5</color>
     <color name="darkGrey">#666</color>
     <color name="white">#fff</color>
-    <color name="transparentWhite">#aaffffff</color>
-    <color name="veryTransparentWhite">#55ffffff</color>
+    <color name="transparentWhite">#aaff001c</color>
+    <color name="NiobeBlue">#ff607D8B</color>
     <color name="lightBlue">#33b5e5</color>
     <color name="lightBlueTransparent">#6633b5e5</color>
     <color name="lightBlueTransparentOnBackground">#ff104198</color>

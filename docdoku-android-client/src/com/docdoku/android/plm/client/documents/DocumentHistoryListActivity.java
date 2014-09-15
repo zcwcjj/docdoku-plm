@@ -143,7 +143,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.recentlyViewedDocuments;
+        return R.id.menuRecentlyViewedDocuments;
     }
 
     /**
@@ -159,6 +159,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
             super(context);
             this.elementId = elementId;
             this.workspace = workspace;
+            Log.d(LOG_TAG, elementId +" " + workspace);
         }
 
         /**
@@ -225,7 +226,6 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
                     }
                     catch (JSONException e) {
                         Log.e(LOG_TAG, "Error handling json object of a document");
-                        e.printStackTrace();
                         Log.i(LOG_TAG, "Error message: " + e.getMessage());
                         document = new Document(elementId);
                     }
@@ -234,7 +234,5 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
             });
             asyncTask.execute(exec);
         }
-
-
     }
 }

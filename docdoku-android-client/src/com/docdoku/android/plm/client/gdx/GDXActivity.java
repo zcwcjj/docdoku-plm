@@ -10,8 +10,6 @@ import com.docdoku.android.plm.client.parts.PartActivity;
 
 
 public class GDXActivity extends AndroidApplication {
-
-
     private static final String LOG_TAG = "com.docdoku.android.plm.client.gdx.GDXActivity";
 
     @Override
@@ -30,6 +28,7 @@ public class GDXActivity extends AndroidApplication {
         setContentView(layout);
 
     }
+
 
     // TODO implement JSON Processing from POC (needed for assembling parts)
     // This is copy paste from poc !

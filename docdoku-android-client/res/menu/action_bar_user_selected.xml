@@ -2,15 +2,15 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/call"
-            android:icon="@drawable/call_light"
-            android:title="@string/call"
+            android:icon="@drawable/ic_call_dark"
+            android:title="@string/menu_bar_call"
             android:showAsAction="always"/>
     <item android:id="@+id/sendSMS"
-            android:icon="@drawable/sms_light"
-            android:title="@string/sendSMS"
+            android:icon="@drawable/ic_sms_dark"
+            android:title="@string/menu_bar_send_SMS"
             android:showAsAction="always"/>
     <item android:id="@+id/sendEmails"
-          android:icon="@drawable/email_new_light"
-          android:title="@string/sendEmail"
+          android:icon="@drawable/ic_new_email_dark"
+          android:title="@string/menu_bar_send_mail"
           android:showAsAction="always"/>
 </menu>

@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DPLM</string>
-    <string name="app_title">DocDokuPLM</string>
+    <string name="app_name">DocDokuPLM</string>
+
+    <!-- Activities name -->
+    <string name="act_document">Document :</string>
+    <string name="act_document_search">Recherche documents</string>
+    <string name="act_documents_list">Documents</string>
+    <string name="act_documents_history">Historique documents</string>
+    <string name="act_documents_reserved">Documents reservés</string>
+    <string name="act_part">Article :</string>
+    <string name="act_part_search">Recherche articles</string>
+    <string name="act_parts_list">Articles</string>
+    <string name="act_parts_history">Historique articles</string>
+    <string name="act_parts_reserved">Articles reservés</string>
+    <string name="act_user">Utilisateurs</string>
+    <string name="act_folder">Dossier :</string>
+    <string name="act_folders_list">Dossiers</string>
+    <string name="act_gdx">Visualisateur 3D :</string>
 
     <!-- Connection/Disconnection strings -->
-    <string name="url">Url du serveur:</string>
-    <string name="urlPrompt">docdokuplm.net</string>
-    <string name="login">Utilisateur:</string>
-    <string name="password">Mot de passe:</string>
-    <string name="autoConnect">Connection Automatique</string>
-    <string name="wrongUsernamePassword">Erreur de nom d\'utilisateur ou de mot de passe</string>
-    <string name="confirmDisconnect">Êtes vous sûr de vouloir vous déconnecter?
-        \n Toutes les données de navigation seront effacées</string>
+    <string name="form_connection_url">Serveur :</string>
+    <string name="form_connection_url_placeholder">docdokuplm.net</string>
+    <string name="form_connection_login">Utilisateur :</string>
+    <string name="form_connection_password">Mot de passe:</string>
+    <string name="form_connection_auto_connect">Connexion Automatique</string>
+    <string name="dialog_connection_login_error">Erreur de nom d\'utilisateur ou de mot de passe</string>
+    <string name="dialog_connection_confirm_disconnect">Voulez-vous vous déconnecter ?</string>
+
+    <!-- Close/Quit application strings -->
+    <string name="dialog_app_close">Fermer l\'application</string>
+    <string name="dialog_app_confirm_close">Souhaitez-vous fermer le DPLM ?</string>
 
     <!-- Useful strings -->
     <string name="yes">Oui</string>
@@ -29,61 +47,58 @@
     <string name="yesterday">hier</string>
 
     <!-- Network interaction -->
-    <string name="connection">Connexion</string>
-    <string name="connectingToServer">Connexion au serveur en cours</string>
-    <string name="noConnectionAvailable">Aucune connexion internet disponible</string>
-    <string name="connectionError">Erreur de connexion</string>
-    <string name="serverUrlError">Erreur dans l\'url du serveur</string>
-    <string name="loading">Chargement en cours, veuillez patienter...</string>
-    <string name="downloadingFile">Téléchargement du fichier en cours...</string>
-    <string name="loadingFile">Chargement en cours...</string>
-    <string name="fileDownloadFail">Echec du téléchargement du fichier</string>
-    <string name="uploadingFile">Chargement du fichier en cours...</string>
-    <string name="fileUploadFail">Echec du chargement du fichier</string>
-    <string name="chooseHowToOpenFile">Choisir avec quel programme ouvrir le fichier</string>
+    <string name="net_connection">Connexion</string>
+    <string name="net_connecting_server">Connexion au serveur en cours</string>
+    <string name="net_no_connection_available">Aucune connexion internet disponible</string>
+    <string name="net_connection_error">Erreur de connexion</string>
+    <string name="net_server_url_error">Erreur dans l\'url du serveur</string>
+    <string name="net_loading">Chargement en cours, veuillez patienter…</string>
+    <string name="net_downloading">Téléchargement en cours…</string>
+    <string name="net_download_failed">Echec du téléchargement</string>
+    <string name="net_uploading">Envoi en cours…</string>
+    <string name="net_upload_failed">Echec de l\'envoi</string>
+
+    <string name="dialog_choose_opening_app">Sélectionnez le programme pour ouvrir le fichier</string>
 
     <!-- Menu -->
-    <string name="workspace">Espace de Travail</string>
-    <string name="documents">Documents</string>
-    <string name="documentSearch">Rechercher</string>
-    <string name="documentHistory">Historique</string>
-    <string name="allDocuments">Tous</string>
-    <string name="checkedOutDocuments">Réservés</string>
-    <string name="documentFolders">Dossiers</string>
-    <string name="parts">Articles</string>
-    <string name="partSearch">Rechercher</string>
-    <string name="partHistory">Historique</string>
-    <string name="allParts">Tous</string>
-    <string name="emptyMenuItem">........................................</string>
+    <string name="menu_workspace">Espace de Travail</string>
+    <string name="menu_documents">Documents</string>
+    <string name="menu_document_search">Rechercher</string>
+    <string name="menu_documents_history">Historique</string>
+    <string name="menu_all_documents">Tous</string>
+    <string name="menu_checked_out_documents">Réservés</string>
+    <string name="menu_document_folders">Dossiers</string>
+    <string name="menu_parts">Articles</string>
+    <string name="menu_part_search">Rechercher</string>
+    <string name="menu_parts_history">Historique</string>
+    <string name="menu_all_parts">Tous</string>
 
-    <!-- Activity labels for action bar -->
-    <string name="allDocumentListTitle">Tous les documents</string>
-    <string name="allPartsListTitle">Tous les articles</string>
-    <string name="documentHistoryListTitle">Historique des documents</string>
-    <string name="partHistoryListTitle">Historique des articles</string>
-    <string name="usersActivityTitle">Utilisateurs</string>
-    <string name="checkedOutDocumentsActivityTitle">Documents réservés</string>
-
-    <!-- Title bars -->
-    <string name="search">Rechercher</string>
-    <string name="users">Utilisateurs</string>
-    <string name="logout">Se déconnecter</string>
-    <string name="sendEmail">Envoyer eMail</string>
-    <string name="call">Appeler</string>
-    <string name="sendSMS">Envoyer SMS</string>
-    <string name="createContact">Créer contact</string>
+    <!-- Search bar -->
+    <string name="menu_bar_search">Rechercher</string>
+    <string name="menu_bar_users">Utilisateurs</string>
+    <string name="menu_bar_share">Partager</string>
+    <string name="menu_bar_logout">Se déconnecter</string>
+    <string name="menu_bar_send_mail">Envoyer eMail</string>
+    <string name="menu_bar_call">Appeler</string>
+    <string name="menu_bar_send_SMS">Envoyer SMS</string>
+    <string name="menu_bar_create_contact">Créer un contact</string>
 
     <!-- Checkin/Checkout -->
-    <string name="checkin">Libérer</string>
-    <string name="checkOut">Réserver</string>
-    <string name="checkOutConfirm">Réserver?</string>
-    <string name="checkInConfirm">Libérer?</string>
-    <string name="doCheckIn">Libérer</string>
-    <string name="cancelCheckOut">Annuler la réservation</string>
-    <string name="iterationNotePrompt">Entrez une note de révision si vous le souhaitez: </string>
-    <string name="locked">Réservé</string>
-    <string name="checkInSuccessful">Libération réussie</string>
-    <string name="checkOutSuccessful">Réservation réussie</string>
+    <string name="dialog_check_out">Réserver</string>
+    <string name="dialog_check_out_confirm">Réserver la ressource ?</string>
+    <string name="dialog_cancel_check_out">Annuler la réservation</string>
+    <string name="dialog_check_out_successful">Réservation réussie</string>
+    <string name="state_checked_out">Réservé</string>
+    <string name="state_locked">Réservé</string>
+
+    <string name="dialog_cancel_action">Ne rien faire</string>
+
+    <string name="dialog_check_in">Libérer</string>
+    <string name="dialog_check_in_confirm">Libérer la ressource ?</string>
+    <string name="dialog_do_check_in">Libérer</string>
+    <string name="dialog_check_in_note">Saisissez une note de révision si vous le souhaitez :</string>
+    <string name="diaog_check_in_successful">Libération réussie</string>
+    <string name="state_checked_in">Libéré</string>
 
     <!-- Last iteration information -->
     <string-array name="iterationFieldNames">
@@ -92,8 +107,6 @@
         <item>Date de modification</item>
         <item>Auteur</item>
     </string-array>
-
-    <string name="downloadSuccessToPath">Document downloaded to %1$s</string>
 
     <!-- Users -->
     <string name="userSendEmail">Envoyer email</string>
@@ -105,6 +118,6 @@
     </string-array>
     <string name="userSearch">Nom d\'utilisateur</string>
     <string name="userLoadError">Erreur dans le chargement de la liste des utilisateurs</string>
-    <string name="userLoadInProgress">Chargement de la liste des utilisateurs en cours...</string>
+    <string name="userLoadInProgress">Chargement de la liste des utilisateurs en cours…</string>
 
 </resources>

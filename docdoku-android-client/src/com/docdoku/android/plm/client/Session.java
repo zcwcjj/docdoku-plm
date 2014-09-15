@@ -186,7 +186,7 @@ public final class Session {
     public void setDownloadedWorkspaces(Context context, String[] downloadedWorkspaces) {
         this.downloadedWorkspaces = downloadedWorkspaces;
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_SESSION, Context.MODE_PRIVATE);
-        Set<String> workspacesSet = new HashSet<String>(Arrays.asList(downloadedWorkspaces));
+        Set<String> workspacesSet = new HashSet<>(Arrays.asList(downloadedWorkspaces));
         preferences.edit()
             .putStringSet(PREFERENCE_KEY_DOWNLOADED_WORKSPACES, workspacesSet)
             .commit();

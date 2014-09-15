@@ -48,13 +48,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
     private boolean workspaceChanged = false;
 
-    private View       view;
+    private View       menuView;
     private RadioGroup workspaceRadioGroup;
     private TextView   expandRadioButtons;
-
-    private Session  session;
-    private String[] downloadedWorkspaces;
-    private String   currentWorkspace;
+    private Session    session;
+    private String[]   downloadedWorkspaces;
+    private String     currentWorkspace;
 
     /**
      * Creates the <code>View</code> for the sliding menu.
@@ -73,13 +72,13 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_menu, container);
+        menuView = inflater.inflate(R.layout.fragment_menu, container);
         workspaceChanged = false;
-        workspaceRadioGroup = (RadioGroup) view.findViewById(R.id.workspaceRadioGroup);
+        workspaceRadioGroup = (RadioGroup) menuView.findViewById(R.id.workspaceRadioGroup);
         try {
             session = Session.getSession();
             currentWorkspace = session.getCurrentWorkspace(getActivity());
-            addCurrentWorkspace(currentWorkspace, workspaceRadioGroup);
+            feedWorkspacesRadioGroup(currentWorkspace, workspaceRadioGroup);
             downloadedWorkspaces = session.getDownloadedWorkspaces(getActivity());
             if (downloadedWorkspaces.length == 1) {
                 ((ViewGroup) expandRadioButtons.getParent()).removeView(expandRadioButtons);
@@ -97,7 +96,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             workspaceRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                    RadioButton selectedWorkspace = (RadioButton) view.findViewById(radioGroup.getCheckedRadioButtonId());
+                    RadioButton selectedWorkspace = (RadioButton) menuView.findViewById(radioGroup.getCheckedRadioButtonId());
                     session.setCurrentWorkspace(getActivity(), selectedWorkspace.getText().toString());
                     workspaceChanged = true;
                 }
@@ -107,17 +106,17 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
-        view.findViewById(R.id.documentSearch).setOnClickListener(this);
-        view.findViewById(R.id.recentlyViewedDocuments).setOnClickListener(this);
-        view.findViewById(R.id.allDocuments).setOnClickListener(this);
-        view.findViewById(R.id.checkedOutDocuments).setOnClickListener(this);
-        view.findViewById(R.id.documentFolders).setOnClickListener(this);
+        menuView.findViewById(R.id.menuDocumentSearch).setOnClickListener(this);
+        menuView.findViewById(R.id.menuRecentlyViewedDocuments).setOnClickListener(this);
+        menuView.findViewById(R.id.menuAllDocuments).setOnClickListener(this);
+        menuView.findViewById(R.id.menuCheckedOutDocuments).setOnClickListener(this);
+        menuView.findViewById(R.id.menuFolders).setOnClickListener(this);
 
-        view.findViewById(R.id.partSearch).setOnClickListener(this);
-        view.findViewById(R.id.recentlyViewedParts).setOnClickListener(this);
-        view.findViewById(R.id.allParts).setOnClickListener(this);
+        menuView.findViewById(R.id.menuPartSearch).setOnClickListener(this);
+        menuView.findViewById(R.id.menuRecentlyViewedParts).setOnClickListener(this);
+        menuView.findViewById(R.id.menuAllParts).setOnClickListener(this);
 
-        return view;
+        return menuView;
     }
 
     /**
@@ -128,20 +127,19 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param workspace  the selected workspace
      * @param radioGroup the empty <code>RadioGroup</code> to be populated
      */
-    void addCurrentWorkspace(String workspace, RadioGroup radioGroup) {
+    private void feedWorkspacesRadioGroup(String workspace, RadioGroup radioGroup) {
         RadioButton radioButton;
         radioButton = new RadioButton(getActivity());
         radioButton.setText(workspace);
-        radioButton.setTextColor(R.color.darkGrey);
+        radioButton.setTextColor(getResources().getColor(R.color.darkGrey));
         radioGroup.addView(radioButton);
         radioGroup.check(radioButton.getId());
         expandRadioButtons = new TextView(getActivity());
         expandRadioButtons.setText("...");
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         expandRadioButtons.setLayoutParams(params);
         expandRadioButtons.setGravity(Gravity.CENTER_HORIZONTAL);
-        expandRadioButtons.setBackgroundResource(R.drawable.selector_background);
+        expandRadioButtons.setBackgroundResource(R.drawable.menu_item);
         radioGroup.addView(expandRadioButtons);
     }
 
@@ -153,17 +151,17 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param workspaces the list of downloaded workspaces
      * @param radioGroup the <code>RadioGroup</code>, containing only one child <code>View</code>, which is the selected workspace
      */
-    void addWorkspaces(String[] workspaces, RadioGroup radioGroup) {
+    private void addWorkspaces(String[] workspaces, RadioGroup radioGroup) {
         int selectedButtonId = radioGroup.getCheckedRadioButtonId();
-        if (selectedButtonId != -1) {
-            radioGroup.removeView(view.findViewById(selectedButtonId));
+        if (selectedButtonId != RadioGroup.NO_ID) {
+            radioGroup.removeView(menuView.findViewById(selectedButtonId));
         }
         workspaceChanged = false;
         for (String workspace : workspaces) {
             RadioButton radioButton;
             radioButton = new RadioButton(getActivity());
             radioButton.setText(workspace);
-            radioButton.setTextColor(R.color.darkGrey);
+            radioButton.setTextColor(getResources().getColor(R.color.darkGrey));
             radioGroup.addView(radioButton);
             if (workspace.equals(currentWorkspace)) {
                 radioGroup.check(radioButton.getId());
@@ -177,7 +175,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
      * @param buttonId The id of the item linking to the current <code>Activity</code>, if such an item exists.
      */
     public void setCurrentActivity(int buttonId) {
-        View activityView = view.findViewById(buttonId);
+        View activityView = menuView.findViewById(buttonId);
         if (activityView != null) {
             activityView.setSelected(true);
         }
@@ -197,33 +195,34 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
         int viewId = view.getId();
         Intent intent = null;
         switch (viewId) {
-            case R.id.documentSearch:
+            case R.id.menuDocumentSearch:
                 intent = new Intent(getActivity(), DocumentSearchActivity.class);
                 break;
-            case R.id.recentlyViewedDocuments:
+            case R.id.menuRecentlyViewedDocuments:
                 intent = new Intent(getActivity(), DocumentHistoryListActivity.class);
                 break;
-            case R.id.allDocuments:
+            case R.id.menuAllDocuments:
                 intent = new Intent(getActivity(), DocumentCompleteListActivity.class);
                 break;
-            case R.id.documentFolders:
+            case R.id.menuFolders:
                 intent = new Intent(getActivity(), DocumentFoldersActivity.class);
                 break;
-            case R.id.checkedOutDocuments:
+            case R.id.menuCheckedOutDocuments:
                 intent = new Intent(getActivity(), DocumentSimpleListActivity.class);
                 intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.CHECKED_OUT_DOCUMENTS_LIST);
                 break;
-            case R.id.partSearch:
+            case R.id.menuPartSearch:
                 intent = new Intent(getActivity(), PartSearchActivity.class);
                 break;
-            case R.id.recentlyViewedParts:
+            case R.id.menuRecentlyViewedParts:
                 intent = new Intent(getActivity(), PartHistoryListActivity.class);
                 break;
-            case R.id.allParts:
+            case R.id.menuAllParts:
                 intent = new Intent(getActivity(), PartCompleteListActivity.class);
                 break;
         }
         if (intent != null) {
+            intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         }
     }

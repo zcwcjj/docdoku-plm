@@ -60,7 +60,7 @@ public class PartActivity extends ElementActivity {
     private static final int             NUM_REVISION_FIELDS            = 4;
     public static        Array<PLMModel> plmmodels                      = new Array<>();
     private Part           part;
-    private ProgressDialog fileDownloadProgressDialog;
+    private ProgressDialog loadingDialog;
     ;
 
     /**
@@ -80,37 +80,13 @@ public class PartActivity extends ElementActivity {
         Intent intent = getIntent();
         part = (Part) intent.getSerializableExtra(PART_EXTRA);
 
+        setTitle(getTitle() + " "  + part.getKey());
+
         ExpandableListView expandableListView = (ExpandableListView) findViewById(R.id.list);
-        expandableListView.addHeaderView(createHeaderView());
-        expandableListView.setAdapter(new PartDetailsExpandableListAdapter());
+        expandableListView.addHeaderView(createHeaderView((ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null), part));
+        adapter = new PartDetailsExpandableListAdapter();
+        expandableListView.setAdapter(adapter);
         expandableListView.expandGroup(0);
-    }
-
-    private View createHeaderView() {
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
-        TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
-        documentReference.setText(part.getKey());
-
-        ToggleButton notifyIteration = (ToggleButton) header.findViewById(R.id.notifyIteration);
-        notifyIteration.setVisibility(View.INVISIBLE);
-        ToggleButton notifyStateChange = (ToggleButton) header.findViewById(R.id.notifyStateChange);
-        notifyStateChange.setVisibility(View.INVISIBLE);
-
-        checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
-        if (part.getCheckOutUserLogin() != null) {
-            if (getCurrentUserLogin().equals(part.getCheckOutUserLogin())) {
-                setElementCheckedOutByCurrentUser();
-            }
-            else {
-                checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
-                checkInOutButton.setClickable(false);
-                checkInOutButton.setText(R.string.locked);
-            }
-        }
-        else {
-            setElementCheckedIn();
-        }
-        return header;
     }
 
     /* TODO before refactor Part / PartActivity / Element / ElementActivity / Document / DocumentActivity
@@ -118,28 +94,33 @@ public class PartActivity extends ElementActivity {
     protected View createFileRowView(final Part part) {
         View rowView = getLayoutInflater().inflate(R.layout.adapter_dowloadable_file, null);
         TextView fileNameField = (TextView) rowView.findViewById(R.id.fileName);
+        ImageView icon = (ImageView) rowView.findViewById(R.id.iconFile);
+        final boolean isObj = part.getCADFileName().endsWith(".obj");
+        if (isObj) {
+            icon.setImageDrawable(getResources().getDrawable(R.drawable.objfile));
+        }
+
         fileNameField.setText(part.getCADFileName());
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fileDownloadProgressDialog = new ProgressDialog(PartActivity.this);
-                fileDownloadProgressDialog.setTitle(R.string.loadingFile);
-                fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                fileDownloadProgressDialog.setIndeterminate(true);
+                loadingDialog = new ProgressDialog(PartActivity.this);
+                loadingDialog.setTitle(R.string.net_loading);
+                loadingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                loadingDialog.setIndeterminate(true);
 
-                fileDownloadProgressDialog.show();
+                loadingDialog.show();
 
                 final String dest = getExternalCacheDir() + "/" + part.getCADFileUrl().replaceAll(part.getCADFileName(), "");
                 HTTPDownloadTask task = new HTTPDownloadTask(new HTTPTaskDoneListener() {
                     @Override
                     public void onDone(HTTPResultTask result) {
-                        fileDownloadProgressDialog.dismiss();
+                        loadingDialog.dismiss();
                         if (result.isSucceed()) {
-                            Toast.makeText(PartActivity.this, getResources().getString(R.string.downloadSuccessToPath, getExternalCacheDir() + part.getCADFileUrl()), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
                             intent.setAction(Intent.ACTION_VIEW);
 
-                            if (part.getCADFileName().endsWith(".obj")) {
+                            if (isObj) {
                                 PLMModel plmmodel = new PLMModel(part.getKey(),
                                         "partiterationID",
                                         new Matrix4(),
@@ -160,12 +141,12 @@ public class PartActivity extends ElementActivity {
 
                                 intent.setDataAndType(Uri.fromFile(file), type);
 
-                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
+                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
                             }
 
                         }
                         else {
-                            Toast.makeText(PartActivity.this, R.string.fileDownloadFail, Toast.LENGTH_LONG).show();
+                            Toast.makeText(PartActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -270,7 +251,7 @@ public class PartActivity extends ElementActivity {
             if (b) {
                 ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
             }
-            TextView title = (TextView) pageView.findViewById(R.id.page_title);
+            TextView title = (TextView) pageView.findViewById(R.id.section_title);
             switch (i) {
                 case 0:
                     title.setText(R.string.partGeneralInformation);

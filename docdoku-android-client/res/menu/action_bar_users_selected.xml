@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/sendSMS"
-          android:icon="@drawable/sms_light"
-          android:title="@string/sendSMS"
-          android:showAsAction="always"/>
-    <item android:id="@+id/sendEmails"
-          android:icon="@drawable/email_new_light"
-          android:title="@string/sendEmail"
-          android:showAsAction="always|withText"/>
+    <application android:theme="@style/Theme.ActionBar"/>
+    <item
+            android:id="@+id/sendSMS"
+            android:icon="@android:drawable/sym_action_chat"
+            android:title="@string/menu_bar_send_SMS"
+            android:showAsAction="always"/>
+    <item
+            android:id="@+id/sendEmails"
+            android:icon="@drawable/ic_new_email_dark"
+            android:title="@string/menu_bar_send_mail"
+            android:showAsAction="always"/>
 </menu>

@@ -50,7 +50,7 @@ public class User {
         this.email = email;
         this.login = login;
         existsOnPhone = false;
-        phoneNumbers = new ArrayList<PhoneNumber>();
+        phoneNumbers = new ArrayList<>();
     }
 
     public boolean existsOnPhone(){

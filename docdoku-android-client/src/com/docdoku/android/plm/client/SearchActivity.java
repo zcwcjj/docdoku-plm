@@ -58,7 +58,6 @@ public abstract class SearchActivity extends SimpleActionBarActivity {
     protected Calendar minDate, maxDate;
     private Button          author;
     private ArrayList<User> users;
-    //    private AsyncTask<String, Void, String> userLoadTask;
     private HTTPGetTask     userLoadTask;
 
     /**
@@ -73,10 +72,11 @@ public abstract class SearchActivity extends SimpleActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
         userLoadTask = new HTTPGetTask(new HTTPTaskDoneListener() {
             @Override
             public void onDone(HTTPResultTask result) {
-                users = new ArrayList<User>();
+                users = new ArrayList<>();
                 try {
                     JSONArray usersJSON = new JSONArray(result.getResultContent());
                     for (int i = 0; i < usersJSON.length(); i++) {
@@ -87,7 +87,6 @@ public abstract class SearchActivity extends SimpleActionBarActivity {
                 }
                 catch (JSONException e) {
                     Log.e(LOG_TAG, "Error handling json of workspace's users");
-                    e.printStackTrace();
                 }
             }
         });
@@ -127,8 +126,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity {
      * <br>If it isn't, then the task is assumed to have failed, and an error message is shown to the user.
      */
     private void showUserPickerDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this)
-                .setTitle(R.string.documentPickAuthor);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SearchActivity.this).setTitle(R.string.documentPickAuthor);
         if (users != null) {
             builder.setItems(getUserNames(users), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogInterface, int item) {
@@ -158,8 +156,7 @@ public abstract class SearchActivity extends SimpleActionBarActivity {
     /**
      * <code>DialogFragment</code> that allows the user to pick a date.
      */
-    static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
+    static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         Button   button;
         Calendar date;

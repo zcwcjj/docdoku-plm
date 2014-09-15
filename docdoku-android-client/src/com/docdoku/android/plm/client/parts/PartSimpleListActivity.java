@@ -86,7 +86,7 @@ public class PartSimpleListActivity extends PartListActivity {
                     ((ViewGroup) loading.getParent()).removeView(loading);
                     loading = null;
                 }
-                partsArray = new ArrayList<Part>();
+                partsArray = new ArrayList<>();
                 try {
                     JSONArray partsJSON = new JSONArray(result.getResultContent());
                     for (int i = 0; i < partsJSON.length(); i++) {
@@ -114,14 +114,6 @@ public class PartSimpleListActivity extends PartListActivity {
                 break;
         }
     }
-
-//    /**
-//     * Called when the query result is obtained.
-//     * <br>Reads the array and adds the parts to the {@code Adapter}, then notifies it that its data set has changed.
-//     *
-//     * @param result a {@code JSONArray} of {@link Part Parts}
-//     * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
-//     */
 
     /**
      * @return

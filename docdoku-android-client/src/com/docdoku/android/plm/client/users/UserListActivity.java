@@ -89,38 +89,6 @@ public class UserListActivity extends SearchActionBarActivity {
     }
 
     /**
-     * Searches on the phone contacts for one that has an email address matching the {@link User}'s.
-     * <p>
-     * If one is found, then the {@code User} is notified through {@link User#setExistsOnPhone(boolean) setExistsOnPhone()}
-     * that it exists in the phone's contacts. All the phone numbers available for this contact are added to the
-     * {@code User}'s {@code ArrayList} of phone numbers.
-     *
-     * @param user the user to search for on phone and that may be updated
-     */
-    private void searchForContactOnPhone(User user) {
-        Cursor contacts = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                ContactsContract.CommonDataKinds.Email.ADDRESS + "= ?", new String[]{user.getEmail()}, null);
-        if (contacts.moveToNext()) {
-            user.setExistsOnPhone(true);
-            String contactId = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
-            Cursor contactPhones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
-            String result = "Phone contact found with email address " + user.getEmail() +
-                    "\nId: " + contactId +
-                    "\nName: " + contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME));
-            while (contactPhones.moveToNext()) {
-                String phoneNumber = contactPhones.getString(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                int phoneTypeCode = contactPhones.getInt(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-                String phoneLabel = contactPhones.getString(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
-                String phoneType = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getResources(), phoneTypeCode, phoneLabel).toString();
-                result += "\nPhone: " + phoneNumber + ", Type: " + phoneType;
-                user.addPhoneNumber(phoneNumber, phoneType, phoneTypeCode);
-            }
-            Log.i(LOG_TAG, result);
-        }
-    }
-
-    /**
      * This {@code Activity}'s {@code Button} is in the {@code ActionBar}, not in the {@link com.docdoku.android.plm.client.MenuFragment}, so this method does
      * not provide a {@code Button} id to be highlighted.
      *
@@ -129,7 +97,7 @@ public class UserListActivity extends SearchActionBarActivity {
      */
     @Override
     protected int getActivityButtonId() {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
 
     /**
@@ -229,7 +197,7 @@ public class UserListActivity extends SearchActionBarActivity {
 
             @Override
             public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;  //To change body of implemented methods use File | Settings | File Templates.
+                return false;
             }
 
             @Override
@@ -364,9 +332,11 @@ public class UserListActivity extends SearchActionBarActivity {
     private void sendEmailToSelectedUsers() {
         Intent intent;
         intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "", null));
-        String[] checkedEmailsArray = getSelectedUsersEmail();
-        intent.putExtra(Intent.EXTRA_EMAIL, checkedEmailsArray);
+        intent.putExtra(Intent.EXTRA_EMAIL, getSelectedUsersEmail());
         intent.putExtra(Intent.EXTRA_SUBJECT, getCurrentWorkspace() + "//");
+
+        // TODO : Add attachment ?
+
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.userSendEmail)));
     }
 
@@ -381,7 +351,7 @@ public class UserListActivity extends SearchActionBarActivity {
         final String[] phoneNumbers = selectedUser.getPhoneNumbers();
         new AlertDialog.Builder(UserListActivity.this)
                 .setTitle(R.string.userChooseNumber)
-                .setIcon(R.drawable.call_light)
+                .setIcon(R.drawable.ic_call_dark)
                 .setNegativeButton(R.string.userCancelCall, null)
                 .setItems(phoneNumbers, new DialogInterface.OnClickListener() {
                     @Override
@@ -450,6 +420,38 @@ public class UserListActivity extends SearchActionBarActivity {
     }
 
     /**
+     * Searches on the phone contacts for one that has an email address matching the {@link User}'s.
+     * <p>
+     * If one is found, then the {@code User} is notified through {@link User#setExistsOnPhone(boolean) setExistsOnPhone()}
+     * that it exists in the phone's contacts. All the phone numbers available for this contact are added to the
+     * {@code User}'s {@code ArrayList} of phone numbers.
+     *
+     * @param user the user to search for on phone and that may be updated
+     */
+    private void searchForContactOnPhone(User user) {
+        Cursor contacts = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Email.ADDRESS + "= ?", new String[]{user.getEmail()}, null);
+        if (contacts.moveToNext()) {
+            user.setExistsOnPhone(true);
+            String contactId = contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
+            Cursor contactPhones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contactId}, null);
+            String result = "Phone contact found with email address " + user.getEmail() +
+                    "\nId: " + contactId +
+                    "\nName: " + contacts.getString(contacts.getColumnIndex(ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME));
+            while (contactPhones.moveToNext()) {
+                String phoneNumber = contactPhones.getString(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                int phoneTypeCode = contactPhones.getInt(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                String phoneLabel = contactPhones.getString(contactPhones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL));
+                String phoneType = ContactsContract.CommonDataKinds.Phone.getTypeLabel(getResources(), phoneTypeCode, phoneLabel).toString();
+                result += "\nPhone: " + phoneNumber + ", Type: " + phoneType;
+                user.addPhoneNumber(phoneNumber, phoneType, phoneTypeCode);
+            }
+            Log.i(LOG_TAG, result);
+        }
+    }
+
+    /**
      * Checks if all selected users exist in the phone's contacts.
      * <p>
      * Note: it does not actually check if the contacts have a phone number available for them.
@@ -508,15 +510,6 @@ public class UserListActivity extends SearchActionBarActivity {
         return null;
     }
 
-//    /**
-//     * Handles the result of the {@link HttpGetTask}.
-//     * <p>
-//     * If the query was successful, the result contains a {@code JSONArray} of the {@link User}s of the workspace. These
-//     * {@code User}s are instantiated, put in an {@code ArrayList}, and set as the data for the {@code Adapter}.
-//     *
-//     * @param result the result of the query
-//     */
-
     /**
      * Returns a {@code String[]} of the selected {@code User}'s email addresses.
      * <p>
@@ -525,7 +518,7 @@ public class UserListActivity extends SearchActionBarActivity {
      * @return
      */
     private String[] getSelectedUsersEmail() {
-        ArrayList<String> checkedEmails = new ArrayList<String>();
+        ArrayList<String> checkedEmails = new ArrayList<>();
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
         int size = checked.size();
         for (int i = 0; i < size; i++) {
@@ -550,7 +543,7 @@ public class UserListActivity extends SearchActionBarActivity {
      * @return
      */
     private String[] getSelectedUsersPhoneNumbers() {
-        ArrayList<String> checkedPhoneNumbers = new ArrayList<String>();
+        ArrayList<String> checkedPhoneNumbers = new ArrayList<>();
         SparseBooleanArray checked = userListView.getCheckedItemPositions();
         int size = checked.size();
         for (int i = 0; i < size; i++) {
@@ -671,7 +664,6 @@ public class UserListActivity extends SearchActionBarActivity {
          */
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-            if (view == null) {
                 view = inflater.inflate(R.layout.adapter_user, null);
                 User user = users.get(i);
                 final TextView username = (TextView) view.findViewById(R.id.username);
@@ -684,7 +676,7 @@ public class UserListActivity extends SearchActionBarActivity {
                 });
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
                 if (user.existsOnPhone()) {
-                    checkBox.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.user_highlighted, 0);
+                    checkBox.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_user_blue,0, 0, 0);
                 }
                 if (userListView.isItemChecked(i)) {
                     checkBox.setChecked(true);
@@ -696,7 +688,6 @@ public class UserListActivity extends SearchActionBarActivity {
                     }
                 });
 
-            }
             return view;
         }
     }
