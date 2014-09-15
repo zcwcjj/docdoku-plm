@@ -10,12 +10,12 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             style="@style/Theme.AppTheme.BigTitle"
-            android:text="@string/url"/>
+            android:text="@string/form_connection_url"/>
 
     <EditText
             android:id="@+id/urlField"
-            android:hint="@string/urlPrompt"
-            android:text="@string/urlPrompt"
+            android:hint="@string/form_connection_url_placeholder"
+            android:text="@string/form_connection_url_placeholder"
             android:layout_width="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             style="@style/Theme.AppTheme.BigTitle"
-            android:text="@string/login"/>
+            android:text="@string/form_connection_login"/>
 
     <EditText
             android:id="@+id/usernameField"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             style="@style/Theme.AppTheme.BigTitle"
-            android:text="@string/password"/>
+            android:text="@string/form_connection_password"/>
 
     <EditText
             android:id="@+id/passwordField"
@@ -53,14 +53,14 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/connection"
+            android:text="@string/net_connection"
             android:id="@+id/btnConnection"
             android:textSize="26sp"/>
 
     <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/autoConnect"
+            android:text="@string/form_connection_auto_connect"
             android:id="@+id/chkboxAutoConnect"
             android:checked="true"/>
 

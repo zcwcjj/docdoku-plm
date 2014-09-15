@@ -3,20 +3,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/selector_listview_background">
+                android:background="@drawable/item_listview">
 
     <RelativeLayout
-        android:id="@+id/contentLink"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_below="@+id/checkedInOutImage"
-        android:layout_alignParentLeft="true">
-
-        <RelativeLayout
+            android:id="@+id/contentLink"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/expand">
+            android:padding="5dp"
+            android:layout_below="@+id/checkedInOutImage"
+            android:layout_alignParentLeft="true">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/expand">
 
             <TextView
                     android:id="@+id/identification"
@@ -31,68 +31,67 @@
                     android:singleLine="true"/>
 
             <TextView
-                android:id="@+id/lastIteration"
-                style="@style/Theme.AppTheme.SmallText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/identification"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/expand"
-                android:text="@string/documentDownloadFailed"
-                android:textSize="16sp"
-                android:textColor="@color/transparentWhite"
-                android:ellipsize="start"
-                android:singleLine="true"/>
+                    android:id="@+id/lastIteration"
+                    style="@style/Theme.AppTheme.SmallText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/identification"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/expand"
+                    android:text="@string/partIteration"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/secondary_text_light"
+                    android:ellipsize="start"
+                    android:singleLine="true"/>
 
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/expand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/element_expand_light"/>
+                android:id="@+id/expand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="2dp"
+                android:src="@drawable/element_expand_light"/>
 
     </RelativeLayout>
 
     <View
             android:id="@+id/opaquePadding"
-            android:layout_height="5dp"
+            android:layout_height="2dp"
             android:layout_width="match_parent"
-            android:background="@color/background"
+            android:background="@android:color/black"
             android:layout_alignParentTop="true"/>
 
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_below="@+id/opaquePadding"
-            android:background="@color/veryTransparentWhite"/>
 
     <ImageView
             android:id="@+id/checkedInOutImage"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
-            android:padding="2px"
-            android:background="@drawable/indicator_background"
-            android:src="@drawable/checked_out_other_user_light"
+            android:layout_marginTop="1dp"
+            android:padding="2dp"
+            android:background="@drawable/item_tag_shape"
+            android:src="@drawable/ic_all_items_light"
             android:layout_alignParentStart="true"
             style="@style/Theme.AppTheme.Indicator"/>
 
     <LinearLayout
-        android:id="@+id/iterationNumberBox"
-        android:orientation="horizontal"
-        android:layout_toRightOf="@+id/checkedInOutImage"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="15dp"
-        android:padding="2px"
-        android:background="@drawable/indicator_background"
-        style="@style/Theme.AppTheme.Indicator">
+            android:id="@+id/iterationNumberBox"
+            android:orientation="horizontal"
+            android:layout_toRightOf="@+id/checkedInOutImage"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:padding="2dp"
+            android:background="@drawable/item_tag_shape"
+            style="@style/Theme.AppTheme.Indicator"
+            android:layout_marginTop="1dp">
 
         <ImageView
-            android:src="@drawable/iteration_notification_off_light"
-            style="@style/Theme.AppTheme.Indicator"/>
+                android:src="@drawable/iteration_notification_off_light"
+                style="@style/Theme.AppTheme.Indicator"
+                />
 
         <TextView
                 android:id="@+id/iterationNumber"
@@ -104,14 +103,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/attachedFilesIndicator"
-        android:orientation="horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="15dp"
-        android:padding="2px"
-        android:background="@drawable/indicator_background"
-        style="@style/Theme.AppTheme.Indicator">
+            android:id="@+id/attachedFilesIndicator"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:padding="2dp"
+            android:background="@drawable/item_tag_shape"
+            style="@style/Theme.AppTheme.Indicator"
+            android:layout_marginTop="1dp"
+            android:layout_alignParentEnd="false">
 
         <ImageView
                 android:src="@drawable/attached_file_light"

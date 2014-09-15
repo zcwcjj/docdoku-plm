@@ -80,11 +80,11 @@ public class DocumentSimpleListActivity extends DocumentListActivity {
         int listType = intent.getIntExtra(LIST_MODE_EXTRA, 0);
         switch (listType) {
             case CHECKED_OUT_DOCUMENTS_LIST:
-                activityIconId = R.id.checkedOutDocuments;
+                activityIconId = R.id.menuCheckedOutDocuments;
                 createTask().execute("api/workspaces/" + getCurrentWorkspace() + "/checkedouts/" + getCurrentUserLogin() + "/documents/");
                 break;
             case SEARCH_RESULTS_LIST:
-                activityIconId = R.id.documentSearch;
+                activityIconId = R.id.menuDocumentSearch;
                 createTask().execute("api/workspaces/" + getCurrentWorkspace() + "/search/" + intent.getStringExtra(SEARCH_QUERY_EXTRA) + "/documents/");
                 break;
         }
@@ -117,14 +117,6 @@ public class DocumentSimpleListActivity extends DocumentListActivity {
         });
         return task;
     }
-
-//    /**
-//     * Called when the query result is obtained.
-//     * <br>Reads the array and adds the documents to the {@code Adapter}, then notifies it that its data set has changed.
-//     *
-//     * @param result a {@code JSONArray} of {@link Document Documents}
-//     * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
-//     */
 
     /**
      * @return

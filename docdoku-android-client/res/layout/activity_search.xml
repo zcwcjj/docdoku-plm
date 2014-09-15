@@ -15,7 +15,7 @@
                 android:padding="15dp"
                 android:textSize="20dp"
                 android:layout_alignParentRight="true"
-                android:drawableLeft="@drawable/search_light"
+                android:drawableLeft="@drawable/ic_search_light"
                 android:drawablePadding="5dp"
                 android:text="@string/documentSearchStart"/>
 
@@ -37,6 +37,8 @@
                         android:paddingTop="15dp"/>
 
                 <EditText
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
                         android:id="@+id/id"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
@@ -49,6 +51,8 @@
                         android:paddingTop="15dp"/>
 
                 <EditText
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
                         android:id="@+id/title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
@@ -61,6 +65,8 @@
                         android:paddingTop="15dp"/>
 
                 <EditText
+                        android:inputType="text"
+                        android:imeOptions="actionSearch"
                         android:id="@+id/version"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>

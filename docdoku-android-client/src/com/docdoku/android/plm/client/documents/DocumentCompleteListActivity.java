@@ -20,11 +20,14 @@
 
 package com.docdoku.android.plm.client.documents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
@@ -81,8 +84,6 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         numDocumentsAvailable = 0;
         numPagesDownloaded = 0;
 
-//        new HttpGetTask(this).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/count");
-
         HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
             @Override
             public void onDone(HTTPResultTask result) {
@@ -129,14 +130,6 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         });
     }
 
-//    /**
-//     * Handles the result of the query for the number of documents in the workspace.
-//     * <p>Registers the result. Removes the <code>View</code> that indicated that a loading was taking place. Starts
-//     * the <code>Loader</code> for the first page of documents.
-//     *
-//     * @param result The number of <code>Document</code>s in the workspace
-//     * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
-//     */
 
     /**
      * @return
@@ -144,7 +137,7 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.allDocuments;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.menuAllDocuments;
     }
 
     /**
@@ -281,6 +274,11 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
         }
 
         private void createTask() {
+            /**
+             * Handles the result of the {@link HttpGetTask} containing a <code>JSONArray</code> of documents.
+             * <p>Creates <code>Document</code> instances from the result and adds them to an {@code ArrayList<Document>}
+             * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
+             */
             asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
                 @Override
                 public void onDone(HTTPResultTask result) {
@@ -305,15 +303,29 @@ public class DocumentCompleteListActivity extends DocumentListActivity implement
             });
             asyncTask.execute("api/workspaces/" + workspace + "/documents?start=" + startIndex);
         }
+    }
 
-//        /**
-//         * Handles the result of the {@link HttpGetTask} containing a <code>JSONArray</code> of documents.
-//         * <p>Creates <code>Document</code> instances from the result and adds them to an {@code ArrayList<Document>}
-//         * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
-//         *
-//         * @param result the query <code>String</code> result
-//         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
-//         * @see Loader
-//         */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //Handle the back button
+        if(keyCode == KeyEvent.KEYCODE_BACK && isTaskRoot()) {
+            //Ask the user if they want to quit
+            new AlertDialog.Builder(this)
+                    .setIcon(getResources().getDrawable(android.R.drawable.ic_menu_info_details))
+                    .setTitle(R.string.dialog_app_close)
+                    .setMessage(R.string.dialog_app_confirm_close)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //Stop the activity
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.no, null)
+                    .show();
+
+            return true;
+        }
+        else {
+            return super.onKeyDown(keyCode, event);
+        }
     }
 }

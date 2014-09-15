@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DPLM</string>
-    <string name="app_title">DocDokuPLM</string>
+    <string name="app_name">DocDokuPLM</string>
+
+    <!-- Activities name -->
+    <string name="act_document">Document:</string>
+    <string name="act_document_search">Documents search</string>
+    <string name="act_documents_list">Documents</string>
+    <string name="act_documents_history">History documents</string>
+    <string name="act_documents_reserved">Reserved documents</string>
+    <string name="act_part">Part:</string>
+    <string name="act_part_search">Part search</string>
+    <string name="act_parts_list">Parts</string>
+    <string name="act_parts_history">History parts</string>
+    <string name="act_parts_reserved">Reserved parts</string>
+    <string name="act_user">Users</string>
+    <string name="act_folder">Folder:</string>
+    <string name="act_folders_list">Folders</string>
+    <string name="act_gdx">Viewer 3D:</string>
 
     <!-- Connection/Disconnection strings -->
-    <string name="url">Server Url:</string>
-    <string name="urlPrompt">docdokuplm.net</string>
-    <string name="login">Username:</string>
-    <string name="password">Password:</string>
-    <string name="autoConnect">Log in automatically</string>
-    <string name="wrongUsernamePassword">Wrong username or password</string>
-    <string name="confirmDisconnect">Are you sure you want to log out?
-        \n All user data will be erased</string>
+    <string name="form_connection_url">Server URL:</string>
+    <string name="form_connection_url_placeholder">docdokuplm.net</string>
+    <string name="form_connection_login">Username:</string>
+    <string name="form_connection_password">Password:</string>
+    <string name="form_connection_auto_connect">Log in automatically</string>
+    <string name="dialog_connection_login_error">Wrong username or password</string>
+    <string name="dialog_connection_confirm_disconnect">Do you want to log out?</string>
+
+    <!-- Close/Quit application strings -->
+    <string name="dialog_app_close">Close Application</string>
+    <string name="dialog_app_confirm_close">Do you want to close the DPLM?</string>
 
     <!-- Useful strings -->
     <string name="yes">Yes</string>
@@ -29,60 +47,57 @@
     <string name="yesterday">yesterday</string>
 
     <!-- Network interaction -->
-    <string name="connection">Connection</string>
-    <string name="connectingToServer">Connecting to server</string>
-    <string name="noConnectionAvailable">Not internet connection available</string>
-    <string name="connectionError">Connection error</string>
-    <string name="serverUrlError">Url error: server not responding</string>
-    <string name="loading">Loading, please wait...</string>
-    <string name="downloadingFile">Downloading file...</string>
-    <string name="loadingFile">Loading... Please wait...</string>
-    <string name="fileDownloadFail">File download fail</string>
-    <string name="uploadingFile">Uploading file...</string>
-    <string name="fileUploadFail">File upload fail</string>
-    <string name="chooseHowToOpenFile">Choose which application to use to open file</string>
+    <string name="net_connection">Connection</string>
+    <string name="net_connecting_server">Connecting to server</string>
+    <string name="net_no_connection_available">Not internet connection available</string>
+    <string name="net_connection_error">Connection error</string>
+    <string name="net_server_url_error">Url error: server not responding</string>
+    <string name="net_loading">Loading, please wait…</string>
+    <string name="net_downloading">Downloading…</string>
+    <string name="net_download_failed">Download failed</string>
+    <string name="net_uploading">Uploading…</string>
+    <string name="net_upload_failed">File upload fail</string>
+    <string name="dialog_choose_opening_app">Choose which application to use to open file</string>
 
     <!-- Menu -->
-    <string name="workspace">Workspace</string>
-    <string name="documents">Documents</string>
-    <string name="documentSearch">Search</string>
-    <string name="documentHistory">History</string>
-    <string name="allDocuments">All</string>
-    <string name="checkedOutDocuments">Checked out by me</string>
-    <string name="documentFolders">Folders</string>
-    <string name="parts">Parts</string>
-    <string name="partSearch">Search</string>
-    <string name="partHistory">History</string>
-    <string name="allParts">All</string>
+    <string name="menu_workspace">Workspace</string>
+    <string name="menu_documents">Documents</string>
+    <string name="menu_document_search">Search</string>
+    <string name="menu_documents_history">History</string>
+    <string name="menu_all_documents">All</string>
+    <string name="menu_checked_out_documents">Checked out</string>
+    <string name="menu_document_folders">Folders</string>
+    <string name="menu_parts">Parts</string>
+    <string name="menu_part_search">Search</string>
+    <string name="menu_parts_history">History</string>
+    <string name="menu_all_parts">All</string>
 
-    <!-- Activity labels for action bar -->
-    <string name="allDocumentListTitle">All documents</string>
-    <string name="allPartsListTitle">All parts</string>
-    <string name="documentHistoryListTitle">Document history</string>
-    <string name="partHistoryListTitle">Part history</string>
-    <string name="usersActivityTitle">Users</string>
-    <string name="checkedOutDocumentsActivityTitle">Checked out documents</string>
-
-    <!-- Title bars -->
-    <string name="search">Search</string>
-    <string name="users">Users</string>
-    <string name="logout">Log out</string>
-    <string name="sendEmail">Send eMail</string>
-    <string name="call">Call</string>
-    <string name="sendSMS">Send SMS</string>
-    <string name="createContact">Create contact</string>
+    <!-- Search bar -->
+    <string name="menu_bar_search">Search</string>
+    <string name="menu_bar_users">Users</string>
+    <string name="menu_bar_share">Share</string>
+    <string name="menu_bar_logout">Log out</string>
+    <string name="menu_bar_send_mail">Send eMail</string>
+    <string name="menu_bar_call">Call</string>
+    <string name="menu_bar_send_SMS">Send SMS</string>
+    <string name="menu_bar_create_contact">Create contact</string>
 
     <!-- Checkin/Checkout -->
-    <string name="checkin">Check in</string>
-    <string name="checkOut">Check out</string>
-    <string name="checkOutConfirm">Check out?</string>
-    <string name="checkInConfirm">Check in?</string>
-    <string name="doCheckIn">Check in</string>
-    <string name="cancelCheckOut">Undo check out</string>
-    <string name="iterationNotePrompt">You may enter the revision note if you wish for the check in: </string>
-    <string name="locked">Checked Out</string>
-    <string name="checkInSuccessful">Checkin successful</string>
-    <string name="checkOutSuccessful">Checkout successful</string>
+    <string name="dialog_check_out">Check out</string>
+    <string name="dialog_check_out_confirm">Check out?</string>
+    <string name="dialog_cancel_check_out">Undo check out</string>
+    <string name="dialog_check_out_successful">Checkout successful</string>
+    <string name="state_checked_out">Checked-Out</string>
+    <string name="state_locked">Checked-Out</string>
+
+    <string name="dialog_cancel_action">Do nothing</string>
+
+    <string name="dialog_check_in">Check-in</string>
+    <string name="dialog_check_in_confirm">Check in?</string>
+    <string name="dialog_do_check_in">Check in</string>
+    <string name="dialog_check_in_note">If you wish, enter a revision note for the check in :</string>
+    <string name="diaog_check_in_successful">Check-in successful</string>
+    <string name="state_checked_in">Check-in</string>
 
     <!-- Last iteration information -->
     <string-array name="iterationFieldNames">
@@ -91,8 +106,6 @@
         <item>Modification date</item>
         <item>Author</item>
     </string-array>
-
-    <string name="downloadSuccessToPath">Document downloaded to %1$s</string>
 
     <!-- Users -->
     <string name="userSendEmail">Send email</string>
@@ -104,6 +117,6 @@
     </string-array>
     <string name="userSearch">User name</string>
     <string name="userLoadError">Error loading user list</string>
-    <string name="userLoadInProgress">Loading user list...</string>
+    <string name="userLoadInProgress">Loading user list…</string>
 
 </resources>

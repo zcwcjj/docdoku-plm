@@ -25,17 +25,14 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
-import com.docdoku.android.plm.client.gdx.GDXActivity;
 import com.docdoku.android.plm.network.HTTPDownloadTask;
 import com.docdoku.android.plm.network.HTTPGetTask;
 import com.docdoku.android.plm.network.HTTPPutTask;
@@ -57,11 +54,30 @@ import java.util.Calendar;
  */
 public abstract class ElementActivity extends SimpleActionBarActivity {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.ElementActivity";
-    protected Button         checkInOutButton;
-    private   Element        element;
-    private   boolean        checkedIn;
-    private   ProgressDialog fileDownloadProgressDialog;
-    private   String         iterationNote;
+    protected Switch                                 switchChechkInOut;
+    private   Element                                element;
+    private   boolean                                checkedIn;
+    private   ProgressDialog                         loadingDialog;
+    private   String                                 iterationNote;
+    private   CompoundButton.OnCheckedChangeListener switchListener;
+
+    protected BaseExpandableListAdapter adapter;
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        switchListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    checkOutElement();
+                }
+                else {
+                    checkInElement();
+                }
+            }
+        };
+    }
 
     /**
      * Obtains the instance of the <code>Element</code> that this <code>Activity</code> is presenting to the user
@@ -76,22 +92,45 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
 
     protected abstract Element getElement();
 
+    protected View createHeaderView(ViewGroup header, Element document) {
+        header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
+//        TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
+//        documentReference.setText(document.getIdentification());
+
+
+//        Switch notifyIteration = (Switch) header.findViewById(R.id.notifyIteration);
+//        setNotifyIterationNotification(notifyIteration);
+//        Switch notifyStateChange = (Switch) header.findViewById(R.id.notifyStateChange);
+//        setNotifyStateChangeNotification(notifyStateChange);
+
+        switchChechkInOut = (Switch) header.findViewById(R.id.checkInOutButton);
+        if (document.getCheckOutUserLogin() != null) {
+            if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())) {
+                setElementCheckedOutByCurrentUser(document.getCheckOutDate());
+            }
+            else {
+//                switchChechkInOut.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
+//                switchChechkInOut.setClickable(false);
+//                switchChechkInOut.setText(R.string.locked);
+                switchChechkInOut.setVisibility(View.GONE);
+            }
+        }
+        else {
+            setElementCheckedIn();
+        }
+
+        switchChechkInOut.setOnCheckedChangeListener(switchListener);
+        return header;
+    }
+
     /**
      * Sets the <code>Element</code> checked in by the current user.
-     * <p>Set the <code>checkInOutButton OnClickListener</code>'s <code>onClick()</code> method to start the
+     * <p>Set the <code>switchChechkInOut OnClickListener</code>'s <code>onClick()</code> method to start the
      * {@link #checkOutElement()} method.
      */
     protected void setElementCheckedIn() {
         checkedIn = true;
-        checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_in_light, 0, 0);
-        checkInOutButton.setText(R.string.checkOut);
         getElement().setCheckOutInformation(null, null, null);
-        checkInOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkOutElement();
-            }
-        });
     }
 
     private HTTPPutTask createTask() {
@@ -110,7 +149,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
         if (result.isSucceed()) {
             if (checkedIn) {
                 setElementCheckedOutByCurrentUser();
-                Toast.makeText(ElementActivity.this, R.string.checkOutSuccessful, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ElementActivity.this, R.string.dialog_check_out_successful, Toast.LENGTH_SHORT).show();
                 try {
                     JSONObject responseJSON = new JSONObject(result.getResultContent());
                     element.updateFromJSON(responseJSON, getResources());
@@ -118,22 +157,30 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
                 catch (JSONException e) {
                     e.printStackTrace();
                 }
+
             }
             else {
                 setElementCheckedIn();
-                Toast.makeText(ElementActivity.this, R.string.checkInSuccessful, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ElementActivity.this, R.string.diaog_check_in_successful, Toast.LENGTH_SHORT).show();
                 SimpleDateFormat dateFormat = new SimpleDateFormat(getResources().getString(R.string.simpleDateFormat));
                 element.setLastIteration(element.iterationNumber, iterationNote, getCurrentUserName(), dateFormat.format(Calendar.getInstance().getTime()));
             }
+            adapter.notifyDataSetChanged();
         }
         else {
+            switchChechkInOut.setChecked(!switchChechkInOut.isChecked());
+            String msg = result.getErrorMsg();
+            if (msg == null)
+                msg = getResources().getString(R.string.net_connection_error);
+
             new AlertDialog.Builder(ElementActivity.this)
-                    .setIcon(R.drawable.error_light)
+                    .setIcon(R.drawable.ic_error_blue)
                     .setTitle(" ")
-                    .setMessage(R.string.connectionError)
+                    .setMessage(msg)
                     .setPositiveButton(R.string.OK, null)
                     .create().show();
         }
+        switchChechkInOut.setOnCheckedChangeListener(switchListener);
     }
 
     /**
@@ -142,18 +189,32 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
      * If he confirms it, a new {@link HTTPPutTask} is started.
      */
     private void checkOutElement() {
+        switchChechkInOut.setOnCheckedChangeListener(null);
+
         new AlertDialog.Builder(ElementActivity.this)
-                .setIcon(R.drawable.checked_in_light)
-                .setTitle(" ")
-                .setMessage(R.string.checkOutConfirm)
+                .setIcon(R.drawable.ic_check_out_dark)
+                .setTitle(R.string.dialog_check_out)
+                .setMessage(R.string.dialog_check_out_confirm)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-//                        new HttpPutTask(ElementActivity.this).execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
                         createTask().execute(getUrlWorkspaceApi() + element.getUrlPath() + "/checkout/");
                     }
                 })
-                .setNegativeButton(R.string.no, null)
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switchChechkInOut.setChecked(!switchChechkInOut.isChecked());
+                        switchChechkInOut.setOnCheckedChangeListener(switchListener);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        switchChechkInOut.setChecked(!switchChechkInOut.isChecked());
+                        switchChechkInOut.setOnCheckedChangeListener(switchListener);
+                    }
+                })
                 .create().show();
     }
 
@@ -170,22 +231,21 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
 
     /**
      * Sets the <code>Element</code> checked out by the current user at the specified time.
-     * <p>Set the <code>checkInOutButton OnClickListener</code>'s <code>onClick()</code> method to start the
+     * <p>Set the <code>switchChechkInOut OnClickListener</code>'s <code>onClick()</code> method to start the
      * {@link #checkInElement()} method.
      *
      * @param date the checkout date
      */
     protected void setElementCheckedOutByCurrentUser(String date) {
         checkedIn = false;
-        checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_current_user_light, 0, 0);
-        checkInOutButton.setText(R.string.checkin);
+        switchChechkInOut.setChecked(true);
         getElement().setCheckOutInformation(getCurrentUserName(), getCurrentUserLogin(), date);
-        checkInOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkInElement();
-            }
-        });
+//        switchChechkInOut.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                checkInElement();
+//            }
+//        });
     }
 
     /**
@@ -197,14 +257,16 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
      * if that task returns a positive result, then another task is started to do the checkin.
      */
     private void checkInElement() {
+        switchChechkInOut.setOnCheckedChangeListener(null);
+
         final EditText iterationNoteField = new EditText(ElementActivity.this);
         new AlertDialog.Builder(ElementActivity.this)
-                .setIcon(R.drawable.checked_out_current_user_light)
-                .setTitle(" ")
-                .setMessage(R.string.checkInConfirm)
-                .setMessage(R.string.iterationNotePrompt)
+                .setIcon(R.drawable.ic_check_in_dark)
+                .setTitle(R.string.dialog_check_in)
+                .setMessage(R.string.dialog_check_in_confirm)
+                .setMessage(R.string.dialog_check_in_note)
                 .setView(iterationNoteField)
-                .setPositiveButton(R.string.doCheckIn, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dialog_do_check_in, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         iterationNote = iterationNoteField.getText().toString();
@@ -229,13 +291,26 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
                         }
                     }
                 })
-                .setNeutralButton(R.string.cancelCheckOut, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.dialog_cancel_check_out, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         createTask().execute(getUrlWorkspaceApi() + element.getUrlPath() + "/undocheckout/");
                     }
                 })
-                .setNegativeButton(R.string.no, null)
+                .setNegativeButton(R.string.dialog_cancel_action, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switchChechkInOut.setChecked(!switchChechkInOut.isChecked());
+                        switchChechkInOut.setOnCheckedChangeListener(switchListener);
+                    }
+                })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        switchChechkInOut.setChecked(!switchChechkInOut.isChecked());
+                        switchChechkInOut.setOnCheckedChangeListener(switchListener);
+                    }
+                })
                 .create().show();
     }
 
@@ -312,39 +387,33 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
 
-                fileDownloadProgressDialog = new ProgressDialog(ElementActivity.this);
-                fileDownloadProgressDialog.setTitle(R.string.downloadingFile);
-                fileDownloadProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                fileDownloadProgressDialog.show();
+                loadingDialog = new ProgressDialog(ElementActivity.this);
+                loadingDialog.setTitle(R.string.net_loading);
+                loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                loadingDialog.setIndeterminate(true);
+                loadingDialog.show();
 
                 final String dest = getExternalCacheDir() + "/" + fileUrl.replaceAll(fileName, "");
                 new HTTPDownloadTask(new HTTPTaskDoneListener() {
                     @Override
                     public void onDone(HTTPResultTask result) {
-                        fileDownloadProgressDialog.dismiss();
+                        loadingDialog.dismiss();
                         if (result.isSucceed()) {
-                            Toast.makeText(ElementActivity.this, getResources().getString(R.string.downloadSuccessToPath, getExternalCacheDir() + fileUrl), Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
                             intent.setAction(android.content.Intent.ACTION_VIEW);
 
-                            if (fileName.endsWith(".obj")) {
-                                startActivity(new Intent(ElementActivity.this, GDXActivity.class));
-                            }
-                            else {
-                                File file = new File(dest + fileName);
+                            File file = new File(dest + fileName);
 
-                                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                                String ext = file.getName().substring(file.getName().indexOf(".") + 1);
-                                String type = mime.getMimeTypeFromExtension(ext);
+                            MimeTypeMap mime = MimeTypeMap.getSingleton();
+                            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+                            String type = mime.getMimeTypeFromExtension(ext);
 
-                                intent.setDataAndType(Uri.fromFile(file), type);
+                            intent.setDataAndType(Uri.fromFile(file), type);
 
-                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.chooseHowToOpenFile)));
-                            }
-
+                            startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
                         }
                         else {
-                            Toast.makeText(ElementActivity.this, R.string.fileDownloadFail, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ElementActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
                         }
                     }
                 }).execute("files/" + fileUrl, dest, fileName);

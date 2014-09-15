@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-// TODO continue refactoring "documents" package.
-
 /**
  * {@code BaseAdapter} implementation for handling the representation of {@link Document} rows.
  */
@@ -112,7 +110,7 @@ class DocumentAdapter extends BaseAdapter {
      */
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
+//        if (view == null) {
             final Document doc = documents.get(i);
             if (doc == null) { //Document is still being loaded
                 view = new ProgressBar(activity);
@@ -122,7 +120,7 @@ class DocumentAdapter extends BaseAdapter {
                 TextView identification = (TextView) view.findViewById(R.id.identification);
                 identification.setText(doc.getIdentification());
                 ImageView checkedInOutImage = (ImageView) view.findViewById(R.id.checkedInOutImage);
-                checkedInOutImage.setImageResource(R.drawable.error_light);
+                checkedInOutImage.setImageResource(R.drawable.ic_error_light);
                 View iterationNumberBox = view.findViewById(R.id.iterationNumberBox);
                 ((ViewGroup) iterationNumberBox.getParent()).removeView(iterationNumberBox);
                 View numAttachedFiles = view.findViewById(R.id.attachedFilesIndicator);
@@ -135,13 +133,21 @@ class DocumentAdapter extends BaseAdapter {
                 ImageView checkedInOutImage = (ImageView) view.findViewById(R.id.checkedInOutImage);
                 String checkOutUserName = doc.getCheckOutUserName();
                 if (checkOutUserName != null) {
+
+                    // TODO : this condition fails : condition always goes in else block...
+                    Log.d(LOG_TAG, doc.getCheckOutUserLogin() + " " + session.getCurrentWorkspace(activity)) ;
+
+
                     String checkOutUserLogin = doc.getCheckOutUserLogin();
-                    if (checkOutUserLogin.equals(session.getCurrentWorkspace(activity))) {
-                        checkedInOutImage.setImageResource(R.drawable.checked_out_current_user_light);
+                    if (checkOutUserLogin.equals(session.getUserLogin())) {
+                        checkedInOutImage.setImageResource(R.drawable.ic_checked_out_light);
+                    }
+                    else {
+                        checkedInOutImage.setImageResource(R.drawable.ic_checked_out_locked_light);
                     }
                 }
                 else {
-                    checkedInOutImage.setImageResource(R.drawable.checked_in_light);
+                    checkedInOutImage.setImageResource(R.drawable.ic_all_items_light);
                 }
                 int docNumAttachedFiles = doc.getNumberOfFiles();
                 if (docNumAttachedFiles == 0) {
@@ -156,7 +162,11 @@ class DocumentAdapter extends BaseAdapter {
                 iterationNumber.setText("" + doc.getIterationNumber());
                 TextView lastIteration = (TextView) view.findViewById(R.id.lastIteration);
                 try {
-                    lastIteration.setText(String.format(activity.getResources().getString(R.string.documentIterationPhrase, simplifyDate(doc.getLastIterationDate()), doc.getLastIterationAuthorName())));
+                    lastIteration.setText(
+                            String.format(activity.getResources().getString(R.string.documentIterationPhrase),
+                                    simplifyDate(doc.getLastIterationDate()),
+                                    doc.getLastIterationAuthorName())
+                    );
                 }
                 catch (ParseException e) {
                     lastIteration.setText(" ");
@@ -167,7 +177,7 @@ class DocumentAdapter extends BaseAdapter {
                     Log.i(LOG_TAG, "Unable to correctly get a date for document (NullPointerException)" + doc.getIdentification());
                 }
             }
-        }
+//        }
 
         return view;
     }

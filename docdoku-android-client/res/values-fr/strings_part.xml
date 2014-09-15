@@ -10,12 +10,10 @@
     <string name="partAttributes">Attributs</string>
 
     <!-- Part attributes -->
-    <string name="partKey">Clé</string>
+    <string name="partKey">Référence</string>
     <string name="partAuthor">Auteur</string>
     <string name="partTitle">Titre</string>
     <string name="partVersion">Version</string>
-    <string name="partCheckOut">Réserver</string>
-    <string name="partCheckIn">Libérer</string>
 
     <!-- No content found for part attribute -->
     <string name="partNoCADFile">Aucun fichier CAD</string>

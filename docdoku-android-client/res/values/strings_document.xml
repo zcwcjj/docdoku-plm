@@ -39,14 +39,16 @@
     <!-- Document notifications-->
     <string name="documentStateChangeButton">States</string>
     <string name="documentIterationButton">Iterations</string>
-    <string name="confirmSubscribeToIterationChangeNotification">Are you sure you want to activate iteration notifications on this document?</string>
-    <string name="confirmUnsubscribeToIterationChangeNotification">Are you sure you want to deactivate iteration notifications on this document?</string>
-    <string name="confirmSubscribeToStateChangeNotification">Are you sure you want to activate state change notifications on this document?</string>
-    <string name="confirmUnsubscribeToStateChangeNotification">Are you sure you want to deactivate state change notifications on this document?</string>
+    <string name="confirmSubscribeToIterationChangeNotification">Activate iteration notifications on this document?</string>
+    <string name="confirmUnsubscribeToIterationChangeNotification">Deactivate iteration notifications on this document?</string>
+    <string name="confirmSubscribeToStateChangeNotification">Activate state change notifications on this document?</string>
+    <string name="confirmUnsubscribeToStateChangeNotification">Deactivate state change notifications on this document?</string>
     <string name="documentIterationChangeNotificationSuccessfullyActivated">Iteration notifications activated</string>
     <string name="documentIterationChangeNotificationSuccessfullyDeactivated">Iteration notifications deactivated</string>
     <string name="documentStateChangeNotificationSuccessfullyActivated">State change notifications activated</string>
     <string name="documentStateChangeNotificationSuccessfullyDeactivated">State change notifications deactivated</string>
+    <string name="notificationSuccessfullyActivated">Notifications activated</string>
+    <string name="notificationSuccessfullyDeactivated">Notifications deactivated</string>
     <string name="documentStateChangeNotified">State change</string>
     <string name="documentIterationNotified">New iteration</string>
 
@@ -62,6 +64,7 @@
     <string name="documentPictureDirectoryFail">Failed to access pictures directory</string>
     <string name="confirmImageUpload">Add this picture to the document?</string>
     <string name="chooseImageFileName">Picture name</string>
+    <string name="upload_select">Select a File to Upload</string>
     <string name="uploadImage">Upload picture</string>
     <string name="uploading">Uploading...</string>
     <string name="uploadSuccess">File upload successful</string>

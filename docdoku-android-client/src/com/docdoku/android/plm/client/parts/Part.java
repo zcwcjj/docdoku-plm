@@ -139,7 +139,7 @@ public class Part extends Element implements Serializable {
 
     @Override
     protected String getIterationNoteJSONKey() {
-        return JSON_KEY_PART_ITERATION_NOTE;  //To change body of implemented methods use File | Settings | File Templates.
+        return JSON_KEY_PART_ITERATION_NOTE;
     }
 
     @Override

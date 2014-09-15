@@ -113,6 +113,6 @@ public class PartSearchActivity extends SearchActivity {
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.partSearch;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.menuPartSearch;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -13,48 +13,132 @@
             android:orientation="vertical"
             android:layout_gravity="center">
 
-        <TextView
-                android:id="@+id/documentIdentification"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                style="@style/Theme.AppTheme.MediumTitle"
-                android:layout_marginTop="2dp"
-                android:text="@string/error"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                >
+
+            <!--<TextView
+                    android:id="@+id/documentIdentification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    style="@style/Theme.AppTheme.MediumTitle"
+                    android:layout_marginTop="2dp"
+                    android:text="..."/>-->
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/notification_statechange_on"
+                    android:id="@+id/iconNotifications"
+                    android:layout_gravity="right"
+                    android:visibility="gone"
+                    />
+        </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/buttons"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal">
 
-            <ToggleButton
-                    android:id="@+id/notifyIteration"
-                    android:layout_width="match_parent"
+            <!--<RelativeLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/relativeLayout1"-->
+                    <!--android:gravity="center_horizontal">-->
+
+                <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+                        <!--android:text="@string/documentIterationButton"-->
+                        <!--android:id="@+id/textView1"-->
+                        <!--android:textSize="18dp"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:textIsSelectable="false"-->
+                        <!--android:layout_alignParentStart="false"-->
+                        <!--android:layout_alignParentEnd="false"-->
+                        <!--android:layout_centerHorizontal="true"/>-->
+
+
+                <!--<Switch-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/notifyIteration"-->
+                        <!--android:enabled="true"-->
+                        <!--android:clickable="true"-->
+                        <!--android:layout_below="@+id/textView1"/>-->
+
+            <!--</RelativeLayout>-->
+
+            <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textOff="@string/documentIterationButton" android:textOn="@string/documentIterationButton"
-                    android:textSize="14sp"
-                    android:drawableTop="@drawable/selector_notification_iteration"/>
+                    android:layout_toRightOf="@+id/relativeLayout1"
+                    android:id="@+id/relativeLayout2"
+                    android:gravity="center_horizontal"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_gravity="center_horizontal">
 
-            <Button
-                    android:id="@+id/checkInOutButton"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:drawableTop="@drawable/error_light"
-                    android:textSize="14sp"
-                    android:text="@string/partCheckOut"/>
+                <!--<TextView-->
+                        <!--android:id="@+id/checkInOutText"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+                        <!--android:text="@string/checkOut"-->
+                        <!--android:textSize="18dp"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:textIsSelectable="false"-->
+                        <!--android:layout_alignParentStart="false"-->
+                        <!--android:layout_alignParentEnd="false"-->
+                        <!--android:layout_centerHorizontal="true"/>-->
 
+                <Switch
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/checkInOutButton"
+                        android:textOn="@string/state_checked_out"
+                        android:textOff="@string/state_checked_in"
+                        android:enabled="true"
+                        android:clickable="true"
+                        android:layout_below="@+id/textView2"/>
 
-            <ToggleButton
-                    android:id="@+id/notifyStateChange"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textOff="@string/documentStateChangeButton" android:textOn="@string/documentStateChangeButton"
-                    android:textSize="14sp"
-                    android:drawableTop="@drawable/selector_notification_state_change"/>
+            </RelativeLayout>
+
+            <!--<RelativeLayout-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_toRightOf="@+id/relativeLayout2"-->
+                    <!--android:id="@+id/relativeLayout3"-->
+                    <!--android:layout_gravity="right"-->
+                    <!--android:gravity="center_horizontal">-->
+
+                <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+                        <!--android:text="@string/documentStateChangeButton"-->
+                        <!--android:id="@+id/textView3"-->
+                        <!--android:textSize="18dp"-->
+                        <!--android:textAlignment="center"-->
+                        <!--android:textIsSelectable="false"-->
+                        <!--android:layout_alignParentStart="false"-->
+                        <!--android:layout_alignParentEnd="false"-->
+                        <!--android:layout_centerHorizontal="true"/>-->
+
+                <!--<Switch-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:id="@+id/notifyStateChange"-->
+                        <!--android:enabled="true"-->
+                        <!--android:clickable="true"-->
+                        <!--android:layout_below="@+id/textView3"/>-->
+            <!--</RelativeLayout>-->
 
         </LinearLayout>
 

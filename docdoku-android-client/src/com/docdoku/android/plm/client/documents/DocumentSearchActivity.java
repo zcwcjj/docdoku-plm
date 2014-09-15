@@ -67,35 +67,41 @@ public class DocumentSearchActivity extends SearchActivity {
         docTitle = (EditText) findViewById(R.id.title);
         docVersion = (EditText) findViewById(R.id.version);
 
+
+        // TODO : remove this button, add action on "Enter key" in google keyboard
         Button doSearch = (Button) findViewById(R.id.doSearch);
         doSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String searchQuery = "";
-                String reference = docReference.getText().toString();
-                searchQuery +="id="+reference;
-                String title = docTitle.getText().toString();
-                searchQuery +="&title="+title;
-                String versions = docVersion.getText().toString();
-                searchQuery += "&version="+versions;
-                if (selectedUser != null){
-                    searchQuery += "&author="+selectedUser.getLogin();
-                }
-                if (!minCreationDate.getText().equals("")){
-                    String minDateString = Long.toString(minDate.getTimeInMillis());
-                    searchQuery += "&from="+ minDateString;
-                }
-                if (!maxCreationDate.getText().equals("")){
-                    String maxDateString = Long.toString(maxDate.getTimeInMillis());
-                    searchQuery += "&to="+ maxDateString;
-                }
-                Log.i(LOG_TAG, "Document search query: " + searchQuery);
-                Intent intent = new Intent(DocumentSearchActivity.this, DocumentSimpleListActivity.class);
-                intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.SEARCH_RESULTS_LIST);
-                intent.putExtra(DocumentSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);
-                startActivity(intent);
+                doSearch();
             }
         });
+    }
+
+    private void doSearch(){
+        String searchQuery = "";
+        String reference = docReference.getText().toString();
+        searchQuery +="id="+reference;
+        String title = docTitle.getText().toString();
+        searchQuery +="&title="+title;
+        String versions = docVersion.getText().toString();
+        searchQuery += "&version="+versions;
+        if (selectedUser != null){
+            searchQuery += "&author="+selectedUser.getLogin();
+        }
+        if (!minCreationDate.getText().equals("")){
+            String minDateString = Long.toString(minDate.getTimeInMillis());
+            searchQuery += "&from="+ minDateString;
+        }
+        if (!maxCreationDate.getText().equals("")){
+            String maxDateString = Long.toString(maxDate.getTimeInMillis());
+            searchQuery += "&to="+ maxDateString;
+        }
+        Log.i(LOG_TAG, "Document search query: " + searchQuery);
+        Intent intent = new Intent(DocumentSearchActivity.this, DocumentSimpleListActivity.class);
+        intent.putExtra(DocumentSimpleListActivity.LIST_MODE_EXTRA, DocumentSimpleListActivity.SEARCH_RESULTS_LIST);
+        intent.putExtra(DocumentSimpleListActivity.SEARCH_QUERY_EXTRA, searchQuery);
+        startActivity(intent);
     }
 
     /**
@@ -105,6 +111,6 @@ public class DocumentSearchActivity extends SearchActivity {
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.documentSearch;  //To change body of implemented methods use File | Settings | File Templates.
+        return R.id.menuDocumentSearch;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

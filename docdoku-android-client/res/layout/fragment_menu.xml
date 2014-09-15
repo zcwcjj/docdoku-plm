@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        style="@style/Menu"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
+            style="@style/Menu"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
 
     <LinearLayout
             style="@style/Menu"
@@ -17,7 +17,8 @@
         <TextView
                 android:layout_height="wrap_content"
                 style="@style/Menu.Title"
-                android:text="@string/workspace"/>
+                android:text="@string/menu_workspace"
+                android:layout_width="wrap_content"/>
 
         <RadioGroup
                 android:id="@+id/workspaceRadioGroup"
@@ -28,75 +29,210 @@
         <TextView
                 android:layout_height="wrap_content"
                 style="@style/Menu.Title"
-                android:text="@string/documents"/>
+                android:text="@string/menu_documents"
+                android:layout_width="wrap_content"/>
 
-        <TextView
-                android:id="@+id/documentSearch"
-                android:layout_height="wrap_content"
+        <!--###############################-->
+        <LinearLayout
+                android:id="@+id/menuDocumentSearch"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
                 style="@style/Menu.Item"
-                android:text="@string/documentSearch"
-                android:drawableLeft="@drawable/search_dark"/>
+                android:weightSum="1">
 
-        <TextView
-                android:id="@+id/recentlyViewedDocuments"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/documentHistory"
-                android:drawableLeft="@drawable/history_dark"/>
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_search_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"
+                    />
 
-        <TextView
-                android:id="@+id/allDocuments"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/allDocuments"
-                android:drawableLeft="@drawable/all_elements_dark"/>
+            <TextView
+                    android:id="@+id/lmenuDocumentSearch"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_document_search"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+        <!--###############################-->
 
-        <TextView
-                android:id="@+id/documentFolders"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/documentFolders"
-                android:drawableLeft="@drawable/folders_dark"/>
+        <LinearLayout
+                android:id="@+id/menuRecentlyViewedDocuments"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
 
-        <TextView
-                android:id="@+id/checkedOutDocuments"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/checkedOutDocuments"
-                android:drawableLeft="@drawable/checked_out_current_user_dark"/>
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_history_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuRecentlyViewedDocuments"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_documents_history"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+        <!--###############################-->
+
+        <LinearLayout
+                android:id="@+id/menuAllDocuments"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_all_items_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuAllDocuments"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_all_documents"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+        <!--###############################-->
+
+        <LinearLayout
+                android:id="@+id/menuFolders"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_folders_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuFolders"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_document_folders"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+
+        <!--###############################-->
+
+        <LinearLayout
+                android:id="@+id/menuCheckedOutDocuments"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_checked_out_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuCheckedOutDocuments"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_checked_out_documents"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+
 
         <TextView
                 android:layout_height="wrap_content"
                 style="@style/Menu.Title"
-                android:text="@string/parts"/>
+                android:text="@string/menu_parts"
+                android:layout_width="wrap_content"/>
 
-        <TextView
-                android:id="@+id/partSearch"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/partSearch"
-                android:drawableLeft="@drawable/search_dark"/>
+        <!--###############################-->
 
-        <TextView
-                android:id="@+id/recentlyViewedParts"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/partHistory"
-                android:drawableLeft="@drawable/history_dark"/>
+        <LinearLayout
+                android:id="@+id/menuPartSearch"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
 
-        <TextView
-                android:id="@+id/allParts"
-                android:layout_height="wrap_content"
-                style="@style/Menu.Item"
-                android:text="@string/allParts"
-                android:drawableLeft="@drawable/all_elements_dark"/>
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_search_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
 
-        <TextView
-            android:layout_height="1px"
-            android:layout_width="wrap_content"
-            style="@style/Menu.Item"
-            android:clickable="false"
-            android:text="@string/emptyMenuItem"/>
+            <TextView
+                    android:id="@+id/lmenuPartSearch"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_part_search"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+        <!--###############################-->
+
+        <LinearLayout
+                android:id="@+id/menuRecentlyViewedParts"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_history_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuRecentlyViewedParts"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_parts_history"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+
+        <!--###############################-->
+
+        <LinearLayout
+                android:id="@+id/menuAllParts"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                style="@style/Menu.Item">
+
+            <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_all_items_dark"
+                    android:layout_gravity="center"
+                    android:alpha=".6"/>
+
+            <TextView
+                    android:id="@+id/lmenuAllParts"
+                    android:layout_height="wrap_content"
+                    style="@style/Menu.Item"
+                    android:text="@string/menu_all_parts"
+                    android:layout_width="wrap_content"/>
+        </LinearLayout>
+        <!--<TextView-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--style="@style/Menu.Item"-->
+        <!--android:clickable="false"-->
+        <!--android:text="@string/emptyMenuItem"/>-->
 
     </LinearLayout>
 

@@ -77,7 +77,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
         ((ViewGroup) loading.getParent()).removeView(loading);
 
         Log.i(LOG_TAG, "navigation history_light size: " + navigationHistory.getSize());
-        partsArray = new ArrayList<Part>();
+        partsArray = new ArrayList<>();
         partAdapter = new PartAdapter(partsArray);
         partListView.setAdapter(partAdapter);
 
@@ -139,7 +139,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.recentlyViewedParts;
+        return R.id.menuRecentlyViewedParts;
     }
 
     /**
@@ -164,10 +164,10 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
          */
         @Override
         protected void onStartLoading() {
-            createTask("api/workspaces/" + workspace + "/parts/" + elementId);
+            createTask();
         }
 
-        private void createTask(String exec) {
+        private void createTask() {
             asyncTask = new HTTPGetTask(new HTTPTaskDoneListener() {
                 @Override
                 public void onDone(HTTPResultTask result) {
@@ -179,13 +179,14 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
                     }
                     catch (JSONException e) {
                         Log.e(LOG_TAG, "Error handling json object of a part");
-                        e.printStackTrace();
                         Log.i(LOG_TAG, "Error message: " + e.getMessage());
                         part = new Part(elementId);
                     }
                     deliverResult(part);
                 }
             });
+
+            asyncTask.execute("api/workspaces/" + workspace + "/parts/" + elementId);
         }
 
         /**
@@ -220,15 +221,7 @@ public class PartHistoryListActivity extends PartListActivity implements LoaderM
             if (asyncTask != null) {
                 asyncTask.cancel(false);
             }
-            createTask("api/workspaces/" + workspace + "/parts/" + elementId);
+            createTask();
         }
-
-//        /**
-//         * Handles the result of the {@link HTTPGetTask}. The result is read to create a new instance of
-//         * {@link Part} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
-//         *
-//         * @param result the {@code JSONObject} representing the {@link Part}.
-//         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
-//         */
     }
 }

@@ -12,7 +12,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:groupIndicator="@null"
-            android:childDivider="@color/transparent"
+            android:childDivider="@android:color/transparent"
             android:dividerHeight="4dp"
             android:indicatorLeft="16dp">
     </ExpandableListView>
@@ -22,10 +22,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
-        <fragment class="com.docdoku.android.plm.client.MenuFragment"
-                  android:id="@+id/menu"
-                  android:layout_width="wrap_content"
-                  android:layout_height="match_parent"/>
+        <fragment
+                class="com.docdoku.android.plm.client.MenuFragment"
+                android:id="@+id/menu"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
 
     </LinearLayout>
 

@@ -54,69 +54,68 @@
 
         <activity
                 android:name=".gdx.GDXActivity"
-                android:label="@string/documents"
+                android:label="@string/act_gdx"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
 
-
         <activity
                 android:name=".documents.DocumentCompleteListActivity"
-                android:label="@string/documents"
+                android:label="@string/act_documents_list"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".documents.DocumentSearchActivity"
-                android:label="@string/documents"
+                android:label="@string/act_document_search"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".parts.PartCompleteListActivity"
-                android:label="@string/parts"
+                android:label="@string/act_parts_list"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".parts.PartSimpleListActivity"
-                android:label="@string/parts"
+                android:label="@string/menu_parts"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".users.UserListActivity"
-                android:label="@string/users"
+                android:label="@string/act_user"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".parts.PartActivity"
-                android:label="@string/parts"
+                android:label="@string/act_part"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".documents.DocumentActivity"
-                android:label="@string/documents"
+                android:label="@string/act_document"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".parts.PartHistoryListActivity"
-                android:label="@string/parts"
+                android:label="@string/act_parts_history"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".parts.PartSearchActivity"
-                android:label="@string/parts"
+                android:label="@string/act_part_search"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".documents.DocumentHistoryListActivity"
-                android:label="@string/documents"
+                android:label="@string/act_documents_history"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".documents.DocumentSimpleListActivity"
-                android:label="@string/documents"
+                android:label="@string/menu_documents"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity
                 android:name=".documents.DocumentFoldersActivity"
-                android:label="@string/documents"
+                android:label="@string/act_folders_list"
                 android:screenOrientation="portrait"
                 android:configChanges="orientation|keyboardHidden"/>
         <activity android:name=".connection.WelcomeScreen"/>

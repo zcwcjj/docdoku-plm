@@ -171,7 +171,7 @@ public class DocumentFoldersActivity extends DocumentListActivity {
      */
     @Override
     protected int getActivityButtonId() {
-        return R.id.documentFolders;
+        return R.id.menuFolders;
     }
 
 }

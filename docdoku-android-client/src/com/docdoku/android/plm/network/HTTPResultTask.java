@@ -14,16 +14,17 @@ import java.util.Map;
  * Created by G. BOTTIEAU on 25/08/14.
  */
 public class HTTPResultTask {
-    public static final  int    NO_RESPONSE_CODE = -1;
-    private              int    responseCode     = NO_RESPONSE_CODE;
-    public static final  String NO_RESPONSE_MSG  = "Connection did not start";
-    private              String responseMessage  = NO_RESPONSE_MSG;
-    private static final String LOG_TAG          = "com.docdoku.android.plm.network.HTTPResultTask";
-    private Map<String, List<String>> headerFields;
-    private boolean succeed       = false;
-    private String  resultContent = null;
+    private static final String  LOG_TAG          = "com.docdoku.android.plm.network.HTTPResultTask";
+    public static final  int     NO_RESPONSE_CODE = -1;
+    public static final  String  NO_RESPONSE_MSG  = "Connection did not start";
+    private              int     responseCode     = NO_RESPONSE_CODE;
+    private              String  responseMessage  = NO_RESPONSE_MSG;
+    private              boolean succeed          = false;
+    private              String  resultContent    = null;
 
-    private HttpURLConnection httpURLConnection;
+    private Map<String, List<String>> headerFields;
+    private HttpURLConnection         httpURLConnection;
+    private String                    errorMsg;
 
 
     public HTTPResultTask() {
@@ -36,6 +37,9 @@ public class HTTPResultTask {
         headerFields = httpURLConnection.getHeaderFields();
 
         succeed = (responseCode == HttpURLConnection.HTTP_OK);
+
+        if(!succeed)
+            errorMsg = httpURLConnection.getHeaderField("Reason-Phrase");
     }
 
     public String getResultContent() {
@@ -103,5 +107,9 @@ public class HTTPResultTask {
     @Override
     public String toString() {
         return "Code:" + responseCode + " " + responseMessage;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
     }
 }

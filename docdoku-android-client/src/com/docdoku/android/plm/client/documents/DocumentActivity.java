@@ -33,6 +33,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -68,75 +70,14 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
     private static final int    NUM_PAGES                         = 5;
     private static final int    NUM_GENERAL_INFORMATION_FIELDS    = 10;
     private static final int    NUM_REVISION_FIELDS               = 4;
+    private static final int    NOTIFICATION_STATE_CHANGE         = 1;
+    private static final int    NOTIFICATION_NEW_ITERATION        = 2;
 
     private Document           document;
     private ExpandableListView expandableListView;
-
-    private String         pictureSavePath;
-    private String         fileUploadUrl;
-    private ProgressDialog progressDialog;
-
-    /**
-     * Opens a <code>ProgressDialog</code> to show progress while uploading a file to the server.
-     *
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
-     */
-    @Override
-    public void onUploadStart() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle(R.string.uploading);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.show();
-    }
-
-    /**
-     * Changes the progress on the progress dialog
-     *
-     * @param progress the percentage of the upload progress
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
-     */
-    @Override
-    public void onUploadProgressUpdate(int progress) {
-        if (progressDialog != null) {
-            progressDialog.setProgress(progress);
-        }
-    }
-
-    /**
-     * Called when the file upload is finished, closes the progress dialog.
-     * If the file upload was successful, shows a <code>Toast</code> and updates the document.
-     * If the file upload was unsuccessful, show an <code>AlertDialog</code>, offering the user to try again.
-     *
-     * @param result
-     * @param fileName
-     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
-     */
-    @Override
-    public void onUploadResult(boolean result, final String fileName) {
-        progressDialog.cancel();
-        if (result) {
-            Toast.makeText(this, R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
-            document.addFile(fileUploadUrl);
-            ((BaseExpandableListAdapter) expandableListView.getExpandableListAdapter()).notifyDataSetChanged();
-        }
-        else {
-            new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.upload_light)
-                    .setTitle(R.string.uploadingFile)
-                    .setMessage(R.string.fileUploadFail)
-                    .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            String docReference = document.getIdentification();
-                            String docId = docReference.substring(0, docReference.lastIndexOf("-"));
-                            String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
-                            new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png", pictureSavePath);
-                        }
-                    })
-                    .create().show();
-        }
-    }
+    private String             pictureSavePath;
+    private String             fileUploadUrl;
+    private ProgressDialog     progressDialog;
 
     /**
      * Called when the <code>Activity</code> started by <code>startActivityForResult()</code> is finished.
@@ -163,7 +104,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     Bitmap picture = BitmapFactory.decodeFile(pictureSavePath);
                     ((ImageView) dialogView.findViewById(R.id.image)).setImageBitmap(picture);
                     new AlertDialog.Builder(this)
-                            .setIcon(R.drawable.take_picture_light)
+                            .setIcon(R.drawable.ic_camera_blue)
                             .setTitle(" ")
                             .setView(dialogView)
                             .setCancelable(false)
@@ -209,6 +150,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     break;*/
                 case INTENT_CODE_ACTIVITY_FILE_CHOOSER:
                     Uri uri = data.getData();
+
                     String path = getRealPathFromURI(uri);
                     String fileName = path.substring(path.lastIndexOf("/") + 1);
                     if (fileName.length() == 0) {
@@ -246,45 +188,46 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         Log.i(LOG_TAG, "starting activity for document with id: " + document.getIdentification());
 
+        setTitle(getTitle() + " " + document.getIdentification());
+
         expandableListView = (ExpandableListView) findViewById(R.id.list);
-        expandableListView.addHeaderView(createHeaderView());
-        expandableListView.setAdapter(new DocumentDetailsExpandableListAdapter());
+        expandableListView.addHeaderView(createHeaderView((ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null), document));
+        createNotificationsTags();
+        adapter = new DocumentDetailsExpandableListAdapter();
+        expandableListView.setAdapter(adapter);
         expandableListView.expandGroup(0);
     }
 
-    private View createHeaderView() {
-        ViewGroup header = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_header, null);
-        TextView documentReference = (TextView) header.findViewById(R.id.documentIdentification);
-        documentReference.setText(document.getIdentification());
-
-        ToggleButton notifyIteration = (ToggleButton) header.findViewById(R.id.notifyIteration);
-        setNotifyIterationNotification(notifyIteration);
-        ToggleButton notifyStateChange = (ToggleButton) header.findViewById(R.id.notifyStateChange);
-        setNotifyStateChangeNotification(notifyStateChange);
-
-        checkInOutButton = (Button) header.findViewById(R.id.checkInOutButton);
-        if (document.getCheckOutUserLogin() != null) {
-            if (getCurrentUserLogin().equals(document.getCheckOutUserLogin())) {
-                setElementCheckedOutByCurrentUser(document.getCheckOutDate());
-            }
-            else {
-                checkInOutButton.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.checked_out_other_user_light, 0, 0);
-                checkInOutButton.setClickable(false);
-                checkInOutButton.setText(R.string.locked);
-            }
-        }
-        else {
-            setElementCheckedIn();
-        }
-        return header;
+    private void createNotificationsTags() {
+        //TODO display informations about notifications
     }
 
-    private void setNotifyIterationNotification(final CompoundButton notifyIteration) {
-        notifyIteration.setChecked(document.getIterationNotification());
-        notifyIteration.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.setGroupVisible(R.id.menu_subscriptions, true);
+
+        MenuItem itemNotifIterations = menu.findItem(R.id.menu_subscribeIterationsNotification);
+        MenuItem itemNotifStates = menu.findItem(R.id.menu_subscribeStateChangeNotification);
+//        MenuItem itemShare = menu.findItem(R.id.menu_share);
+        MenuItem itemLogout = menu.findItem(R.id.menu_logout);
+
+        itemLogout.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
+        setNotifyIterationNotification(itemNotifIterations);
+        setNotifyStateChangeNotification(itemNotifStates);
+
+        return true;
+    }
+
+
+    private void setNotifyIterationNotification(final MenuItem menuItem) {
+        menuItem.setChecked(document.getIterationNotification());
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                final boolean b = notifyIteration.isChecked();
+            public boolean onMenuItemClick(MenuItem item) {
+                // get opposite value (isChecked returns current value, not new value !)
+                final boolean b = !item.isChecked();
 
                 HTTPTaskDoneListener taskDoneListener = new HTTPTaskDoneListener() {
                     @Override
@@ -297,46 +240,44 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                                 Toast.makeText(DocumentActivity.this, R.string.documentIterationChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
                             }
                             document.setIterationNotification(b);
+                            menuItem.setChecked(b);
+                            adapter.notifyDataSetChanged();
+                            createNotificationsTags();
                         }
                         else {
-                            Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
-                            notifyIteration.setChecked(!b);
+                            Toast.makeText(DocumentActivity.this, R.string.net_connection_error, Toast.LENGTH_LONG).show();
                         }
                     }
                 };
 
                 if (b) {
                     subscriptionChangeRequested(
-                            R.drawable.iteration_notification_off_light,
+                            R.drawable.ic_iteration_blue,
                             R.string.confirmSubscribeToIterationChangeNotification,
-                            document,
                             "iterationChange/subscribe",
-                            notifyIteration,
-                            b,
-//                            httpPutListener);
+                            menuItem,
                             taskDoneListener);
                 }
                 else {
                     subscriptionChangeRequested(
-                            R.drawable.iteration_notification_off_light,
+                            R.drawable.ic_iteration_blue,
                             R.string.confirmUnsubscribeToIterationChangeNotification,
-                            document,
                             "iterationChange/unsubscribe",
-                            notifyIteration,
-                            b,
-//                            httpPutListener);
+                            menuItem,
                             taskDoneListener);
                 }
+                return b;
             }
         });
     }
 
-    private void setNotifyStateChangeNotification(final CompoundButton notifyStateChange) {
-        notifyStateChange.setChecked(document.getStateChangeNotification());
-        notifyStateChange.setOnClickListener(new View.OnClickListener() {
+    private void setNotifyStateChangeNotification(final /*CompoundButton*/ MenuItem menuItem) {
+        menuItem.setChecked(document.getStateChangeNotification());
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                final boolean b = notifyStateChange.isChecked();
+            public boolean onMenuItemClick(MenuItem item) {
+                // get opposite value (isChecked returns current value, not new value !)
+                final boolean b = !item.isChecked();
 
                 HTTPTaskDoneListener taskDoneListener = new HTTPTaskDoneListener() {
                     @Override
@@ -349,42 +290,41 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                                 Toast.makeText(DocumentActivity.this, R.string.documentStateChangeNotificationSuccessfullyDeactivated, Toast.LENGTH_SHORT).show();
                             }
                             document.setStateChangeNotification(b);
+                            menuItem.setChecked(b);
+
+                            adapter.notifyDataSetChanged();
+
+                            createNotificationsTags();
                         }
                         else {
-                            Toast.makeText(DocumentActivity.this, R.string.connectionError, Toast.LENGTH_LONG).show();
-                            notifyStateChange.setChecked(!b);
+                            Toast.makeText(DocumentActivity.this, R.string.net_connection_error, Toast.LENGTH_LONG).show();
                         }
                     }
                 };
 
                 if (b) {
                     subscriptionChangeRequested(
-                            R.drawable.state_change_notification_off_light,
+                            R.drawable.state_change_notification_on_light,
                             R.string.confirmSubscribeToStateChangeNotification,
-                            document,
                             "stateChange/subscribe",
-                            notifyStateChange,
-                            b,
-//                            httpPutListener);
+                            menuItem,
                             taskDoneListener);
                 }
                 else {
                     subscriptionChangeRequested(
-                            R.drawable.state_change_notification_off_light,
+                            R.drawable.state_change_notification_on_light,
                             R.string.confirmUnsubscribeToStateChangeNotification,
-                            document,
                             "stateChange/unsubscribe",
-                            notifyStateChange,
-                            b,
-//                            httpPutListener);
+                            menuItem,
                             taskDoneListener);
 
                 }
+                return true;
             }
         });
     }
 
-    private void subscriptionChangeRequested(int iconId, int messageId, final Document doc, final String urlCommand, final CompoundButton compoundButton, final boolean compoundButtonState, final HTTPTaskDoneListener taskDoneListener) {
+    private void subscriptionChangeRequested(int iconId, int messageId, final String urlCommand, final MenuItem compoundButton/*final CompoundButton compoundButton*/, final HTTPTaskDoneListener taskDoneListener) {
         new AlertDialog.Builder(DocumentActivity.this)
                 .setIcon(iconId)
                 .setTitle(" ")
@@ -392,22 +332,12 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.i(LOG_TAG, "Subscribing to iteration change notification for document with reference " + doc.getIdentification());
-                        new HTTPPutTask(taskDoneListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + doc.getIdentification() + "/notification/" + urlCommand);
+                        Log.i(LOG_TAG, "Subscribing to iteration change notification for document with reference " + document.getIdentification());
+                        new HTTPPutTask(taskDoneListener).execute("api/workspaces/" + getCurrentWorkspace() + "/documents/" + document.getIdentification() + "/notification/" + urlCommand);
                     }
                 })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        compoundButton.setChecked(!compoundButtonState);
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        compoundButton.setChecked(!compoundButtonState);
-                    }
-                })
+                .setNegativeButton(R.string.no, null)
+                .setOnCancelListener(null)
                 .create().show();
     }
 
@@ -419,7 +349,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         new HttpPostUploadFileTask(DocumentActivity.this).execute(fileUploadUrl, filePath);
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
+    private String getRealPathFromURI(Uri contentUri) throws IllegalArgumentException{
         String[] proj = {MediaStore.Images.Media.DATA};
         CursorLoader loader = new CursorLoader(this, contentUri, proj, null, null, null);
         Cursor cursor = loader.loadInBackground();
@@ -503,8 +433,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
 
                 try {
-                    startActivityForResult(
-                            Intent.createChooser(intent, "Select a File to Upload"), INTENT_CODE_ACTIVITY_FILE_CHOOSER);
+                    startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.upload_select)), INTENT_CODE_ACTIVITY_FILE_CHOOSER);
                 }
                 catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(DocumentActivity.this, "Please install a File Manager.", Toast.LENGTH_LONG).show();
@@ -512,6 +441,69 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
             }
         });
         return rowView;
+    }
+
+    /**
+     * Opens a <code>ProgressDialog</code> to show progress while uploading a file to the server.
+     *
+     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     */
+    @Override
+    public void onUploadStart() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(R.string.uploading);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
+    }
+
+    /**
+     * Changes the progress on the progress dialog
+     *
+     * @param progress the percentage of the upload progress
+     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     */
+    @Override
+    public void onUploadProgressUpdate(int progress) {
+        if (progressDialog != null) {
+            progressDialog.setProgress(progress);
+        }
+    }
+
+    /**
+     * Called when the file upload is finished, closes the progress dialog.
+     * If the file upload was successful, shows a <code>Toast</code> and updates the document.
+     * If the file upload was unsuccessful, show an <code>AlertDialog</code>, offering the user to try again.
+     *
+     * @param result
+     * @param fileName
+     * @see com.docdoku.android.plm.network.old.HttpPostUploadFileTask.HttpPostUploadFileListener
+     */
+    @Override
+    public void onUploadResult(boolean result, final String fileName) {
+        progressDialog.dismiss();
+        if (result) {
+            Toast.makeText(this, R.string.uploadSuccess, Toast.LENGTH_SHORT).show();
+            document.addFile(fileUploadUrl.substring("files/".length())); // quick hack : TODO get real path on device
+            adapter.notifyDataSetChanged();
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_upload_blue)
+                    .setTitle(R.string.net_uploading)
+                    .setMessage(R.string.net_upload_failed)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.retry, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            String docReference = document.getIdentification();
+                            String docId = docReference.substring(0, docReference.lastIndexOf("-"));
+                            String docVersion = docReference.substring(docReference.lastIndexOf("-") + 1);
+                            new HttpPostUploadFileTask(DocumentActivity.this).execute("files/" + getCurrentWorkspace() + "/documents/" + docId + "/" + docVersion + "/" + document.getIterationNumber() + "/" + fileName + ".png", pictureSavePath);
+                        }
+                    })
+                    .create().show();
+        }
     }
 
     /**
@@ -554,12 +546,12 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         @Override
         public Object getGroup(int i) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         @Override
         public Object getChild(int i, int i2) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         @Override
@@ -579,12 +571,13 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
         @Override
         public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-            ViewGroup pageView;
-            pageView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
+            viewGroup = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
+
             if (b) {
-                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
+                ImageView img = ((ImageView) viewGroup.findViewById(R.id.collapse_expand_group));
+                img.setImageResource(R.drawable.group_collapse_light);
             }
-            TextView title = (TextView) pageView.findViewById(R.id.page_title);
+            TextView title = (TextView) viewGroup.findViewById(R.id.section_title);
             switch (i) {
                 case 0:
                     title.setText(R.string.documentGeneralInformation);
@@ -593,6 +586,18 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     title.setText(R.string.documentFiles);
                     break;
                 case 2:
+
+
+                    // TEST !
+                    // TODO : method to check if view will be valued. if not, don't show it
+//                    try {
+//                        document.getLinkedDocument(2);
+//                    }
+//                    catch (Exception e) {
+//                        pageView.setVisibility(View.GONE);
+//                        break;
+//                    }
+
                     title.setText(R.string.documentLinks);
                     break;
                 case 3:
@@ -602,7 +607,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     title.setText(R.string.documentAttributes);
                     break;
             }
-            return pageView;
+            return viewGroup;
         }
 
         @Override

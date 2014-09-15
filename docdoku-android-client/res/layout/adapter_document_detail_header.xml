@@ -5,7 +5,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="horizontal"
-              android:background="@color/lightBlue">
+              android:background="@android:color/holo_blue_dark">
+<!--android:background="@color/lightBlue">-->
 
     <ImageView
         android:id="@+id/collapse_expand_group"
@@ -15,8 +16,8 @@
         android:layout_centerVertical="true"
         android:src="@drawable/group_expand_light"/>
 
-    <TextView android:id="@+id/page_title"
-              android:text="Page Title"
+    <TextView android:id="@+id/section_title"
+              android:text="..."
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_centerInParent="true"

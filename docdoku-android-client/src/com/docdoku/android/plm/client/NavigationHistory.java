@@ -60,8 +60,8 @@ import java.util.NoSuchElementException;
  *     }
  * </pre></code>
  *
- * @author: Martin Devillers
  * @version 1.0
+ * @author: Martin Devillers
  */
 public class NavigationHistory {
     private static final String LOG_TAG = "com.docdoku.android.plm.client.NavigationHistory";
@@ -69,11 +69,10 @@ public class NavigationHistory {
     /**
      * Maximum number of elements to be kept in the navigation history.
      */
-    private static final int NAVIGATION_HISTORY_MAX_SIZE = 20;
-    private static final String PREFERENCE_NAVIGATION_HISTORY_SIZE = "size";
-
-    private final SharedPreferences sharedPreferences;
-    private final LinkedHashSet<String> navigationHistory;
+    private static final int                   NAVIGATION_HISTORY_MAX_SIZE        = 20;
+    private static final String                PREFERENCE_NAVIGATION_HISTORY_SIZE = "size";
+    private final        SharedPreferences     sharedPreferences;
+    private final        LinkedHashSet<String> navigationHistory;
     private int size;
 
     /**
@@ -86,11 +85,11 @@ public class NavigationHistory {
      *
      * @param sharedPreferences <code>SharedPreferences</code> where the <code>NavigationHistory</code> data is kept
      */
-    public NavigationHistory(SharedPreferences sharedPreferences){
+    public NavigationHistory(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
         size = sharedPreferences.getInt(PREFERENCE_NAVIGATION_HISTORY_SIZE, 0);
-        navigationHistory = new LinkedHashSet<String>();
-        for (int i = 0; i< size; i++){
+        navigationHistory = new LinkedHashSet<>();
+        for (int i = 0; i < size; i++) {
             String key = sharedPreferences.getString(Integer.toString(i), "");
             navigationHistory.add(key);
             Log.i(LOG_TAG, "Retreiving key at position " + i + ": " + key);
@@ -102,15 +101,16 @@ public class NavigationHistory {
      *
      * @return the <code>Iterator</code>
      */
-    public Iterator<String> getKeyIterator(){
+    public Iterator<String> getKeyIterator() {
         return navigationHistory.iterator();
     }
 
     /**
      * Returns the number of elements in the <code>NavigationHistory</code>
+     *
      * @return the navigation history size
      */
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 
@@ -119,27 +119,29 @@ public class NavigationHistory {
      * <p>If the key of the <code>Element</code> is already in history <code>LinkedHashSet</code>, then that key is moved to the top
      * of the <code>LinkedHashSet</code>. Otherwise, it is added at the top. {@link #saveHistory()} is then called to store
      * the new history into the <code>SharedPreferences</code>.
+     *
      * @param key the key of the entry to add to the history
      */
-    public void add(String key){
-        if (navigationHistory.contains(key)){
+    public void add(String key) {
+        if (navigationHistory.contains(key)) {
             navigationHistory.remove(key);
-        } else {
+        }
+        else {
             size++;
         }
         navigationHistory.add(key);
-        if (size > NAVIGATION_HISTORY_MAX_SIZE){
+        if (size > NAVIGATION_HISTORY_MAX_SIZE) {
             removeLastEntry();
         }
         saveHistory();
     }
 
-    private void saveHistory(){
+    private void saveHistory() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(PREFERENCE_NAVIGATION_HISTORY_SIZE, size);
         Iterator<String> iterator = navigationHistory.iterator();
         int i = size - 1;
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             String next = iterator.next();
             Log.i(LOG_TAG, "Storing key " + next + " in preferences at position " + i);
             editor.putString(Integer.toString(i), next);
@@ -148,7 +150,7 @@ public class NavigationHistory {
         editor.commit();
     }
 
-    private void removeLastEntry() throws NoSuchElementException, UnsupportedOperationException{
+    private void removeLastEntry() throws NoSuchElementException, UnsupportedOperationException {
         Iterator<String> iterator = navigationHistory.iterator();
         iterator.next();
         iterator.remove();
