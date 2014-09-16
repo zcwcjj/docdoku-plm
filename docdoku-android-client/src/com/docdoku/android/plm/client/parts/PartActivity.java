@@ -97,7 +97,7 @@ public class PartActivity extends ElementActivity {
         ImageView icon = (ImageView) rowView.findViewById(R.id.iconFile);
         final boolean isObj = part.getCADFileName().endsWith(".obj");
         if (isObj) {
-            icon.setImageDrawable(getResources().getDrawable(R.drawable.objfile));
+            icon.setImageDrawable(getResources().getDrawable(R.drawable.ic_obj_file_dark));
         }
 
         fileNameField.setText(part.getCADFileName());
@@ -249,7 +249,7 @@ public class PartActivity extends ElementActivity {
             ViewGroup pageView;
             pageView = (ViewGroup) getLayoutInflater().inflate(R.layout.adapter_document_detail_header, null);
             if (b) {
-                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.group_collapse_light);
+                ((ImageView) pageView.findViewById(R.id.collapse_expand_group)).setImageResource(R.drawable.ic_navigation_collapse_light);
             }
             TextView title = (TextView) pageView.findViewById(R.id.section_title);
             switch (i) {

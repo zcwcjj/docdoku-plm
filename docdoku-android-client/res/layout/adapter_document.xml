@@ -53,7 +53,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:padding="2dp"
-                android:src="@drawable/element_expand_light"/>
+                />
+        <!--android:src="@drawable/element_expand_light"-->
 
     </RelativeLayout>
 
@@ -115,7 +116,7 @@
             android:layout_alignParentEnd="false">
 
         <ImageView
-                android:src="@drawable/attached_file_light"
+                android:src="@drawable/ic_attachment_light"
                 style="@style/Theme.AppTheme.Indicator"/>
 
         <TextView

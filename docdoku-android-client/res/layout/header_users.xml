@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:id="@+id/selectAllUsers"
-            android:src="@drawable/all_users_light"
+            android:src="@drawable/ic_users_all_light"
             android:layout_gravity="right|center_vertical"
             android:contentDescription=""/>
 </RelativeLayout>
