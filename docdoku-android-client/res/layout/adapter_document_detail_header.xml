@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/group_expand_light"/>
+        android:src="@drawable/ic_navigation_expand_light"/>
 
     <TextView android:id="@+id/section_title"
               android:text="..."

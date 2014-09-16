@@ -83,7 +83,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text=""
-                    android:drawableLeft="@drawable/all_users_light"/>
+                    android:drawableLeft="@drawable/ic_users_all_light"/>
 
                 <TextView
                         android:id="@+id/creationDateMinTitle"
@@ -97,7 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text=""
-                        android:drawableLeft="@drawable/calendar_light"/>
+                        android:drawableLeft="@drawable/ic_calendar_light"/>
 
                 <TextView
                         android:id="@+id/creationDateMaxTitle"
@@ -111,7 +111,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text=""
-                        android:drawableLeft="@drawable/calendar_light"/>
+                        android:drawableLeft="@drawable/ic_calendar_light"/>
 
                 </LinearLayout>
 

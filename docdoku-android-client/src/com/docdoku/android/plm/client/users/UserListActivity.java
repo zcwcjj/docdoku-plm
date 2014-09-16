@@ -395,7 +395,7 @@ public class UserListActivity extends SearchActionBarActivity {
      */
     private void createContactForSelectedUser() {
         new AlertDialog.Builder(UserListActivity.this)
-                .setIcon(R.drawable.create_contact_light)
+                .setIcon(R.drawable.ic_user_add_blue)
                 .setTitle(" ")
                 .setItems(R.array.userAddContactOptions, new DialogInterface.OnClickListener() {
                     @Override

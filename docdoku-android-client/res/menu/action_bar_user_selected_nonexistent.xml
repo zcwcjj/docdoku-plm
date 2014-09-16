@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/createContact"
-          android:icon="@drawable/create_contact_dark"
+          android:icon="@drawable/ic_user_add_dark"
           android:title="@string/menu_bar_create_contact"
           android:showAsAction="always"/>
     <item android:id="@+id/sendEmails"

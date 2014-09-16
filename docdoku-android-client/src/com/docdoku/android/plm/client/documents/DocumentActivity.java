@@ -22,6 +22,7 @@ package com.docdoku.android.plm.client.documents;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -31,7 +32,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.content.CursorLoader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -150,6 +150,8 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
                     break;*/
                 case INTENT_CODE_ACTIVITY_FILE_CHOOSER:
                     Uri uri = data.getData();
+
+                    Log.d(LOG_TAG, uri.toString());
 
                     String path = getRealPathFromURI(uri);
                     String fileName = path.substring(path.lastIndexOf("/") + 1);
@@ -353,8 +355,13 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
         String[] proj = {MediaStore.Images.Media.DATA};
         CursorLoader loader = new CursorLoader(this, contentUri, proj, null, null, null);
         Cursor cursor = loader.loadInBackground();
+//        Cursor cursor = this.getContentResolver().query(contentUri, proj, null, null, null);
+
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
+
+        Log.d(LOG_TAG, cursor.getColumnCount() + "");
+
         return cursor.getString(column_index);
     }
 
@@ -575,7 +582,7 @@ public class DocumentActivity extends ElementActivity implements HttpPostUploadF
 
             if (b) {
                 ImageView img = ((ImageView) viewGroup.findViewById(R.id.collapse_expand_group));
-                img.setImageResource(R.drawable.group_collapse_light);
+                img.setImageResource(R.drawable.ic_navigation_collapse_light);
             }
             TextView title = (TextView) viewGroup.findViewById(R.id.section_title);
             switch (i) {
