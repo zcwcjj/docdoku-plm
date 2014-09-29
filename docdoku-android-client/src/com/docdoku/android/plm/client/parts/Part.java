@@ -120,10 +120,19 @@ public class Part extends Element implements Serializable {
     @Override
     public Part updateFromJSON(JSONObject partJSON, Resources resources) throws JSONException {
         updateElementFromJSON(partJSON, resources);
+
+        String lifeCycleState;
+        try {
+            lifeCycleState = partJSON.getString(JSON_KEY_PART_LIFECYCLE_STATE);
+        }
+        catch (JSONException e) {
+            lifeCycleState = "";
+        }
+
         setPartDetails(
                 partJSON.getString(JSON_KEY_PART_NUMBER),
                 partJSON.getString(JSON_KEY_PART_VERSION),
-                partJSON.getString(JSON_KEY_PART_LIFECYCLE_STATE),
+                lifeCycleState,
                 partJSON.getBoolean(JSON_KEY_PART_STANDARD_PART)
         );
         return this;

@@ -121,10 +121,19 @@ public class Document extends Element implements Serializable {
 
     public Document updateFromJSON(JSONObject documentJSON, Resources resources) throws JSONException {
         updateElementFromJSON(documentJSON, resources);
+        String lifeCycleState;
+        try {
+            lifeCycleState = documentJSON.getString("lifeCycleState");
+        }
+        catch (JSONException e) {
+            lifeCycleState = "";
+        }
+
         setDocumentDetails(
                 documentJSON.getString("path"),
                 documentJSON.getString("type"),
-                documentJSON.getString("lifeCycleState")
+                lifeCycleState
+
         );
         iterationNotification = documentJSON.getBoolean("iterationSubscription");
         stateChangeNotification = documentJSON.getBoolean("stateSubscription");
