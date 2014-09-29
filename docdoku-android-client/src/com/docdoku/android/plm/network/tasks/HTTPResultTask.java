@@ -1,4 +1,4 @@
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.tasks;
 
 import android.util.Log;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by G. BOTTIEAU on 25/08/14.
  */
 public class HTTPResultTask {
-    private static final String  LOG_TAG          = "com.docdoku.android.plm.network.HTTPResultTask";
+    private static final String  LOG_TAG          = "com.docdoku.android.plm.network.tasks.HTTPResultTask";
     public static final  int     NO_RESPONSE_CODE = -1;
     public static final  String  NO_RESPONSE_MSG  = "Connection did not start";
     private              int     responseCode     = NO_RESPONSE_CODE;

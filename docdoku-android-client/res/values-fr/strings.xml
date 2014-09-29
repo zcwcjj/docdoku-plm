@@ -17,7 +17,7 @@
     <string name="act_user">Utilisateurs</string>
     <string name="act_folder">Dossier :</string>
     <string name="act_folders_list">Dossiers</string>
-    <string name="act_gdx">Visualisateur 3D :</string>
+    <string name="act_gdx">Visualiseur 3D</string>
 
     <!-- Connection/Disconnection strings -->
     <string name="form_connection_url">Serveur :</string>

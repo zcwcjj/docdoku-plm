@@ -1,13 +1,13 @@
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.tasks;
 
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 import com.docdoku.android.plm.client.Session;
-import com.docdoku.android.plm.network.listeners.HTTPTaskBeforeStartListener;
-import com.docdoku.android.plm.network.listeners.HTTPTaskCanceledListener;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
-import com.docdoku.android.plm.network.listeners.HTTPTaskProgressListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskBeforeStartListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskCanceledListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskProgressListener;
 
 import java.io.*;
 import java.net.*;
@@ -21,7 +21,7 @@ public abstract class HTTPAsyncTask<Params, Progress> extends AsyncTask<Params, 
     public static final  String ERROR_URL               = "Error on URL";
     public static final  String ERROR_HTTP_BAD_REQUEST  = "Http Bad request";
     public static final  String ERROR_HTTP_UNAUTHORIZED = "Http unauthorized";
-    private static final String LOG_TAG                 = "com.docdoku.android.plm.network.HTTPAsyncTask";
+    private static final String LOG_TAG                 = "com.docdoku.android.plm.network.tasks.HTTPAsyncTask";
     private final static int    CHUNK_SIZE              = 1024 * 8;
     private final static int    BUFFER_CAPACITY         = 1024 * 32;
 
@@ -40,22 +40,16 @@ public abstract class HTTPAsyncTask<Params, Progress> extends AsyncTask<Params, 
     }
 
     HTTPAsyncTask(Session session) {
-        if (session != null) {
-            initParameters(session);
-        }
-        else if (id == null || host == null) {
-            Log.i(LOG_TAG, "attempting to retrieve server connection information from memory...");
+        if (session == null) {
             try {
                 session = Session.getSession();
-                initParameters(session);
             }
             catch (Session.SessionLoadException e) {
                 Log.e(LOG_TAG, "Error : Session.SessionLoadException : " + e.getMessage());
             }
         }
-    }
 
-    private void initParameters(Session session) {
+
         Log.i(LOG_TAG, "attempting to retrieve server connection information from memory...");
         host = session.getHost();
         port = session.getPort();
@@ -69,11 +63,28 @@ public abstract class HTTPAsyncTask<Params, Progress> extends AsyncTask<Params, 
         Log.i(LOG_TAG, "All the server connection information is correctly available : " + host + ":" + port);
     }
 
+    protected boolean isReachable() {
+        boolean reachable = false;
+        try {
+            if (host != null)
+                reachable = InetAddress.getByName(host).isReachable(5000);
+        }
+        catch (UnknownHostException e) {
+
+        }
+        catch (IOException e) {
+
+        }
+        return reachable;
+    }
+
     HttpURLConnection getHttpUrlConnection(String path) throws IOException, URISyntaxException {
         URL url = createURL(path);
 
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
         httpURLConnection.setRequestProperty("Authorization", "Basic " + new String(id, "US-ASCII"));
+
+        httpURLConnection.setConnectTimeout(8000 /* milliseconds */);
 
         return httpURLConnection;
     }

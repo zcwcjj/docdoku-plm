@@ -27,9 +27,9 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ViewGroup;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 

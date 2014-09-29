@@ -41,9 +41,9 @@ import android.widget.*;
 import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPPutTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPPutTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import com.docdoku.android.plm.network.old.HttpPostUploadFileTask;
 
 import java.io.File;

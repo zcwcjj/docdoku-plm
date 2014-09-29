@@ -30,9 +30,9 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -234,7 +234,7 @@ public class PartCompleteListActivity extends PartListActivity implements Loader
                  * <p>Creates <code>Part</code> instances from the result and adds them to an {@code ArrayList<Document>}
                  * which is passed to the {@code LoaderManager.LoaderCallbacks} in the {@code deliverResult()} method.
                  *
-                 * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
+                 * @see com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener
                  */
                 @Override
                 public void onDone(HTTPResultTask result) {

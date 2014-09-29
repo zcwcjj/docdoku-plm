@@ -18,11 +18,11 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.tasks;
 
 import android.util.Log;
 import com.docdoku.android.plm.client.Session;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -41,7 +41,7 @@ import java.net.URISyntaxException;
  * @author: Martin Devillers
  */
 public class HTTPPutTask extends HTTPAsyncTask<String, Void> {
-    private static final String LOG_TAG = "com.docdoku.android.plm.network.HTTPPutTask";
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.tasks.HTTPPutTask";
 
     public HTTPPutTask() {
         super();

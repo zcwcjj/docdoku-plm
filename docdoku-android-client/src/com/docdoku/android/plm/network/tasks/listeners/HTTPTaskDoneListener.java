@@ -1,6 +1,6 @@
-package com.docdoku.android.plm.network.listeners;
+package com.docdoku.android.plm.network.tasks.listeners;
 
-import com.docdoku.android.plm.network.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
 
 /**
  * Created by G. BOTTIEAU on 21/08/14.

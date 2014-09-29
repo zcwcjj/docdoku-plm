@@ -60,7 +60,7 @@ public class WelcomeScreen extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.welcome_screen);
+        setContentView(R.layout.splash_screen);
     }
 
     /**

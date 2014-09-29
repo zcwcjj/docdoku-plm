@@ -26,9 +26,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -214,7 +214,7 @@ public class DocumentHistoryListActivity extends DocumentListActivity implements
                  * {@link Document} which is passed to the {@code LoaderManager.LoaderCallbacks} using {@code deliverResult()}.
                  *
                  * @param result the {@code JSONObject} representing the {@link Document}.
-                 * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
+                 * @see com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener
                  */
                 @Override
                 public void onDone(HTTPResultTask result) {

@@ -89,9 +89,7 @@
     <string name="dialog_check_out_successful">Checkout successful</string>
     <string name="state_checked_out">Checked-Out</string>
     <string name="state_locked">Checked-Out</string>
-
     <string name="dialog_cancel_action">Do nothing</string>
-
     <string name="dialog_check_in">Check-in</string>
     <string name="dialog_check_in_confirm">Check in?</string>
     <string name="dialog_do_check_in">Check in</string>
@@ -111,10 +109,12 @@
     <string name="userSendEmail">Send email</string>
     <string name="userChooseNumber">Choose the number to call</string>
     <string name="userCancelCall">Cancel</string>
+
     <string-array name="userAddContactOptions">
         <item>Create new contact</item>
         <item>Add email to existing contact</item>
     </string-array>
+
     <string name="userSearch">User name</string>
     <string name="userLoadError">Error loading user list</string>
     <string name="userLoadInProgress">Loading user list…</string>

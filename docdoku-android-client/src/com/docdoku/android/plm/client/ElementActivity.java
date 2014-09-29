@@ -33,11 +33,11 @@ import android.webkit.MimeTypeMap;
 import android.widget.*;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
-import com.docdoku.android.plm.network.HTTPDownloadTask;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPPutTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPDownloadTask;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPPutTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -371,7 +371,7 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
 
     /**
      * Inflates a layout for an linked file, showing its name.
-     * Sets the <code>OnClickListener</code> that starts the download of the file with an {@link com.docdoku.android.plm.network.HTTPDownloadTask}.
+     * Sets the <code>OnClickListener</code> that starts the download of the file with an {@link com.docdoku.android.plm.network.tasks.HTTPDownloadTask}.
      * <p>Layout file: {@link /res/layout/adapter_dowloadable_file.xml adapter_downloadable_file}
      *
      * @param fileName the name of the downloadable file
@@ -387,36 +387,56 @@ public abstract class ElementActivity extends SimpleActionBarActivity {
             public void onClick(View view) {
                 Log.i("com.docdoku.android.plm.client", "downloading file from path: " + fileUrl);
 
-                loadingDialog = new ProgressDialog(ElementActivity.this);
-                loadingDialog.setTitle(R.string.net_loading);
-                loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                loadingDialog.setIndeterminate(true);
-                loadingDialog.show();
-
                 final String dest = getExternalCacheDir() + "/" + fileUrl.replaceAll(fileName, "");
-                new HTTPDownloadTask(new HTTPTaskDoneListener() {
-                    @Override
-                    public void onDone(HTTPResultTask result) {
-                        loadingDialog.dismiss();
-                        if (result.isSucceed()) {
-                            Intent intent = new Intent();
-                            intent.setAction(android.content.Intent.ACTION_VIEW);
 
-                            File file = new File(dest + fileName);
+                // TODO : if file exists propose to check for update
+                // TODO quick patch done : now factorize this code
+                final File file = new File(dest + fileName);
+                if(file.exists()){
+                    MimeTypeMap mime = MimeTypeMap.getSingleton();
+                    String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+                    String type = mime.getMimeTypeFromExtension(ext);
 
-                            MimeTypeMap mime = MimeTypeMap.getSingleton();
-                            String ext = file.getName().substring(file.getName().indexOf(".") + 1);
-                            String type = mime.getMimeTypeFromExtension(ext);
+                    Intent intent = new Intent();
+                    intent.setAction(android.content.Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(file), type);
 
-                            intent.setDataAndType(Uri.fromFile(file), type);
+                    startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
+                }
+                else
+                {
+                    loadingDialog = new ProgressDialog(ElementActivity.this);
+                    loadingDialog.setTitle(R.string.net_loading);
+                    loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    loadingDialog.setIndeterminate(true);
+                    loadingDialog.show();
 
-                            startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
+                    new HTTPDownloadTask(new HTTPTaskDoneListener() {
+                        @Override
+                        public void onDone(HTTPResultTask result) {
+                            loadingDialog.dismiss();
+                            if (result.isSucceed()) {
+                                Intent intent = new Intent();
+                                intent.setAction(android.content.Intent.ACTION_VIEW);
+
+//                                File file = new File(dest + fileName);
+
+                                MimeTypeMap mime = MimeTypeMap.getSingleton();
+                                String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+                                String type = mime.getMimeTypeFromExtension(ext);
+
+                                intent.setDataAndType(Uri.fromFile(file), type);
+
+                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
+                            }
+                            else {
+                                Toast.makeText(ElementActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
+                            }
                         }
-                        else {
-                            Toast.makeText(ElementActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }).execute("files/" + fileUrl, dest, fileName);
+                    }).execute("files/" + fileUrl, dest, fileName);
+                }
+
+
             }
         });
         return rowView;

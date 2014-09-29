@@ -1,4 +1,4 @@
-package com.docdoku.android.plm.network.listeners;
+package com.docdoku.android.plm.network.tasks.listeners;
 
 /**
  * Created by G. BOTTIEAU on 21/08/14.

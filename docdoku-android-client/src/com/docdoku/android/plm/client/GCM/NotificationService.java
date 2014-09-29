@@ -30,9 +30,9 @@ import com.docdoku.android.plm.client.Session;
 import com.docdoku.android.plm.client.connection.ConnectionActivity;
 import com.docdoku.android.plm.client.documents.Document;
 import com.docdoku.android.plm.client.documents.DocumentActivity;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,7 +52,7 @@ public class NotificationService extends Service {
      * Loads the {@link com.docdoku.android.plm.client.Session} information in order to be able to send a request to the server.
      * <p>
      * Extracts the document data from the {@code Extra}s in the {@code Intent} to start an {@link HTTPGetTask} to fetch
-     * the information about the document from the server. This {@code NotificationService} is set as {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener}
+     * the information about the document from the server. This {@code NotificationService} is set as {@link com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener}
      * for the {@code HTTPGetTask}.
      *
      * @param intent the {@code PendingIntent} created in the {@link com.docdoku.android.plm.client.GCM.GCMIntentService}

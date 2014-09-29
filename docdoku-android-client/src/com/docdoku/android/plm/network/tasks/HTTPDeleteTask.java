@@ -18,11 +18,11 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.tasks;
 
 import android.util.Log;
 import com.docdoku.android.plm.client.Session;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,14 +33,14 @@ import java.net.URISyntaxException;
 
 /**
  * Sends an Http DELETE request to the server.
- * <p>The constructor requires a {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener} to notify the result of the request.
+ * <p>The constructor requires a {@link com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener} to notify the result of the request.
  * <p>The host's url path is specified in the first <code>String</code> parameter in the <code>execute()</code> method.
  *
  * @version 1.0
  * @author: Martin Devillers
  */
 public class HTTPDeleteTask extends HTTPAsyncTask<String, Void> {
-    private static final String LOG_TAG = "com.docdoku.android.plm.network.HTTPDeleteTask";
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.tasks.HTTPDeleteTask";
 
     public HTTPDeleteTask() {
         super();

@@ -27,9 +27,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import com.docdoku.android.plm.client.R;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +83,7 @@ public class DocumentFoldersActivity extends DocumentListActivity {
          * obtained, they are added to the {@link FolderAdapter}.
          *
          * @param result the {@code JSONArray} of sub-folders
-         * @see com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener
+         * @see com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener
          */
         HTTPGetTask task = new HTTPGetTask(new HTTPTaskDoneListener() {
             @Override

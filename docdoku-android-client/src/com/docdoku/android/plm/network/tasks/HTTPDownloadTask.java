@@ -1,8 +1,8 @@
-package com.docdoku.android.plm.network;
+package com.docdoku.android.plm.network.tasks;
 
 import android.util.Log;
 import com.docdoku.android.plm.client.Session;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 
 public class HTTPDownloadTask extends HTTPAsyncTask<String, Integer> {
-    private static final String LOG_TAG = "com.docdoku.android.plm.network.HTTPDownloadTask";
+    private static final String LOG_TAG = "com.docdoku.android.plm.network.tasks.HTTPDownloadTask";
 
     private int headerFileSize = -1;
 

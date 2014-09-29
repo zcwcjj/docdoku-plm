@@ -41,9 +41,9 @@ import com.docdoku.android.plm.client.GCM.GCMRegisterService;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.Session;
 import com.docdoku.android.plm.client.documents.DocumentCompleteListActivity;
-import com.docdoku.android.plm.network.HTTPGetTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPGetTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -102,6 +102,7 @@ public class ConnectionActivity extends Activity {
     private CheckBox       chkboxAutoConnect;
     private boolean        autoConnect;
     private PendingIntent  pendingIntent;
+    private Button         btnConnection;
 
     /**
      * Called on the {@code Activity}'s creation.
@@ -122,6 +123,7 @@ public class ConnectionActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_connection);
+        btnConnection = (Button) findViewById(R.id.btnConnection);
 
         Intent intent = getIntent();
         boolean eraseData = intent.getBooleanExtra(INTENT_KEY_ERASE_ID, false);
@@ -135,7 +137,7 @@ public class ConnectionActivity extends Activity {
         setUpConnectionBtn();
         if (Session.loadSession(ConnectionActivity.this)) {
             try {
-                autoConnect = true;
+//                autoConnect = true;
                 session = Session.getSession();
                 connect();
             }
@@ -148,6 +150,7 @@ public class ConnectionActivity extends Activity {
             Intent welcomeIntent = new Intent(this, WelcomeScreen.class);
             startActivity(welcomeIntent);
         }
+
     }
 
     /**
@@ -171,6 +174,7 @@ public class ConnectionActivity extends Activity {
      * {@link #downloadWorkspaces()}.
      */
     private void connect() {
+
         if (checkInternetConnection()) {
             Log.i(LOG_TAG, "Showing progress dialog");
             progressDialog = new ProgressDialog(ConnectionActivity.this);
@@ -195,8 +199,8 @@ public class ConnectionActivity extends Activity {
     /**
      * Attempts to download workspaces from server.
      * <p/>
-     * Starts a new {@link com.docdoku.android.plm.network.HTTPGetTask} to download the workspaces, with this {@code ConnectionActivity} set as the
-     * {@link com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener}.
+     * Starts a new {@link com.docdoku.android.plm.network.tasks.HTTPGetTask} to download the workspaces, with this {@code ConnectionActivity} set as the
+     * {@link com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener}.
      * <p/>
      * Handles the result of the request to the server.
      * <p/>
@@ -205,7 +209,7 @@ public class ConnectionActivity extends Activity {
      * specified. Otherwise, a default connection error message is specified.
      * <p>If the request was successful, the result is a {@code JSONArray} of the workspaces of which the user is a member.
      * This array of workspaces is transferred to the {@link Session} so that it can be stored in memory and in the
-     * {@code Preferences}. A new {@link com.docdoku.android.plm.network.HTTPGetTask} is started to load request the server for the user's name,
+     * {@code Preferences}. A new {@link com.docdoku.android.plm.network.tasks.HTTPGetTask} is started to load request the server for the user's name,
      * to be presented instead of his login once it is obtained. If the auto connect {@code CheckBox} was checked,
      * a {@link com.docdoku.android.plm.client.GCM.GCMIntentService} is started to register for GCM messaging.
      * The {@link #endConnectionActivity()} method is called.
@@ -270,14 +274,19 @@ public class ConnectionActivity extends Activity {
                 else {
                     createErrorDialog(R.string.net_connection_error);
                 }
+                btnConnection.setEnabled(true);
             }
+
         });
+
+        btnConnection.setEnabled(false);
         downloadWorkspacesTask.execute("/api/accounts/workspaces");
 
-        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+            public void onCancel(DialogInterface dialog) {
                 downloadWorkspacesTask.cancel(true);
+                btnConnection.setEnabled(true);
             }
         });
 
@@ -312,7 +321,7 @@ public class ConnectionActivity extends Activity {
      * of the id input fields to create a new {@link Session Session} and then calls {@link #connect()}.
      */
     private void setUpConnectionBtn() {
-        Button btnConnection = (Button) findViewById(R.id.btnConnection);
+
         btnConnection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -367,6 +376,7 @@ public class ConnectionActivity extends Activity {
         for (String child : children) {
             // clear each of the preferences
             getSharedPreferences(child.replace(".xml", ""), Context.MODE_PRIVATE).edit().clear().commit();
+            new File(dir, child).delete();
         }
         // Make sure it has enough time to save all the commited changes
         try {
@@ -374,10 +384,10 @@ public class ConnectionActivity extends Activity {
         }
         catch (InterruptedException ignored) {
         }
-        for (String child : children) {
-            // delete the files
-            new File(dir, child).delete();
-        }
+//        for (String child : children) {
+//            // delete the files
+//            new File(dir, child).delete();
+//        }
     }
 
     /**

@@ -36,9 +36,9 @@ import com.docdoku.android.plm.client.Element;
 import com.docdoku.android.plm.client.ElementActivity;
 import com.docdoku.android.plm.client.R;
 import com.docdoku.android.plm.client.gdx.GDXActivity;
-import com.docdoku.android.plm.network.HTTPDownloadTask;
-import com.docdoku.android.plm.network.HTTPResultTask;
-import com.docdoku.android.plm.network.listeners.HTTPTaskDoneListener;
+import com.docdoku.android.plm.network.tasks.HTTPDownloadTask;
+import com.docdoku.android.plm.network.tasks.HTTPResultTask;
+import com.docdoku.android.plm.network.tasks.listeners.HTTPTaskDoneListener;
 
 import java.io.File;
 
@@ -104,53 +104,67 @@ public class PartActivity extends ElementActivity {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadingDialog = new ProgressDialog(PartActivity.this);
-                loadingDialog.setTitle(R.string.net_loading);
-                loadingDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                loadingDialog.setIndeterminate(true);
 
-                loadingDialog.show();
 
                 final String dest = getExternalCacheDir() + "/" + part.getCADFileUrl().replaceAll(part.getCADFileName(), "");
-                HTTPDownloadTask task = new HTTPDownloadTask(new HTTPTaskDoneListener() {
-                    @Override
-                    public void onDone(HTTPResultTask result) {
-                        loadingDialog.dismiss();
-                        if (result.isSucceed()) {
-                            Intent intent = new Intent();
-                            intent.setAction(Intent.ACTION_VIEW);
+                File obj = new File(dest + part.getCADFileName());
 
-                            if (isObj) {
-                                PLMModel plmmodel = new PLMModel(part.getKey(),
-                                        "partiterationID",
-                                        new Matrix4(),
-                                        part.getCADFileName(),
-                                        dest);
-                                plmmodels.clear();
-                                plmmodels.add(plmmodel);
+                // TODO : find a better to share plmmodels (currently is static attribute)
+                PLMModel plmmodel = new PLMModel(part.getKey(),
+                        "partiterationID",
+                        new Matrix4(),
+                        part.getCADFileName(),
+                        dest);
+                plmmodels.clear();
+                plmmodels.add(plmmodel);
 
 
-                                startActivity(new Intent(PartActivity.this, GDXActivity.class));
+                // TODO : if file exists (obj or other) propose to check for update
+                if(obj.exists() && isObj){
+                    startActivity(new Intent(PartActivity.this, GDXActivity.class));
+                }
+                else
+                {
+
+                    loadingDialog = new ProgressDialog(PartActivity.this);
+                    loadingDialog.setTitle(R.string.net_loading);
+                    loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    loadingDialog.setIndeterminate(true);
+
+                    loadingDialog.show();
+                    HTTPDownloadTask task = new HTTPDownloadTask(new HTTPTaskDoneListener() {
+                        @Override
+                        public void onDone(HTTPResultTask result) {
+                            loadingDialog.dismiss();
+                            if (result.isSucceed()) {
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_VIEW);
+
+                                if (isObj) {
+                                    startActivity(new Intent(PartActivity.this, GDXActivity.class));
+                                }
+                                else {
+                                    File file = new File(dest + part.getCADFileName());
+
+                                    MimeTypeMap mime = MimeTypeMap.getSingleton();
+                                    String ext = file.getName().substring(file.getName().indexOf(".") + 1);
+                                    String type = mime.getMimeTypeFromExtension(ext);
+
+                                    intent.setDataAndType(Uri.fromFile(file), type);
+
+                                    startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
+                                }
+
                             }
                             else {
-                                File file = new File(dest + part.getCADFileName());
-
-                                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                                String ext = file.getName().substring(file.getName().indexOf(".") + 1);
-                                String type = mime.getMimeTypeFromExtension(ext);
-
-                                intent.setDataAndType(Uri.fromFile(file), type);
-
-                                startActivity(Intent.createChooser(intent, getResources().getString(R.string.dialog_choose_opening_app)));
+                                Toast.makeText(PartActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
                             }
+                        }
+                    });
+                    task.execute("files/" + part.getCADFileUrl(), dest, part.getCADFileName());
+                }
 
-                        }
-                        else {
-                            Toast.makeText(PartActivity.this, R.string.net_download_failed, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                task.execute("files/" + part.getCADFileUrl(), dest, part.getCADFileName());
+
             }
         });
         return rowView;
