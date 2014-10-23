@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="PARTREVISION"/>
+    </preConditions>
+
+    <changeSet author="Taylor LABEJOF" id="20140515-partRelease-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="STATUS" tableName="PARTREVISION" />
+        </preConditions>
+
+        <addColumn tableName="PARTREVISION" >
+            <column name="STATUS"
+                    type="INT(10)"
+                    remarks="Since commit 27137c9d0e9a6c3119ee535cad7eda95b632b41e"
+                    defaultValueNumeric="0"/>
+        </addColumn>
+
+        <comment>Add status column to know if a part revision is released or in progress</comment>
+    </changeSet>
+
+</databaseChangeLog>

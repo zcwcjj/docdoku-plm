@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="CHANGEISSUE"/>
+        <tableExists tableName="CHANGEORDER"/>
+        <tableExists tableName="CHANGEREQUEST"/>
+        <tableExists tableName="MILESTONE"/>
+    </preConditions>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeIssue-documentIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEISSUE_AFFECTED_DOCUMENT" />
+        </preConditions>
+        <createTable tableName="CHANGEISSUE_AFFECTED_DOCUMENT">
+            <column name="CHANGEISSUE_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change issue with the affected documents iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeIssue-partIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEISSUE_AFFECTED_PART" />
+        </preConditions>
+        <createTable tableName="CHANGEISSUE_AFFECTED_PART">
+            <column name="CHANGEISSUE_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change issue with the affected parts iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeIssue-tag">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEISSUE_TAG" />
+        </preConditions>
+        <createTable tableName="CHANGEISSUE_TAG">
+            <column name="CHANGEISSUE_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_LABEL" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change issue with its tags</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeOrder-documentIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEORDER_AFFECTED_DOCUMENT" />
+        </preConditions>
+        <createTable tableName="CHANGEORDER_AFFECTED_DOCUMENT">
+            <column name="CHANGEORDER_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change order with the affected documents iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeOrder-partIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEORDER_AFFECTED_PART" />
+        </preConditions>
+        <createTable tableName="CHANGEORDER_AFFECTED_PART">
+            <column name="CHANGEORDER_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change order with the affected parts iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeOrder-tag">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEORDER_TAG" />
+        </preConditions>
+        <createTable tableName="CHANGEORDER_TAG">
+            <column name="CHANGEORDER_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_LABEL" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change order with its tags</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeRequest-documentIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEREQUEST_AFFECTED_DOCUMENT" />
+        </preConditions>
+        <createTable tableName="CHANGEREQUEST_AFFECTED_DOCUMENT">
+            <column name="CHANGEREQUEST_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change request with the affected documents iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeRequest-partIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEREQUEST_AFFECTED_PART" />
+        </preConditions>
+        <createTable tableName="CHANGEREQUEST_AFFECTED_PART">
+            <column name="CHANGEREQUEST_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change request with the affected parts iterations</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeRequest-tag">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="CHANGEREQUEST_TAG" />
+        </preConditions>
+        <createTable tableName="CHANGEREQUEST_TAG">
+            <column name="CHANGEREQUEST_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_LABEL" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a change request with its tags</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeIssue-acl">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ACL_ID" tableName="CHANGEISSUE" />
+        </preConditions>
+        <addColumn tableName="CHANGEISSUE">
+            <column name="ACL_ID" type="INT(10)"/>
+        </addColumn>
+        <comment>Link a change issue with it ACL</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeOrder-acl">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ACL_ID" tableName="CHANGEORDER" />
+        </preConditions>
+        <addColumn tableName="CHANGEORDER">
+            <column name="ACL_ID" type="INT(10)"/>
+        </addColumn>
+        <comment>Link a change order with it ACL</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-changeOrder-acl">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ACL_ID" tableName="CHANGEREQUEST" />
+        </preConditions>
+        <addColumn tableName="CHANGEREQUEST">
+            <column name="ACL_ID" type="INT(10)"/>
+        </addColumn>
+        <comment>Link a change request with it ACL</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-milestone-acl">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ACL_ID" tableName="MILESTONE" />
+        </preConditions>
+        <addColumn tableName="MILESTONE">
+            <column name="ACL_ID" type="INT(10)"/>
+        </addColumn>
+        <comment>Link a milestone with it ACL</comment>
+    </changeSet>
+
+    <changeSet author="docdoku (generated)" id="1414426919023-33">
+        <addPrimaryKey columnNames="CHANGEISSUE_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEISSUE_AFFECTED_DOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-34">
+        <addPrimaryKey columnNames="CHANGEISSUE_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, PARTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEISSUE_AFFECTED_PART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-35">
+        <addPrimaryKey columnNames="CHANGEISSUE_ID, TAG_LABEL, TAG_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEISSUE_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-36">
+        <addPrimaryKey columnNames="CHANGEORDER_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEORDER_AFFECTED_DOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-37">
+        <addPrimaryKey columnNames="CHANGEORDER_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, PARTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEORDER_AFFECTED_PART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-38">
+        <addPrimaryKey columnNames="CHANGEORDER_ID, TAG_LABEL, TAG_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEORDER_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-39">
+        <addPrimaryKey columnNames="CHANGEREQUEST_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEREQUEST_AFFECTED_DOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-40">
+        <addPrimaryKey columnNames="CHANGEREQUEST_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, PARTMASTER_WORKSPACE_ID, ITERATION" constraintName="PRIMARY" tableName="CHANGEREQUEST_AFFECTED_PART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-41">
+        <addPrimaryKey columnNames="CHANGEREQUEST_ID, TAG_LABEL, TAG_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEREQUEST_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-43">
+        <addForeignKeyConstraint baseColumnNames="CHANGEREQUEST_ID" baseTableName="CHANGEREQUEST_AFFECTED_DOCUMENT" constraintName="CHANGEREQUEST_AFFECTED_DOCUMENT_CHANGEREQUEST_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-51">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="CHANGEISSUE" constraintName="FK_CHANGEISSUE_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-52">
+        <addForeignKeyConstraint baseColumnNames="CHANGEISSUE_ID" baseTableName="CHANGEISSUE_AFFECTED_DOCUMENT" constraintName="FK_CHANGEISSUE_AFFECTED_DOCUMENT_CHANGEISSUE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-53">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, DOCUMENTMASTER_WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="CHANGEISSUE_AFFECTED_DOCUMENT" constraintName="FK_CHANGEISSUE_AFFECTED_DOCUMENT_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-54">
+        <addForeignKeyConstraint baseColumnNames="CHANGEISSUE_ID" baseTableName="CHANGEISSUE_AFFECTED_PART" constraintName="FK_CHANGEISSUE_AFFECTED_PART_CHANGEISSUE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-55">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, PARTMASTER_WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" baseTableName="CHANGEISSUE_AFFECTED_PART" constraintName="FK_CHANGEISSUE_AFFECTED_PART_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" referencedTableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-56">
+        <addForeignKeyConstraint baseColumnNames="CHANGEISSUE_ID" baseTableName="CHANGEISSUE_TAG" constraintName="FK_CHANGEISSUE_TAG_CHANGEISSUE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-57">
+        <addForeignKeyConstraint baseColumnNames="TAG_LABEL, TAG_WORKSPACE_ID" baseTableName="CHANGEISSUE_TAG" constraintName="FK_CHANGEISSUE_TAG_TAG_LABEL" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LABEL, WORKSPACE_ID" referencedTableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-58">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="CHANGEORDER" constraintName="FK_CHANGEORDER_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-59">
+        <addForeignKeyConstraint baseColumnNames="CHANGEORDER_ID" baseTableName="CHANGEORDER_AFFECTED_DOCUMENT" constraintName="FK_CHANGEORDER_AFFECTED_DOCUMENT_CHANGEORDER_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-60">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, DOCUMENTMASTER_WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="CHANGEORDER_AFFECTED_DOCUMENT" constraintName="FK_CHANGEORDER_AFFECTED_DOCUMENT_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-61">
+        <addForeignKeyConstraint baseColumnNames="CHANGEORDER_ID" baseTableName="CHANGEORDER_AFFECTED_PART" constraintName="FK_CHANGEORDER_AFFECTED_PART_CHANGEORDER_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-62">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, PARTMASTER_WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" baseTableName="CHANGEORDER_AFFECTED_PART" constraintName="FK_CHANGEORDER_AFFECTED_PART_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" referencedTableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-63">
+        <addForeignKeyConstraint baseColumnNames="CHANGEORDER_ID" baseTableName="CHANGEORDER_TAG" constraintName="FK_CHANGEORDER_TAG_CHANGEORDER_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-64">
+        <addForeignKeyConstraint baseColumnNames="TAG_LABEL, TAG_WORKSPACE_ID" baseTableName="CHANGEORDER_TAG" constraintName="FK_CHANGEORDER_TAG_TAG_LABEL" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LABEL, WORKSPACE_ID" referencedTableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-65">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="CHANGEREQUEST" constraintName="FK_CHANGEREQUEST_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-66">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, DOCUMENTMASTER_WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="CHANGEREQUEST_AFFECTED_DOCUMENT" constraintName="FK_CHANGEREQUEST_AFFECTED_DOCUMENT_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-67">
+        <addForeignKeyConstraint baseColumnNames="CHANGEREQUEST_ID" baseTableName="CHANGEREQUEST_AFFECTED_PART" constraintName="FK_CHANGEREQUEST_AFFECTED_PART_CHANGEREQUEST_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-68">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, PARTMASTER_WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" baseTableName="CHANGEREQUEST_AFFECTED_PART" constraintName="FK_CHANGEREQUEST_AFFECTED_PART_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" referencedTableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-69">
+        <addForeignKeyConstraint baseColumnNames="CHANGEREQUEST_ID" baseTableName="CHANGEREQUEST_TAG" constraintName="FK_CHANGEREQUEST_TAG_CHANGEREQUEST_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-70">
+        <addForeignKeyConstraint baseColumnNames="TAG_LABEL, TAG_WORKSPACE_ID" baseTableName="CHANGEREQUEST_TAG" constraintName="FK_CHANGEREQUEST_TAG_TAG_LABEL" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LABEL, WORKSPACE_ID" referencedTableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-78">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="MILESTONE" constraintName="FK_MILESTONE_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-82">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_AFFECTED_DOCUMENT" constraintName="CHANGEITEMAFFECTEDDOCUMENTDOCUMENTREVISION_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-85">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_AFFECTED_DOCUMENT" constraintName="FK_CHANGEITEM_AFFECTED_DOCUMENT_CHANGEITEM_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-86">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_AFFECTED_PART" constraintName="FK_CHANGEITEM_AFFECTED_PART_CHANGEITEM_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-87">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_AFFECTED_PART" constraintName="FK_CHANGEITEM_AFFECTED_PART_PARTREVISION_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-88">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_TAG" constraintName="FK_CHANGEITEM_TAG_CHANGEITEM_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-89">
+        <dropForeignKeyConstraint baseTableName="CHANGEITEM_TAG" constraintName="FK_CHANGEITEM_TAG_TAG_LABEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-92">
+        <dropTable tableName="CHANGEITEM_AFFECTED_DOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-93">
+        <dropTable tableName="CHANGEITEM_AFFECTED_PART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-94">
+        <dropTable tableName="CHANGEITEM_TAG"/>
+    </changeSet>
+
+</databaseChangeLog>

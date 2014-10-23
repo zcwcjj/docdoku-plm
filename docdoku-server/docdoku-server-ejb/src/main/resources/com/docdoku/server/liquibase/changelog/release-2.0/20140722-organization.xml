@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="ACCOUNT"/>
+    </preConditions>
+
+    <changeSet author="Florent GARIN" id="1414426919023-create-organization">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="ORGANIZATION" />
+        </preConditions>
+        <createTable tableName="ORGANIZATION">
+            <column name="NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="OWNER_LOGIN" type="VARCHAR(255)"/>
+        </createTable>
+        <comment>Create Organization</comment>
+    </changeSet>
+
+    <changeSet author="Florent GARIN" id="20140515-organization-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ORGANIZATION_NAME" tableName="ACCOUNT" />
+        </preConditions>
+        <addColumn tableName="ACCOUNT" >
+            <column name="ORGANIZATION_NAME"
+                    type="VARCHAR(100)"
+                    remarks="Since commit organization feature">
+            </column>
+        </addColumn>
+        <comment>Add a link between ACCOUNT and ORGANIZATION</comment>
+    </changeSet>
+
+    <changeSet author="docdoku (generated)" id="1414426919023-42">
+        <addPrimaryKey columnNames="NAME" constraintName="PRIMARY" tableName="ORGANIZATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-44">
+        <addForeignKeyConstraint baseColumnNames="ORGANIZATION_NAME" baseTableName="ACCOUNT" constraintName="FK_ACCOUNT_ORGANIZATION_NAME" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="NAME" referencedTableName="ORGANIZATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-79">
+        <addForeignKeyConstraint baseColumnNames="OWNER_LOGIN" baseTableName="ORGANIZATION" constraintName="FK_ORGANIZATION_OWNER_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN" referencedTableName="ACCOUNT"/>
+    </changeSet>
+</databaseChangeLog>

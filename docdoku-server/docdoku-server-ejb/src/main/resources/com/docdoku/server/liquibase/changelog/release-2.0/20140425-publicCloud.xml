@@ -1,0 +1,1287 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+    <changeSet author="docdoku (generated)" id="1414425017565-1">
+        <createTable tableName="ACTIVITYMODEL_RELAUNCH">
+            <column name="ACTIVITYMODEL_STEP" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKFLOWMODEL_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELAUNCHACTIVITYMODEL_STEP" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELAUNCHWORKFLOWMODEL_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELAUNCHWORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-2">
+        <createTable tableName="ACTIVITY_RELAUNCH">
+            <column name="ACTIVITY_STEP" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTIVITY_WORKFLOW_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELAUNCH_STEP" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELAUNCH_WORKFLOW_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-3">
+        <createTable tableName="BASELINE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONFIGURATIONITEM_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="CONFIGURATIONITEM_ID" type="VARCHAR(255)"/>
+            <column name="PARTCOLLECTION_ID" type="INT(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-4">
+        <createTable tableName="BASELINEDPART">
+            <column name="TARGET_ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTCOLLECTION_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_PARTMASTER_PARTNUMBER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-5">
+        <createTable tableName="CHANGEISSUE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CATEGORY" type="INT(10)"/>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="INITIATOR" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="PRIORITY" type="INT(10)"/>
+            <column name="ASSIGNEE_LOGIN" type="VARCHAR(255)"/>
+            <column name="ASSIGNEE_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-6">
+        <createTable tableName="CHANGEITEM_AFFECTED_DOCUMENT">
+            <column name="CHANGEITEM_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-7">
+        <createTable tableName="CHANGEITEM_AFFECTED_PART">
+            <column name="CHANGEITEM_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-8">
+        <createTable tableName="CHANGEITEM_TAG">
+            <column name="CHANGEITEM_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_LABEL" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-9">
+        <createTable tableName="CHANGEORDER">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CATEGORY" type="INT(10)"/>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="PRIORITY" type="INT(10)"/>
+            <column name="ASSIGNEE_LOGIN" type="VARCHAR(255)"/>
+            <column name="ASSIGNEE_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+            <column name="MILESTONE_ID" type="INT(10)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-10">
+        <createTable tableName="CHANGEORDER_CHANGEREQUEST">
+            <column name="CHANGEORDER_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHANGEREQUEST_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-11">
+        <createTable tableName="CHANGEREQUEST">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CATEGORY" type="INT(10)"/>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="PRIORITY" type="INT(10)"/>
+            <column name="ASSIGNEE_LOGIN" type="VARCHAR(255)"/>
+            <column name="ASSIGNEE_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+            <column name="MILESTONE_ID" type="INT(10)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-12">
+        <createTable tableName="CHANGEREQUEST_CHANGEISSUE">
+            <column name="CHANGEREQUEST_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHANGEISSUE_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-13">
+        <createTable tableName="DOCUMENTREVISION">
+            <column name="VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHECKOUTDATE" type="datetime"/>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="PUBLICSHARED" type="BIT"/>
+            <column name="TITLE" type="VARCHAR(255)"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+            <column name="CHECKOUTUSER_LOGIN" type="VARCHAR(255)"/>
+            <column name="CHECKOUTUSER_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="LOCATION_COMPLETEPATH" type="VARCHAR(255)"/>
+            <column name="ACL_ID" type="INT(10)"/>
+            <column name="WORKFLOW_ID" type="INT(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-14">
+        <createTable tableName="DOCUMENTREVISION_TAG">
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_LABEL" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAG_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-15">
+        <createTable tableName="DOCUMENT_ABORTED_WORKFLOW">
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKFLOW_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-16">
+        <createTable tableName="GCMACCOUNT">
+            <column name="GCMID" type="VARCHAR(255)"/>
+            <column name="ACCOUNT_LOGIN" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-17">
+        <createTable tableName="MILESTONE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="DUEDATE" type="datetime"/>
+            <column name="TITLE" type="VARCHAR(255)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-18">
+        <createTable tableName="PARTCOLLECTION">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-19">
+        <createTable tableName="PART_ABORTED_WORKFLOW">
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKFLOW_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-20">
+        <createTable tableName="PRODUCTINSTANCEITERATION">
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONFIGURATIONITEM_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PRDINSTANCEMASTER_SERIALNUMBER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARTCOLLECTION_ID" type="INT(10)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-21">
+        <createTable tableName="PRODUCTINSTANCEMASTER">
+            <column name="SERIALNUMBER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONFIGURATIONITEM_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-22">
+        <createTable tableName="ROLE">
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEFAULT_USER_MAPPED_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="DEFAULT_USER_MAPPED_LOGIN" type="VARCHAR(255)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-23">
+        <createTable tableName="SHAREDENTITY">
+            <column name="UUID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DTYPE" type="VARCHAR(31)"/>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="EXPIREDATE" type="datetime"/>
+            <column name="PASSWORD" type="VARCHAR(255)"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+            <column name="WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ENTITY_WORKSPACE_ID" type="VARCHAR(255)"/>
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)"/>
+            <column name="PARTMASTER_PARTNUMBER" type="VARCHAR(255)"/>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)"/>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-24">
+        <addColumn tableName="WORKFLOW">
+            <column name="ABORTEDDATE" type="DATETIME(19)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-25">
+        <addColumn tableName="PARTREVISION">
+            <column name="ACL_ID" type="INT(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-30">
+        <addColumn tableName="CONFIGSPEC">
+            <column name="BASELINE_ID" type="INT(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-31">
+        <addColumn tableName="DOCUMENTITERATION">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-32">
+        <addColumn tableName="DOCUMENTITERATION_ATTRIBUTE">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-33">
+        <addColumn tableName="DOCUMENTITERATION_BINRES">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-34">
+        <addColumn tableName="DOCUMENTITERATION_DOCUMENTLINK">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-35">
+        <addColumn tableName="ITERATIONCHANGESUBSCRIPTION">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-36">
+        <addColumn tableName="STATECHANGESUBSCRIPTION">
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-37">
+        <addColumn tableName="BINARYRESOURCE">
+            <column name="LASTMODIFIED" type="DATETIME(19)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-40">
+        <addColumn tableName="PARTREVISION_EFFECTIVITY">
+            <column name="PARTMASTER_WORKSPACE_ID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-41">
+        <addColumn tableName="PARTREVISION_EFFECTIVITY">
+            <column name="PARTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-42">
+        <addColumn tableName="PARTREVISION">
+            <column defaultValue="0" name="PUBLICSHARED" type="BIT"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-43">
+        <addColumn tableName="BINARYRESOURCE">
+            <column name="RADIUS" type="DOUBLE(22)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-44">
+        <addColumn tableName="TASKMODEL">
+            <column name="ROLE_NAME" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-45">
+        <addColumn tableName="TASKMODEL">
+            <column name="ROLE_WORKSPACE_ID" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-46">
+        <addColumn tableName="TASK">
+            <column name="SIGNATURE" type="LONGTEXT(2147483647)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-47">
+        <addColumn tableName="DOCUMENTLINK">
+            <column name="TARGET_DOCUMENTREVISION_VERSION" type="VARCHAR(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-48">
+        <addPrimaryKey columnNames="ACTIVITYMODEL_STEP, WORKFLOWMODEL_ID, WORKSPACE_ID, RELAUNCHACTIVITYMODEL_STEP, RELAUNCHWORKFLOWMODEL_ID, RELAUNCHWORKSPACE_ID" constraintName="PRIMARY" tableName="ACTIVITYMODEL_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-49">
+        <addPrimaryKey columnNames="ACTIVITY_STEP, ACTIVITY_WORKFLOW_ID, RELAUNCH_STEP, RELAUNCH_WORKFLOW_ID" constraintName="PRIMARY" tableName="ACTIVITY_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-50">
+        <addPrimaryKey columnNames="PARTCOLLECTION_ID, TARGET_PARTMASTER_PARTNUMBER, TARGET_WORKSPACE_ID" constraintName="PRIMARY" tableName="BASELINEDPART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-51">
+        <addPrimaryKey columnNames="CHANGEITEM_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEITEM_AFFECTED_DOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-52">
+        <addPrimaryKey columnNames="CHANGEITEM_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, PARTMASTER_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEITEM_AFFECTED_PART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-53">
+        <addPrimaryKey columnNames="CHANGEITEM_ID, TAG_LABEL, TAG_WORKSPACE_ID" constraintName="PRIMARY" tableName="CHANGEITEM_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-54">
+        <addPrimaryKey columnNames="CHANGEORDER_ID, CHANGEREQUEST_ID" constraintName="PRIMARY" tableName="CHANGEORDER_CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-55">
+        <addPrimaryKey columnNames="CHANGEREQUEST_ID, CHANGEISSUE_ID" constraintName="PRIMARY" tableName="CHANGEREQUEST_CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-56">
+        <addPrimaryKey columnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" constraintName="PRIMARY" tableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-57">
+        <addPrimaryKey columnNames="DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, TAG_LABEL, TAG_WORKSPACE_ID" constraintName="PRIMARY" tableName="DOCUMENTREVISION_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-58">
+        <addPrimaryKey columnNames="DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, WORKFLOW_ID" constraintName="PRIMARY" tableName="DOCUMENT_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-59">
+        <addPrimaryKey columnNames="ACCOUNT_LOGIN" constraintName="PRIMARY" tableName="GCMACCOUNT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-60">
+        <addPrimaryKey columnNames="PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, PARTMASTER_WORKSPACE_ID, WORKFLOW_ID" constraintName="PRIMARY" tableName="PART_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-61">
+        <addPrimaryKey columnNames="ITERATION, WORKSPACE_ID, CONFIGURATIONITEM_ID, PRDINSTANCEMASTER_SERIALNUMBER" constraintName="PRIMARY" tableName="PRODUCTINSTANCEITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-62">
+        <addPrimaryKey columnNames="SERIALNUMBER, WORKSPACE_ID, CONFIGURATIONITEM_ID" constraintName="PRIMARY" tableName="PRODUCTINSTANCEMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-63">
+        <addPrimaryKey columnNames="NAME, WORKSPACE_ID" constraintName="PRIMARY" tableName="ROLE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-64">
+        <addPrimaryKey columnNames="UUID, WORKSPACE_ID" constraintName="PRIMARY" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-65">
+        <addForeignKeyConstraint baseColumnNames="RELAUNCHACTIVITYMODEL_STEP, RELAUNCHWORKFLOWMODEL_ID, RELAUNCHWORKSPACE_ID" baseTableName="ACTIVITYMODEL_RELAUNCH" constraintName="ACTIVITYMODEL_RELAUNCH_RELAUNCHACTIVITYMODEL_STEP" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="STEP, WORKFLOWMODEL_ID, WORKSPACE_ID" referencedTableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-66">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, DOCUMENTMASTER_WORKSPACE_ID" baseTableName="CHANGEITEM_AFFECTED_DOCUMENT" constraintName="CHANGEITEMAFFECTEDDOCUMENTDOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-67">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, DOCUMENTMASTER_WORKSPACE_ID" baseTableName="DOCUMENT_ABORTED_WORKFLOW" constraintName="DOCUMENT_ABORTED_WORKFLOW_DOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-68">
+        <addForeignKeyConstraint baseColumnNames="ACTIVITYMODEL_STEP, WORKFLOWMODEL_ID, WORKSPACE_ID" baseTableName="ACTIVITYMODEL_RELAUNCH" constraintName="FK_ACTIVITYMODEL_RELAUNCH_ACTIVITYMODEL_STEP" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="STEP, WORKFLOWMODEL_ID, WORKSPACE_ID" referencedTableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-69">
+        <addForeignKeyConstraint baseColumnNames="ACTIVITY_STEP, ACTIVITY_WORKFLOW_ID" baseTableName="ACTIVITY_RELAUNCH" constraintName="FK_ACTIVITY_RELAUNCH_ACTIVITY_STEP" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="STEP, WORKFLOW_ID" referencedTableName="ACTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-70">
+        <addForeignKeyConstraint baseColumnNames="RELAUNCH_STEP, RELAUNCH_WORKFLOW_ID" baseTableName="ACTIVITY_RELAUNCH" constraintName="FK_ACTIVITY_RELAUNCH_RELAUNCH_STEP" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="STEP, WORKFLOW_ID" referencedTableName="ACTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-71">
+        <addForeignKeyConstraint baseColumnNames="PARTCOLLECTION_ID" baseTableName="BASELINEDPART" constraintName="FK_BASELINEDPART_PARTCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="PARTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-72">
+        <addForeignKeyConstraint baseColumnNames="TARGET_ITERATION, TARGET_WORKSPACE_ID, TARGET_PARTREVISION_VERSION, TARGET_PARTMASTER_PARTNUMBER" baseTableName="BASELINEDPART" constraintName="FK_BASELINEDPART_TARGET_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, PARTREVISION_VERSION, PARTMASTER_PARTNUMBER" referencedTableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-73">
+        <addForeignKeyConstraint baseColumnNames="CONFIGURATIONITEM_ID, CONFIGURATIONITEM_WORKSPACE_ID" baseTableName="BASELINE" constraintName="FK_BASELINE_CONFIGURATIONITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID, WORKSPACE_ID" referencedTableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-74">
+        <addForeignKeyConstraint baseColumnNames="PARTCOLLECTION_ID" baseTableName="BASELINE" constraintName="FK_BASELINE_PARTCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="PARTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-75">
+        <addForeignKeyConstraint baseColumnNames="ASSIGNEE_LOGIN, ASSIGNEE_WORKSPACE_ID" baseTableName="CHANGEISSUE" constraintName="FK_CHANGEISSUE_ASSIGNEE_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-76">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="CHANGEISSUE" constraintName="FK_CHANGEISSUE_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-77">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="CHANGEISSUE" constraintName="FK_CHANGEISSUE_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-78">
+        <addForeignKeyConstraint baseColumnNames="CHANGEITEM_ID" baseTableName="CHANGEITEM_AFFECTED_DOCUMENT" constraintName="FK_CHANGEITEM_AFFECTED_DOCUMENT_CHANGEITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-79">
+        <addForeignKeyConstraint baseColumnNames="CHANGEITEM_ID" baseTableName="CHANGEITEM_AFFECTED_PART" constraintName="FK_CHANGEITEM_AFFECTED_PART_CHANGEITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-80">
+        <addForeignKeyConstraint baseColumnNames="PARTREVISION_VERSION, PARTMASTER_PARTNUMBER, PARTMASTER_WORKSPACE_ID" baseTableName="CHANGEITEM_AFFECTED_PART" constraintName="FK_CHANGEITEM_AFFECTED_PART_PARTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" referencedTableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-81">
+        <addForeignKeyConstraint baseColumnNames="CHANGEITEM_ID" baseTableName="CHANGEITEM_TAG" constraintName="FK_CHANGEITEM_TAG_CHANGEITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-82">
+        <addForeignKeyConstraint baseColumnNames="TAG_LABEL, TAG_WORKSPACE_ID" baseTableName="CHANGEITEM_TAG" constraintName="FK_CHANGEITEM_TAG_TAG_LABEL" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LABEL, WORKSPACE_ID" referencedTableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-83">
+        <addForeignKeyConstraint baseColumnNames="ASSIGNEE_LOGIN, ASSIGNEE_WORKSPACE_ID" baseTableName="CHANGEORDER" constraintName="FK_CHANGEORDER_ASSIGNEE_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-84">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="CHANGEORDER" constraintName="FK_CHANGEORDER_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-85">
+        <addForeignKeyConstraint baseColumnNames="CHANGEORDER_ID" baseTableName="CHANGEORDER_CHANGEREQUEST" constraintName="FK_CHANGEORDER_CHANGEREQUEST_CHANGEORDER_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-86">
+        <addForeignKeyConstraint baseColumnNames="CHANGEREQUEST_ID" baseTableName="CHANGEORDER_CHANGEREQUEST" constraintName="FK_CHANGEORDER_CHANGEREQUEST_CHANGEREQUEST_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-87">
+        <addForeignKeyConstraint baseColumnNames="MILESTONE_ID" baseTableName="CHANGEORDER" constraintName="FK_CHANGEORDER_MILESTONE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="MILESTONE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-88">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="CHANGEORDER" constraintName="FK_CHANGEORDER_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-89">
+        <addForeignKeyConstraint baseColumnNames="ASSIGNEE_LOGIN, ASSIGNEE_WORKSPACE_ID" baseTableName="CHANGEREQUEST" constraintName="FK_CHANGEREQUEST_ASSIGNEE_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-90">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="CHANGEREQUEST" constraintName="FK_CHANGEREQUEST_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-91">
+        <addForeignKeyConstraint baseColumnNames="CHANGEISSUE_ID" baseTableName="CHANGEREQUEST_CHANGEISSUE" constraintName="FK_CHANGEREQUEST_CHANGEISSUE_CHANGEISSUE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-92">
+        <addForeignKeyConstraint baseColumnNames="CHANGEREQUEST_ID" baseTableName="CHANGEREQUEST_CHANGEISSUE" constraintName="FK_CHANGEREQUEST_CHANGEISSUE_CHANGEREQUEST_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-93">
+        <addForeignKeyConstraint baseColumnNames="MILESTONE_ID" baseTableName="CHANGEREQUEST" constraintName="FK_CHANGEREQUEST_MILESTONE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="MILESTONE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-94">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="CHANGEREQUEST" constraintName="FK_CHANGEREQUEST_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-95">
+        <addForeignKeyConstraint baseColumnNames="BASELINE_ID" baseTableName="CONFIGSPEC" constraintName="FK_CONFIGSPEC_BASELINE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="BASELINE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-96">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" baseTableName="DOCUMENTITERATION" constraintName="FK_DOCUMENTITERATION_DOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-97">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-98">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-99">
+        <addForeignKeyConstraint baseColumnNames="CHECKOUTUSER_LOGIN, CHECKOUTUSER_WORKSPACE_ID" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_CHECKOUTUSER_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-100">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTMASTER_ID, WORKSPACE_ID" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_DOCUMENTMASTER_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID, WORKSPACE_ID" referencedTableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-101">
+        <addForeignKeyConstraint baseColumnNames="LOCATION_COMPLETEPATH" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_LOCATION_COMPLETEPATH" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="COMPLETEPATH" referencedTableName="FOLDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-102">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, DOCUMENTMASTER_WORKSPACE_ID" baseTableName="DOCUMENTREVISION_TAG" constraintName="FK_DOCUMENTREVISION_TAG_DOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-103">
+        <addForeignKeyConstraint baseColumnNames="TAG_LABEL, TAG_WORKSPACE_ID" baseTableName="DOCUMENTREVISION_TAG" constraintName="FK_DOCUMENTREVISION_TAG_TAG_LABEL" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LABEL, WORKSPACE_ID" referencedTableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-104">
+        <addForeignKeyConstraint baseColumnNames="WORKFLOW_ID" baseTableName="DOCUMENTREVISION" constraintName="FK_DOCUMENTREVISION_WORKFLOW_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-105">
+        <addForeignKeyConstraint baseColumnNames="WORKFLOW_ID" baseTableName="DOCUMENT_ABORTED_WORKFLOW" constraintName="FK_DOCUMENT_ABORTED_WORKFLOW_WORKFLOW_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-106">
+        <addForeignKeyConstraint baseColumnNames="ACCOUNT_LOGIN" baseTableName="GCMACCOUNT" constraintName="FK_GCMACCOUNT_ACCOUNT_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN" referencedTableName="ACCOUNT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-107">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="MILESTONE" constraintName="FK_MILESTONE_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-108">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="PARTCOLLECTION" constraintName="FK_PARTCOLLECTION_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-109">
+        <addForeignKeyConstraint baseColumnNames="ACL_ID" baseTableName="PARTREVISION" constraintName="FK_PARTREVISION_ACL_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="ACL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-110">
+        <addForeignKeyConstraint baseColumnNames="PARTREVISION_VERSION, PARTMASTER_PARTNUMBER, PARTMASTER_WORKSPACE_ID" baseTableName="PARTREVISION_EFFECTIVITY" constraintName="FK_PARTREVISION_EFFECTIVITY_PARTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" referencedTableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-111">
+        <addForeignKeyConstraint baseColumnNames="PARTREVISION_VERSION, PARTMASTER_PARTNUMBER, PARTMASTER_WORKSPACE_ID" baseTableName="PART_ABORTED_WORKFLOW" constraintName="FK_PART_ABORTED_WORKFLOW_PARTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" referencedTableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-112">
+        <addForeignKeyConstraint baseColumnNames="WORKFLOW_ID" baseTableName="PART_ABORTED_WORKFLOW" constraintName="FK_PART_ABORTED_WORKFLOW_WORKFLOW_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-113">
+        <addForeignKeyConstraint baseColumnNames="PARTCOLLECTION_ID" baseTableName="PRODUCTINSTANCEITERATION" constraintName="FK_PRODUCTINSTANCEITERATION_PARTCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="PARTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-114">
+        <addForeignKeyConstraint baseColumnNames="CONFIGURATIONITEM_ID, WORKSPACE_ID" baseTableName="PRODUCTINSTANCEMASTER" constraintName="FK_PRODUCTINSTANCEMASTER_CONFIGURATIONITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID, WORKSPACE_ID" referencedTableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-115">
+        <addForeignKeyConstraint baseColumnNames="DEFAULT_USER_MAPPED_LOGIN, DEFAULT_USER_MAPPED_WORKSPACE_ID" baseTableName="ROLE" constraintName="FK_ROLE_DEFAULT_USER_MAPPED_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-116">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="ROLE" constraintName="FK_ROLE_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-117">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="SHAREDENTITY" constraintName="FK_SHAREDENTITY_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-118">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, ENTITY_WORKSPACE_ID" baseTableName="SHAREDENTITY" constraintName="FK_SHAREDENTITY_DOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-119">
+        <addForeignKeyConstraint baseColumnNames="PARTREVISION_VERSION, PARTMASTER_PARTNUMBER, ENTITY_WORKSPACE_ID" baseTableName="SHAREDENTITY" constraintName="FK_SHAREDENTITY_PARTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" referencedTableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-120">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="SHAREDENTITY" constraintName="FK_SHAREDENTITY_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-121">
+        <addForeignKeyConstraint baseColumnNames="ROLE_NAME, ROLE_WORKSPACE_ID" baseTableName="TASKMODEL" constraintName="FK_TASKMODEL_ROLE_NAME" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="NAME, WORKSPACE_ID" referencedTableName="ROLE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-122">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, DOCUMENTMASTER_WORKSPACE_ID" baseTableName="ITERATIONCHANGESUBSCRIPTION" constraintName="ITERATIONCHANGESUBSCRIPTIONDOCUMENTREVISIONVERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-123">
+        <addForeignKeyConstraint baseColumnNames="PRDINSTANCEMASTER_SERIALNUMBER, WORKSPACE_ID, CONFIGURATIONITEM_ID" baseTableName="PRODUCTINSTANCEITERATION" constraintName="PRDCTINSTANCEITERATIONPRDNSTANCEMASTERSERIALNUMBER" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="SERIALNUMBER, WORKSPACE_ID, CONFIGURATIONITEM_ID" referencedTableName="PRODUCTINSTANCEMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-124">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID, DOCUMENTMASTER_WORKSPACE_ID" baseTableName="STATECHANGESUBSCRIPTION" constraintName="STATECHANGESUBSCRIPTION_DOCUMENTREVISION_VERSION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="VERSION, DOCUMENTMASTER_ID, WORKSPACE_ID" referencedTableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-125">
+        <createIndex indexName="FK_DOCUMENTITERATION_ATTRIBUTE_ITERATION" tableName="DOCUMENTITERATION_ATTRIBUTE" unique="false">
+            <column name="ITERATION"/>
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-126">
+        <createIndex indexName="FK_DOCUMENTITERATION_BINRES_ITERATION" tableName="DOCUMENTITERATION_BINRES" unique="false">
+            <column name="ITERATION"/>
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-127">
+        <createIndex indexName="FK_DOCUMENTITERATION_DOCUMENTLINK_ITERATION" tableName="DOCUMENTITERATION_DOCUMENTLINK" unique="false">
+            <column name="ITERATION"/>
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-128">
+        <createIndex indexName="FK_DOCUMENTLINK_TARGET_ITERATION" tableName="DOCUMENTLINK" unique="false">
+            <column name="TARGET_ITERATION"/>
+            <column name="TARGET_WORKSPACE_ID"/>
+            <column name="TARGET_DOCUMENTREVISION_VERSION"/>
+            <column name="TARGET_DOCUMENTMASTER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-129">
+        <createIndex indexName="FK_PARTITERATION_PARTREVISION_VERSION" tableName="PARTITERATION" unique="false">
+            <column name="PARTREVISION_VERSION"/>
+            <column name="PARTMASTER_PARTNUMBER"/>
+            <column name="WORKSPACE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-130">
+        <createIndex indexName="PRIMARY" tableName="DOCUMENTITERATION" unique="true">
+            <column name="ITERATION"/>
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-131">
+        <createIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_ATTRIBUTE" unique="true">
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTMASTER_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="ITERATION"/>
+            <column name="INSTANCEATTRIBUTE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-132">
+        <createIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_BINRES" unique="true">
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTMASTER_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="ITERATION"/>
+            <column name="ATTACHEDFILE_FULLNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-133">
+        <createIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_DOCUMENTLINK" unique="true">
+            <column name="WORKSPACE_ID"/>
+            <column name="DOCUMENTMASTER_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="ITERATION"/>
+            <column name="DOCUMENTLINK_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-134">
+        <createIndex indexName="PRIMARY" tableName="DOCUMENTMASTER" unique="true">
+            <column name="ID"/>
+            <column name="WORKSPACE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-135">
+        <createIndex indexName="PRIMARY" tableName="ITERATIONCHANGESUBSCRIPTION" unique="true">
+            <column name="DOCUMENTMASTER_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID"/>
+            <column name="SUBSCRIBER_LOGIN"/>
+            <column name="SUBSCRIBER_WORKSPACE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-136">
+        <createIndex indexName="PRIMARY" tableName="PARTREVISION" unique="true">
+            <column name="VERSION"/>
+            <column name="PARTMASTER_PARTNUMBER"/>
+            <column name="WORKSPACE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-137">
+        <createIndex indexName="PRIMARY" tableName="PARTREVISION_EFFECTIVITY" unique="true">
+            <column name="PARTMASTER_WORKSPACE_ID"/>
+            <column name="PARTMASTER_PARTNUMBER"/>
+            <column name="PARTREVISION_VERSION"/>
+            <column name="EFFECTIVITY_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-138">
+        <createIndex indexName="PRIMARY" tableName="STATECHANGESUBSCRIPTION" unique="true">
+            <column name="DOCUMENTMASTER_ID"/>
+            <column name="DOCUMENTREVISION_VERSION"/>
+            <column name="DOCUMENTMASTER_WORKSPACE_ID"/>
+            <column name="SUBSCRIBER_LOGIN"/>
+            <column name="SUBSCRIBER_WORKSPACE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-139">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTITERATION" constraintName="FK_DOCUMENTITERATION_DOCUMENTMASTER_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-140">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER" constraintName="FK_DOCUMENTMASTER_ACL_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-141">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER" constraintName="FK_DOCUMENTMASTER_CHECKOUTUSER_LOGIN"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-142">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER" constraintName="FK_DOCUMENTMASTER_LOCATION_COMPLETEPATH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-143">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER_TAG" constraintName="FK_DOCUMENTMASTER_TAG_DOCUMENTMASTER_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-144">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER_TAG" constraintName="FK_DOCUMENTMASTER_TAG_TAG_LABEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-145">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTMASTER" constraintName="FK_DOCUMENTMASTER_WORKFLOW_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-146">
+        <dropForeignKeyConstraint baseTableName="PARTREVISION_EFFECTIVITY" constraintName="FK_PARTREVISION_EFFECTIVITY_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-147">
+        <dropForeignKeyConstraint baseTableName="STATECHANGESUBSCRIPTION" constraintName="FK_STATECHANGESUBSCRIPTION_DOCUMENTMASTER_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-148">
+        <dropForeignKeyConstraint baseTableName="TASKMODEL" constraintName="FK_TASKMODEL_WORKER_LOGIN"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-149">
+        <dropForeignKeyConstraint baseTableName="ITERATIONCHANGESUBSCRIPTION" constraintName="ITERATIONCHANGESUBSCRIPTION_DOCUMENTMASTER_VERSION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-150">
+        <dropTable tableName="DOCUMENTMASTER_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-151">
+        <dropColumn columnName="ACL_ID" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-152">
+        <dropColumn columnName="CHECKOUTDATE" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-153">
+        <dropColumn columnName="CHECKOUTUSER_LOGIN" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-154">
+        <dropColumn columnName="CHECKOUTUSER_WORKSPACE_ID" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-155">
+        <dropColumn columnName="DESCRIPTION" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-156">
+        <dropColumn columnName="DESCRIPTION" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-157">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-158">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-159">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-160">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-161">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-162">
+        <dropColumn columnName="DOCUMENTMASTER_VERSION" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-163">
+        <dropColumn columnName="LOCATION_COMPLETEPATH" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-164">
+        <dropColumn columnName="POSITIONING" tableName="CADINSTANCE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-165">
+        <dropColumn columnName="TARGET_DOCUMENTMASTER_VERSION" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-166">
+        <dropColumn columnName="TITLE" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-167">
+        <dropColumn columnName="VAULTTYPE" tableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-168">
+        <dropColumn columnName="VERSION" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-169">
+        <dropColumn columnName="VERSION" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-170">
+        <dropColumn columnName="WORKER_LOGIN" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-171">
+        <dropColumn columnName="WORKER_WORKSPACE_ID" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-172">
+        <dropColumn columnName="WORKFLOW_ID" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-173">
+        <dropColumn columnName="WORKSPACE_ID" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-174">
+        <dropIndex indexName="FK_DOCUMENTITERATION_ATTRIBUTE_ITERATION" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-175">
+        <dropIndex indexName="FK_DOCUMENTITERATION_BINRES_ITERATION" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-176">
+        <dropIndex indexName="FK_DOCUMENTITERATION_DOCUMENTLINK_ITERATION" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-177">
+        <dropIndex indexName="FK_DOCUMENTLINK_TARGET_ITERATION" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-178">
+        <dropIndex indexName="FK_PARTITERATION_PARTREVISION_VERSION" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-179">
+        <dropIndex indexName="PRIMARY" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-180">
+        <dropIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-181">
+        <dropIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-182">
+        <dropIndex indexName="PRIMARY" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-183">
+        <dropIndex indexName="PRIMARY" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-184">
+        <dropIndex indexName="PRIMARY" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-185">
+        <dropIndex indexName="PRIMARY" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-186">
+        <dropIndex indexName="PRIMARY" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-187">
+        <dropIndex indexName="PRIMARY" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-188">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTITERATION_ATTRIBUTE" constraintName="FK_DOCUMENTITERATION_ATTRIBUTE_ITERATION"/>
+        <addForeignKeyConstraint baseColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="DOCUMENTITERATION_ATTRIBUTE" constraintName="FK_DOCUMENTITERATION_ATTRIBUTE_ITERATION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-189">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTITERATION_BINRES" constraintName="FK_DOCUMENTITERATION_BINRES_ITERATION"/>
+        <addForeignKeyConstraint baseColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="DOCUMENTITERATION_BINRES" constraintName="FK_DOCUMENTITERATION_BINRES_ITERATION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-190">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTITERATION_DOCUMENTLINK" constraintName="FK_DOCUMENTITERATION_DOCUMENTLINK_ITERATION"/>
+        <addForeignKeyConstraint baseColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="DOCUMENTITERATION_DOCUMENTLINK" constraintName="FK_DOCUMENTITERATION_DOCUMENTLINK_ITERATION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-191">
+        <dropForeignKeyConstraint baseTableName="DOCUMENTLINK" constraintName="FK_DOCUMENTLINK_TARGET_ITERATION"/>
+        <addForeignKeyConstraint baseColumnNames="TARGET_ITERATION, TARGET_WORKSPACE_ID, TARGET_DOCUMENTREVISION_VERSION, TARGET_DOCUMENTMASTER_ID" baseTableName="DOCUMENTLINK" constraintName="FK_DOCUMENTLINK_TARGET_ITERATION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-192">
+        <dropForeignKeyConstraint baseTableName="PARTITERATION" constraintName="FK_PARTITERATION_PARTREVISION_VERSION"/>
+        <addForeignKeyConstraint baseColumnNames="PARTREVISION_VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" baseTableName="PARTITERATION" constraintName="FK_PARTITERATION_PARTREVISION_VERSION" referencedColumnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" referencedTableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-193">
+        <modifyDataType columnName="ALTERNATE_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-194">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-195">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-196">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-197">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-198">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="MARKER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-199">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-200">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-201">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-202">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-203">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-204">
+        <modifyDataType columnName="CHECKOUTUSER_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-205">
+        <modifyDataType columnName="COMPONENT_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-206">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(255)" tableName="CONFIGSPEC"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-207">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(255)" tableName="EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-208">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(255)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-209">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(255)" tableName="CONFIGSPEC"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-210">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(255)" tableName="EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-211">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(255)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-212">
+        <modifyDataType columnName="DESCRIPTION" newDataType="clob" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-213">
+        <modifyDataType columnName="DESCRIPTION" newDataType="clob" tableName="EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-214">
+        <modifyDataType columnName="DESCRIPTION" newDataType="clob" tableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-215">
+        <modifyDataType columnName="DOCUMENTMASTERTEMPLATE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-216">
+        <modifyDataType columnName="DOCUMENTMASTERTEMPLATE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-217">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-218">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-219">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-220">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-221">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-222">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-223">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(255)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-224">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(255)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-225">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-226">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-227">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-228">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-229">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="USERGROUP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-230">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-231">
+        <modifyDataType columnName="ID" newDataType="varchar(255)" tableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-232">
+        <modifyDataType columnName="LABEL" newDataType="varchar(255)" tableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-233">
+        <modifyDataType columnName="MEMBER_ID" newDataType="varchar(255)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-234">
+        <modifyDataType columnName="MEMBER_WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-235">
+        <modifyDataType columnName="MEMBER_WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKSPACEUSERMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-236">
+        <modifyDataType columnName="NAME" newDataType="varchar(255)" tableName="INSTANCEATTRIBUTETEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-237">
+        <modifyDataType columnName="PARTMASTERTEMPLATE_ID" newDataType="varchar(255)" tableName="PARTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-238">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(255)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-239">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-240">
+        <modifyDataType columnName="PRINCIPAL_ID" newDataType="varchar(255)" tableName="ACLUSERGROUPENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-241">
+        <modifyDataType columnName="PRINCIPAL_WORKSPACE_ID" newDataType="varchar(255)" tableName="ACLUSERENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-242">
+        <modifyDataType columnName="PRINCIPAL_WORKSPACE_ID" newDataType="varchar(255)" tableName="ACLUSERGROUPENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-243">
+        <modifyDataType columnName="REFERENCEDESCRIPTION" newDataType="clob" tableName="PARTSUBSTITUTELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-244">
+        <modifyDataType columnName="REFERENCEDESCRIPTION" newDataType="clob" tableName="PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-245">
+        <modifyDataType columnName="RELATEDPART_WORKSPACE_ID" newDataType="varchar(255)" tableName="MARKER_PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-246">
+        <modifyDataType columnName="SUBSCRIBER_WORKSPACE_ID" newDataType="varchar(255)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-247">
+        <modifyDataType columnName="SUBSCRIBER_WORKSPACE_ID" newDataType="varchar(255)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-248">
+        <modifyDataType columnName="SUBSTITUTE_WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTSUBSTITUTELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-249">
+        <modifyDataType columnName="TARGET_DOCUMENTMASTER_ID" newDataType="varchar(255)" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-250">
+        <modifyDataType columnName="TARGET_WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-251">
+        <modifyDataType columnName="USERGROUP_ID" newDataType="varchar(255)" tableName="USERGROUP_USER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-252">
+        <modifyDataType columnName="USERGROUP_ID_WORKSPACE_ID" newDataType="varchar(255)" tableName="USERGROUP_USER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-253">
+        <modifyDataType columnName="WORKER_WORKSPACE_ID" newDataType="varchar(255)" tableName="TASK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-254">
+        <modifyDataType columnName="WORKFLOWMODEL_ID" newDataType="varchar(255)" tableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-255">
+        <modifyDataType columnName="WORKFLOWMODEL_ID" newDataType="varchar(255)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-256">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-257">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-258">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-259">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-260">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-261">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-262">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-263">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-264">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-265">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="DOCUMENTMASTERTEMPLATE_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-266">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-267">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-268">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-269">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-270">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION_GEOMETRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-271">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTITERATION_PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-272">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-273">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-274">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-275">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-276">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-277">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-278">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-279">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="USERGROUP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-280">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-281">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-282">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(255)" tableName="WORKSPACEUSERMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-283">
+        <dropPrimaryKey tableName="DOCUMENTITERATION"/>
+        <addPrimaryKey columnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" constraintName="PRIMARY" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-284">
+        <dropPrimaryKey tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+        <addPrimaryKey columnNames="WORKSPACE_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, ITERATION, INSTANCEATTRIBUTE_ID" constraintName="PRIMARY" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-285">
+        <dropPrimaryKey tableName="DOCUMENTITERATION_BINRES"/>
+        <addPrimaryKey columnNames="WORKSPACE_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, ITERATION, ATTACHEDFILE_FULLNAME" constraintName="PRIMARY" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-286">
+        <dropPrimaryKey tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+        <addPrimaryKey columnNames="WORKSPACE_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, ITERATION, DOCUMENTLINK_ID" constraintName="PRIMARY" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-287">
+        <dropPrimaryKey tableName="DOCUMENTMASTER"/>
+        <addPrimaryKey columnNames="ID, WORKSPACE_ID" constraintName="PRIMARY" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-288">
+        <dropPrimaryKey tableName="ITERATIONCHANGESUBSCRIPTION"/>
+        <addPrimaryKey columnNames="DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, SUBSCRIBER_LOGIN, SUBSCRIBER_WORKSPACE_ID" constraintName="PRIMARY" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-289">
+        <dropPrimaryKey tableName="PARTREVISION"/>
+        <addPrimaryKey columnNames="VERSION, PARTMASTER_PARTNUMBER, WORKSPACE_ID" constraintName="PRIMARY" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-290">
+        <dropPrimaryKey tableName="PARTREVISION_EFFECTIVITY"/>
+        <addPrimaryKey columnNames="PARTMASTER_WORKSPACE_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION, EFFECTIVITY_ID" constraintName="PRIMARY" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414425017565-291">
+        <dropPrimaryKey tableName="STATECHANGESUBSCRIPTION"/>
+        <addPrimaryKey columnNames="DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_WORKSPACE_ID, SUBSCRIBER_LOGIN, SUBSCRIBER_WORKSPACE_ID" constraintName="PRIMARY" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+</databaseChangeLog>

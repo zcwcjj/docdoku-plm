@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="CONFIGSPEC"/>
+    </preConditions>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-baselineDocument">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BASELINEDDOCUMENT" />
+        </preConditions>
+        <createTable tableName="BASELINEDDOCUMENT">
+            <column name="TARGET_ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTCOLLECTION_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_DOCUMENTMASTER_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TARGET_WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Create BaselineDocument to snapshot a version of a document</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-baselineFolder">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BASELINEDFOLDER" />
+        </preConditions>
+        <createTable tableName="BASELINEDFOLDER">
+            <column name="COMPLETEPATH" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FOLDERCOLLECTION_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PARENTFOLDER_FOLDERCOLLECTION_ID" type="INT(10)"/>
+            <column name="PARENTFOLDER_COMPLETEPATH" type="VARCHAR(255)"/>
+        </createTable>
+        <comment>Create BaselineFolder to snapshot a folder</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-baselineFolder-documentIteration">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="BASELINEDFOLDER_DOCUMENTITERATION" />
+        </preConditions>
+        <createTable tableName="BASELINEDFOLDER_DOCUMENTITERATION">
+            <column name="COMPLETEPATH" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FOLDERCOLLECTION_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ITERATION" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTREVISION_VERSION" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DOCUMENTMASTER_ID" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Link a baselined folder with its document iterations content</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-documentBaseline">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="DOCUMENTBASELINE" />
+        </preConditions>
+        <createTable tableName="DOCUMENTBASELINE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORKSPACE_ID" type="VARCHAR(100)"/>
+            <column name="FOLDERCOLLECTION_ID" type="INT(10)"/>
+        </createTable>
+        <comment>Create Baseline to snapshot the version of a collection of document</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-documentCollection">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="DOCUMENTCOLLECTION" />
+        </preConditions>
+        <createTable tableName="DOCUMENTCOLLECTION">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(100)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+        </createTable>
+        <comment>Create DocumentCollection to specify a collection of document</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-folderCollection">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="FOLDERCOLLECTION" />
+        </preConditions>
+        <createTable tableName="FOLDERCOLLECTION">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="AUTHOR_WORKSPACE_ID" type="VARCHAR(100)"/>
+            <column name="AUTHOR_LOGIN" type="VARCHAR(255)"/>
+        </createTable>
+        <comment>Create FolderCollection to specify a structure of folders</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-create-productBaseline">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="PRODUCTBASELINE" />
+        </preConditions>
+        <createTable tableName="PRODUCTBASELINE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="CREATIONDATE" type="datetime"/>
+            <column name="DESCRIPTION" type="LONGTEXT"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE" type="INT(10)"/>
+            <column name="CONFIGURATIONITEM_WORKSPACE_ID" type="VARCHAR(100)"/>
+            <column name="CONFIGURATIONITEM_ID" type="VARCHAR(100)"/>
+            <column name="PARTCOLLECTION_ID" type="INT(10)"/>
+        </createTable>
+        <comment>Create BaselineProduct to replace Baseline</comment>
+    </changeSet>
+
+    <changeSet author="Taylor LABEJOF" id="1414426919023-link-configSpec-documentBaseline">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="DOCUMENTBASELINE_ID" tableName="CONFIGSPEC" />
+        </preConditions>
+        <addColumn tableName="CONFIGSPEC">
+            <column name="DOCUMENTBASELINE_ID" type="INT(10)"/>
+        </addColumn>
+        <comment>Link a configSpec to a DocumentBaseline</comment>
+    </changeSet>
+
+    <changeSet author="docdoku (generated)" id="1414426919023-25">
+        <addColumn tableName="CONFIGSPEC">
+            <column name="LOGIN" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-27">
+        <addColumn tableName="CONFIGSPEC">
+            <column name="PRODUCTBASELINE_ID" type="INT(10)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-29">
+        <addColumn tableName="CONFIGSPEC">
+            <column name="WORKSPACE_ID" type="VARCHAR(100)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="docdoku (generated)" id="1414426919023-30">
+        <addPrimaryKey columnNames="DOCUMENTCOLLECTION_ID, TARGET_DOCUMENTMASTER_ID, TARGET_WORKSPACE_ID" constraintName="PRIMARY" tableName="BASELINEDDOCUMENT"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-31">
+        <addPrimaryKey columnNames="COMPLETEPATH, FOLDERCOLLECTION_ID" constraintName="PRIMARY" tableName="BASELINEDFOLDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-32">
+        <addPrimaryKey columnNames="COMPLETEPATH, FOLDERCOLLECTION_ID, ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" constraintName="PRIMARY" tableName="BASELINEDFOLDER_DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-45">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTCOLLECTION_ID" baseTableName="BASELINEDDOCUMENT" constraintName="FK_BASELINEDDOCUMENT_DOCUMENTCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="DOCUMENTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-46">
+        <addForeignKeyConstraint baseColumnNames="TARGET_ITERATION, TARGET_WORKSPACE_ID, TARGET_DOCUMENTREVISION_VERSION, TARGET_DOCUMENTMASTER_ID" baseTableName="BASELINEDDOCUMENT" constraintName="FK_BASELINEDDOCUMENT_TARGET_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-47">
+        <addForeignKeyConstraint baseColumnNames="COMPLETEPATH, FOLDERCOLLECTION_ID" baseTableName="BASELINEDFOLDER_DOCUMENTITERATION" constraintName="FK_BASELINEDFOLDER_DOCUMENTITERATION_COMPLETEPATH" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="COMPLETEPATH, FOLDERCOLLECTION_ID" referencedTableName="BASELINEDFOLDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-48">
+        <addForeignKeyConstraint baseColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" baseTableName="BASELINEDFOLDER_DOCUMENTITERATION" constraintName="FK_BASELINEDFOLDER_DOCUMENTITERATION_ITERATION" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ITERATION, WORKSPACE_ID, DOCUMENTREVISION_VERSION, DOCUMENTMASTER_ID" referencedTableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-49">
+        <addForeignKeyConstraint baseColumnNames="FOLDERCOLLECTION_ID" baseTableName="BASELINEDFOLDER" constraintName="FK_BASELINEDFOLDER_FOLDERCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="FOLDERCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-50">
+        <addForeignKeyConstraint baseColumnNames="PARENTFOLDER_COMPLETEPATH, PARENTFOLDER_FOLDERCOLLECTION_ID" baseTableName="BASELINEDFOLDER" constraintName="FK_BASELINEDFOLDER_PARENTFOLDER_COMPLETEPATH" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="COMPLETEPATH, FOLDERCOLLECTION_ID" referencedTableName="BASELINEDFOLDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-71">
+        <addForeignKeyConstraint baseColumnNames="DOCUMENTBASELINE_ID" baseTableName="CONFIGSPEC" constraintName="FK_CONFIGSPEC_DOCUMENTBASELINE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="DOCUMENTBASELINE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-72">
+        <addForeignKeyConstraint baseColumnNames="LOGIN, WORKSPACE_ID" baseTableName="CONFIGSPEC" constraintName="FK_CONFIGSPEC_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-73">
+        <addForeignKeyConstraint baseColumnNames="PRODUCTBASELINE_ID" baseTableName="CONFIGSPEC" constraintName="FK_CONFIGSPEC_PRODUCTBASELINE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="PRODUCTBASELINE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-74">
+        <addForeignKeyConstraint baseColumnNames="FOLDERCOLLECTION_ID" baseTableName="DOCUMENTBASELINE" constraintName="FK_DOCUMENTBASELINE_FOLDERCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="FOLDERCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-75">
+        <addForeignKeyConstraint baseColumnNames="WORKSPACE_ID" baseTableName="DOCUMENTBASELINE" constraintName="FK_DOCUMENTBASELINE_WORKSPACE_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-76">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="DOCUMENTCOLLECTION" constraintName="FK_DOCUMENTCOLLECTION_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-77">
+        <addForeignKeyConstraint baseColumnNames="AUTHOR_LOGIN, AUTHOR_WORKSPACE_ID" baseTableName="FOLDERCOLLECTION" constraintName="FK_FOLDERCOLLECTION_AUTHOR_LOGIN" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="LOGIN, WORKSPACE_ID" referencedTableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-80">
+        <addForeignKeyConstraint baseColumnNames="CONFIGURATIONITEM_ID, CONFIGURATIONITEM_WORKSPACE_ID" baseTableName="PRODUCTBASELINE" constraintName="FK_PRODUCTBASELINE_CONFIGURATIONITEM_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID, WORKSPACE_ID" referencedTableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-81">
+        <addForeignKeyConstraint baseColumnNames="PARTCOLLECTION_ID" baseTableName="PRODUCTBASELINE" constraintName="FK_PRODUCTBASELINE_PARTCOLLECTION_ID" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="ID" referencedTableName="PARTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-83">
+        <dropForeignKeyConstraint baseTableName="BASELINE" constraintName="FK_BASELINE_CONFIGURATIONITEM_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-84">
+        <dropForeignKeyConstraint baseTableName="BASELINE" constraintName="FK_BASELINE_PARTCOLLECTION_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-90">
+        <dropForeignKeyConstraint baseTableName="CONFIGSPEC" constraintName="FK_CONFIGSPEC_BASELINE_ID"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-91">
+        <dropTable tableName="BASELINE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-95">
+        <dropColumn columnName="BASELINE_ID" tableName="CONFIGSPEC"/>
+    </changeSet>
+
+</databaseChangeLog>

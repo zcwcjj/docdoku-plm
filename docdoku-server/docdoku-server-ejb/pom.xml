@@ -211,6 +211,12 @@
             <artifactId>elasticsearch</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <!-- Liquibase dependency for db migration log -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.2.2</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>

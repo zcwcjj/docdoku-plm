@@ -51,10 +51,11 @@ define([
             this.bindDomElements();
             this.menuResizable();
 
-            try {
+
+                App.sceneManager = new SceneManager();
 
                 App.instancesManager = new InstancesManager();
-                App.sceneManager = new SceneManager();
+
                 App.collaborativeController = new CollaborativeController();
 
                 App.collaborativeView = new CollaborativeView().render();
@@ -78,17 +79,15 @@ define([
                 App.$ControlsContainer.append(new ControlMarkersView().render().$el);
                 App.$ControlsContainer.append(new ControlLayersView().render().$el);
                 App.$ControlsContainer.append(new ControlMeasureView().render().$el);
-
+            try {
                 App.sceneManager.init();
-
-                this.listenEvents();
-                this.bindDatGUIControls();
-
-           } catch (ex) {
+            } catch (ex) {
                 console.error('Got exception in dmu');
-                console.error(ex);
+                App.log(ex);
                 this.onNoWebGLSupport();
             }
+                this.listenEvents();
+                this.bindDatGUIControls();
 
             return this;
         },
@@ -141,6 +140,12 @@ define([
             this.centerSceneContainer = this.$('#center_container');
             this.partMetadataContainer = this.$('#part_metadata_container');
             App.$ControlsContainer = this.$('#side_controls_container');
+            App.$SceneContainer = this.$('#scene_container');
+
+            App.controls = {
+                $ControlsContainer: this.$('#side_controls_container')
+
+            };
         },
 
         updateBom: function (showRoot) {
@@ -337,8 +342,8 @@ define([
         },
 
 		crashWithMessage: function(htmlMessage){
-			this.centerSceneContainer.find('#scene_container').html('<span class="crashMessage">'+htmlMessage+ '</span>');
-			this.centerSceneContainer.find('#side_controls_container').empty();
+            App.$SceneContainer.html('<span class="crashMessage">'+htmlMessage+ '</span>');
+            App.$ControlsContainer.empty();
 			this.exportSceneButton.remove();
 			this.fullScreenSceneButton.remove();
 		}

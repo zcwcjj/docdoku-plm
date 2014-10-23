@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="docdoku (generated)" id="1414426919023-96">
+        <modifyDataType columnName="ALTERNATE_PARTNUMBER" newDataType="varchar(100)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-97">
+        <modifyDataType columnName="ALTERNATE_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-98">
+        <modifyDataType columnName="ASSIGNEE_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-99">
+        <modifyDataType columnName="ASSIGNEE_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-100">
+        <modifyDataType columnName="ASSIGNEE_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-101">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-102">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-103">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-104">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-105">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-106">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-107">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-108">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-109">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="MARKER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-110">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTCOLLECTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-111">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-112">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-113">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-114">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-115">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-116">
+        <modifyDataType columnName="AUTHOR_WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-117">
+        <modifyDataType columnName="CHECKOUTUSER_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-118">
+        <modifyDataType columnName="CHECKOUTUSER_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-119">
+        <modifyDataType columnName="COMPONENT_PARTNUMBER" newDataType="varchar(100)" tableName="PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-120">
+        <modifyDataType columnName="COMPONENT_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-121">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(100)" tableName="CONFIGSPEC"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-122">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(100)" tableName="EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-123">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(100)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-124">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(100)" tableName="PRODUCTINSTANCEITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-125">
+        <modifyDataType columnName="CONFIGURATIONITEM_ID" newDataType="varchar(100)" tableName="PRODUCTINSTANCEMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-126">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(100)" tableName="CONFIGSPEC"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-127">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(100)" tableName="EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-128">
+        <modifyDataType columnName="CONFIGURATIONITEM_WORKSPACE_ID" newDataType="varchar(100)" tableName="LAYER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-129">
+        <modifyDataType columnName="DEFAULT_USER_MAPPED_WORKSPACE_ID" newDataType="varchar(100)" tableName="ROLE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-130">
+        <modifyDataType columnName="DOCUMENTMASTERTEMPLATE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-131">
+        <modifyDataType columnName="DOCUMENTMASTERTEMPLATE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-132">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-133">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-134">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-135">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-136">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-137">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-138">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENT_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-139">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-140">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-141">
+        <modifyDataType columnName="DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-142">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-143">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENT_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-144">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-145">
+        <modifyDataType columnName="DOCUMENTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-146">
+        <modifyDataType columnName="ENTITY_WORKSPACE_ID" newDataType="varchar(100)" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-147">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-148">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-149">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-150">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-151">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="USERGROUP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-152">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-153">
+        <modifyDataType columnName="ID" newDataType="varchar(100)" tableName="WORKSPACE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-154">
+        <modifyDataType columnName="LABEL" newDataType="varchar(100)" tableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-155">
+        <modifyDataType columnName="LOGIN" newDataType="varchar(50)" tableName="CREDENTIAL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-156">
+        <modifyDataType columnName="MEMBER_ID" newDataType="varchar(100)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-157">
+        <modifyDataType columnName="MEMBER_WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-158">
+        <modifyDataType columnName="MEMBER_WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKSPACEUSERMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-159">
+        <modifyDataType columnName="NAME" newDataType="varchar(100)" tableName="INSTANCEATTRIBUTETEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-160">
+        <modifyDataType columnName="NAME" newDataType="varchar(100)" tableName="ROLE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-161">
+        <modifyDataType columnName="PARTMASTERTEMPLATE_ID" newDataType="varchar(100)" tableName="PARTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-162">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-163">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-164">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-165">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-166">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-167">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION_GEOMETRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-168">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTITERATION_PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-169">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-170">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-171">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-172">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="PART_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-173">
+        <modifyDataType columnName="PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-174">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-175">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTER_ALTERNATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-176">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTREVISION_EFFECTIVITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-177">
+        <modifyDataType columnName="PARTMASTER_WORKSPACE_ID" newDataType="varchar(100)" tableName="PART_ABORTED_WORKFLOW"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-178">
+        <modifyDataType columnName="PARTNUMBER" newDataType="varchar(100)" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-179">
+        <modifyDataType columnName="PRDINSTANCEMASTER_SERIALNUMBER" newDataType="varchar(100)" tableName="PRODUCTINSTANCEITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-180">
+        <modifyDataType columnName="PRINCIPAL_ID" newDataType="varchar(100)" tableName="ACLUSERGROUPENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-181">
+        <modifyDataType columnName="PRINCIPAL_WORKSPACE_ID" newDataType="varchar(100)" tableName="ACLUSERENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-182">
+        <modifyDataType columnName="PRINCIPAL_WORKSPACE_ID" newDataType="varchar(100)" tableName="ACLUSERGROUPENTRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-183">
+        <modifyDataType columnName="RELATEDPART_PARTNUMBER" newDataType="varchar(100)" tableName="MARKER_PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-184">
+        <modifyDataType columnName="RELATEDPART_WORKSPACE_ID" newDataType="varchar(100)" tableName="MARKER_PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-185">
+        <modifyDataType columnName="RELAUNCHWORKFLOWMODEL_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-186">
+        <modifyDataType columnName="RELAUNCHWORKSPACE_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-187">
+        <modifyDataType columnName="ROLE_NAME" newDataType="varchar(100)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-188">
+        <modifyDataType columnName="ROLE_WORKSPACE_ID" newDataType="varchar(100)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-189">
+        <modifyDataType columnName="SERIALNUMBER" newDataType="varchar(100)" tableName="PRODUCTINSTANCEMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-190">
+        <modifyDataType columnName="SUBSCRIBER_WORKSPACE_ID" newDataType="varchar(100)" tableName="ITERATIONCHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-191">
+        <modifyDataType columnName="SUBSCRIBER_WORKSPACE_ID" newDataType="varchar(100)" tableName="STATECHANGESUBSCRIPTION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-192">
+        <modifyDataType columnName="SUBSTITUTE_PARTNUMBER" newDataType="varchar(100)" tableName="PARTSUBSTITUTELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-193">
+        <modifyDataType columnName="SUBSTITUTE_WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTSUBSTITUTELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-194">
+        <modifyDataType columnName="TAG_LABEL" newDataType="varchar(100)" tableName="DOCUMENTREVISION_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-195">
+        <modifyDataType columnName="TAG_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION_TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-196">
+        <modifyDataType columnName="TARGET_DOCUMENTMASTER_ID" newDataType="varchar(100)" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-197">
+        <modifyDataType columnName="TARGET_PARTMASTER_PARTNUMBER" newDataType="varchar(100)" tableName="BASELINEDPART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-198">
+        <modifyDataType columnName="TARGET_WORKSPACE_ID" newDataType="varchar(100)" tableName="BASELINEDPART"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-199">
+        <modifyDataType columnName="TARGET_WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-200">
+        <modifyDataType columnName="USERGROUP_ID" newDataType="varchar(100)" tableName="USERGROUP_USER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-201">
+        <modifyDataType columnName="USERGROUP_ID_WORKSPACE_ID" newDataType="varchar(100)" tableName="USERGROUP_USER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-202">
+        <modifyDataType columnName="WORKER_WORKSPACE_ID" newDataType="varchar(100)" tableName="TASK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-203">
+        <modifyDataType columnName="WORKFLOWMODEL_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-204">
+        <modifyDataType columnName="WORKFLOWMODEL_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-205">
+        <modifyDataType columnName="WORKFLOWMODEL_ID" newDataType="varchar(100)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-206">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-207">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="ACTIVITYMODEL_RELAUNCH"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-208">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEISSUE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-209">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEORDER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-210">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="CHANGEREQUEST"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-211">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="CONFIGURATIONITEM"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-212">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-213">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-214">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-215">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-216">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-217">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-218">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-219">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTMASTERTEMPLATE_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-220">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="DOCUMENTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-221">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="MILESTONE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-222">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-223">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION_ATTRIBUTE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-224">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION_BINRES"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-225">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION_DOCUMENTLINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-226">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION_GEOMETRY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-227">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTITERATION_PARTUSAGELINK"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-228">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-229">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTERTEMPLATE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-230">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTMASTERTEMPLATE_ATTR"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-231">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PARTREVISION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-232">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PRODUCTINSTANCEITERATION"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-233">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="PRODUCTINSTANCEMASTER"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-234">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="ROLE"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-235">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="SHAREDENTITY"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-236">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="TAG"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-237">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="TASKMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-238">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="USERDATA"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-239">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="USERGROUP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-240">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKFLOWMODEL"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-241">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKSPACEUSERGROUPMEMBERSHIP"/>
+    </changeSet>
+    <changeSet author="docdoku (generated)" id="1414426919023-242">
+        <modifyDataType columnName="WORKSPACE_ID" newDataType="varchar(100)" tableName="WORKSPACEUSERMEMBERSHIP"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="INSTANCEATTRIBUTETEMPLATE"/>
+        <tableExists tableName="INSTANCEATTRIBUTE"/>
+        <tableExists tableName="PARTMASTERTEMPLATE"/>
+        <tableExists tableName="PARTMASTER"/>
+        <tableExists tableName="DOCUMENTMASTER"/>
+        <tableExists tableName="DOCUMENTMASTERTEMPLATE"/>
+    </preConditions>
+
+    <changeSet author="Yann SERGENT" id="20140515-mandatoryAttributeInTemplate-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="MANDATORY" tableName="INSTANCEATTRIBUTETEMPLATE" />
+        </preConditions>
+
+        <addColumn tableName="INSTANCEATTRIBUTETEMPLATE" >
+            <column name="MANDATORY"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add mandatory field in Template's attributes</comment>
+    </changeSet>
+
+    <changeSet author="Yann SERGENT" id="20140515-mandatoryAttribute-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="MANDATORY" tableName="INSTANCEATTRIBUTE" />
+        </preConditions>
+
+        <addColumn tableName="INSTANCEATTRIBUTE" >
+            <column name="MANDATORY"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add mandatory field in attribute</comment>
+    </changeSet>
+
+    <changeSet author="Yann SERGENT" id="20140515-lockAttributeInPartTemplate-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ATTRIBUTESLOCKED" tableName="PARTMASTERTEMPLATE" />
+        </preConditions>
+
+        <addColumn tableName="PARTMASTERTEMPLATE" >
+            <column name="ATTRIBUTESLOCKED"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add attribute locked field in part template to lock attribute structure</comment>
+    </changeSet>
+
+    <changeSet author="Yann SERGENT" id="20140515-lockAttributeInDocumentTemplate-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ATTRIBUTESLOCKED" tableName="DOCUMENTMASTERTEMPLATE" />
+        </preConditions>
+
+        <addColumn tableName="DOCUMENTMASTERTEMPLATE" >
+            <column name="ATTRIBUTESLOCKED"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add attribute locked field in document template to lock attribute structure</comment>
+    </changeSet>
+
+    <changeSet author="Yann SERGENT" id="20140515-lockAttributeInPart-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ATTRIBUTESLOCKED" tableName="PARTMASTER" />
+        </preConditions>
+
+        <addColumn tableName="PARTMASTER" >
+            <column name="ATTRIBUTESLOCKED"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add attribute locked field in part to lock attribute structure</comment>
+    </changeSet>
+
+    <changeSet author="Yann SERGENT" id="20140515-lockAttributeInDocument-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="ATTRIBUTESLOCKED" tableName="DOCUMENTMASTER" />
+        </preConditions>
+
+        <addColumn tableName="DOCUMENTMASTER" >
+            <column name="ATTRIBUTESLOCKED"
+                    type="BOOLEAN"
+                    remarks="Since commit a1bb4742ae215a597f3e05c413bdc355dc104dff"
+                    defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>Add attribute locked field in document to lock attribute structure</comment>
+    </changeSet>
+
+</databaseChangeLog>

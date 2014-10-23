@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <preConditions onFail="HALT">
+        <tableExists tableName="LAYER"/>
+    </preConditions>
+
+    <changeSet author="Arthur FRIN" id="20140811-collaborativeMode-1.0">
+        <preConditions onFail="MARK_RAN">
+            <columnExists columnName="COLOR" tableName="LAYER" />
+        </preConditions>
+        <addColumn tableName="LAYER" >
+            <column name="COLOR"
+                    type="VARCHAR(255) "
+                    remarks="Since commit 60b671da688c5d383281e2c8c1a05306ca686a25"
+                    defaultValueNumeric="0"/>
+        </addColumn>
+        <comment>Add color column to get same layer color in collaborative mode</comment>
+    </changeSet>
+
+</databaseChangeLog>
