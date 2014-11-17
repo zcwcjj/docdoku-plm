@@ -7,7 +7,6 @@ import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import javax.ejb.EJB;
@@ -24,9 +23,6 @@ public class TestPartManagerBean {
 
     @EJB
     private IProductManagerLocal productManagerLocal;
-
-    @EJB
-    private ESIndexer esIndexer;
 
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
