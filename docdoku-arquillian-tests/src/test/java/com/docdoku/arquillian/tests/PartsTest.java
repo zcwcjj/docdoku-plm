@@ -27,7 +27,6 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentMasterKey;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.gcm.GCMAccount;
-import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
@@ -37,7 +36,6 @@ import com.docdoku.server.esindexer.ESMapper;
 import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.esindexer.ESTools;
 import com.docdoku.server.gcm.GCMSenderBean;
-import com.sun.tools.javac.util.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -71,7 +69,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 @FixMethodOrder(value = MethodSorters.NAME_ASCENDING )
-public class AccessRightsTest {
+public class PartsTest {
 
     @EJB
     private ESIndexer esIndexer;
@@ -90,7 +88,7 @@ public class AccessRightsTest {
     @Inject
     private UserTransaction utx;
 
-    private static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(AccessRightsTest.class);
+    private static org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(PartsTest.class);
     private static final int COUNT = 5;
 
     @Deployment
@@ -127,8 +125,11 @@ public class AccessRightsTest {
                         WorkspaceUserMembership.class
                 )
                 .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-                .addAsWebInfResource("WEB-INF/sun-web.xml");
-                //.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addAsWebInfResource("WEB-INF/sun-web.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsResource("log4j.properties", ArchivePaths.create("log4j.properties"));
+
+
     }
 
     @Before
@@ -146,74 +147,6 @@ public class AccessRightsTest {
 
 
     @Test
-    public void Test1_testSimpleCreation() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testSimpleCreation");
-        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
-        documentManagerBean.testFolderCreation("user1", "TEST_WORKSPACE", "TEST_FOLDER");
-        userManagerBean.testAddingUserInWorkspace("user1", "user2", "TEST_WORKSPACE");
-        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT0", null, null);
-        ArrayList<InstanceAttributeTemplate>instanceAttributes = new ArrayList<InstanceAttributeTemplate>();
-        instanceAttributes.add(new InstanceAttributeTemplate("attr1", InstanceAttributeTemplate.AttributeType.BOOLEAN));
-        instanceAttributes.add(new InstanceAttributeTemplate("attr2", InstanceAttributeTemplate.AttributeType.DATE));
-        partManagerBean.testPartMasterTemplateCreation("user1", "TEST_WORKSPACE", "template1", "planes", "plane_###", instanceAttributes.toArray(new InstanceAttributeTemplate[instanceAttributes.size()]), true, true);
-        System.out.println("LOGGG "+partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "plane_125", " ", true, null, "", "template1", null, null, null).getNumber());
-        assertEquals(partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "plane_125", " ", true, null, "", "template1", null, null, null).getNumber(), "plane_125");
-    }
-
-    @Test
-    public void Test2_testMatrixRights1() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights1");
-        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user2"}, "TEST_WORKSPACE", false);
-        documentManagerBean.testDocumentCreation("user2", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT1", null, null);
-    }
-
-    @Test
-    public void Test3_testMatrixRights2() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights2");
-        userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group1");
-        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
-        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
-        userManagerBean.testAddingUserInWorkspace("user1", "user3", "TEST_WORKSPACE");
-        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user3"}, "TEST_WORKSPACE", false);
-        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT3", null, null);
-    }
-
-    @Test
-    public void Test4_testMatrixRights3() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights3");
-        userManagerBean.testGroupCreation("user1", "TEST_WORKSPACE", "group2");
-        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group2"}, "TEST_WORKSPACE", false);
-        userManagerBean.testGrantingUserGroupAccessInWorkspace("user1", new String[]{"group1"}, "TEST_WORKSPACE", true);
-        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user3");
-        userManagerBean.testAddingUserInGroup("user1", "group2", "TEST_WORKSPACE", "user3");
-        documentManagerBean.testDocumentCreation("user3", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT4", null, null);
-    }
-
-    @Test
-    public void Test5_testMatrixRights4() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testMatrixRights4");
-        userManagerBean.testAddingUserInWorkspace("user1", "user4", "TEST_WORKSPACE");
-        userManagerBean.testGrantingUserAccessInWorkspace("user1", new String[]{"user4"}, "TEST_WORKSPACE", true);
-        User user = em.find(User.class, new UserKey("TEST_WORKSPACE", "user4"));
-        ACLUserEntry[] aclUserEntries = new ACLUserEntry[1];
-        aclUserEntries[0] = new ACLUserEntry(new ACL(), user, ACL.Permission.FULL_ACCESS);
-
-        userManagerBean.testAddingUserInGroup("user1", "group1", "TEST_WORKSPACE", "user4");
-        UserGroup userGroup = em.find(UserGroup.class, new UserGroupKey("TEST_WORKSPACE", "group1"));
-        ACLUserGroupEntry[] aclUserGroupEntries = new ACLUserGroupEntry[1];
-        aclUserGroupEntries[0] = new ACLUserGroupEntry(new ACL(), userGroup, ACL.Permission.FULL_ACCESS);
-
-        documentManagerBean.testDocumentCreation("user1", "TEST_WORKSPACE/TEST_FOLDER", "DOCUMENT5", aclUserEntries, aclUserGroupEntries);
-    }
-
-    @Test
-    public void Test6_testCheckInCheckOut() throws Exception {
-        Logger.getLogger(AccessRightsTest.class.getName()).log(Level.INFO, "Test method : testCheckInCheckOut");
-        documentManagerBean.testDocumentCheckIn("user1", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
-        documentManagerBean.testDocumentCheckOut("user4", new DocumentRevisionKey(new DocumentMasterKey("TEST_WORKSPACE", "DOCUMENT5"), "A"));
-    }
-
-    @Test
     public void testCreationPartMasterFromTemplate() throws Exception {
         Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : testCreationPartMasterFromTemplate");
         org.glassfish.hk2.utilities.reflection.Logger.getLogger().debug("Test method : testCreationPartMasterFromTemplate");
@@ -221,6 +154,19 @@ public class AccessRightsTest {
         partManagerBean.testPartMasterTemplateCreation("user1", "TEST_WORKSPACE", "template1", "planes", "plane_###", null, true, true);
         partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "plane_125", " ", true, null, "", "template1", null, null, null);
         assertTrue(partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "plane_125", " ", true, null, "", "template1", null, null, null).getNumber().equals("ddd"));
+    }
+
+
+    @Test
+    public void testMaskValidityPartTemplate() throws Exception {
+
+        Logger.getLogger(ProductTest.class.getName()).log(Level.INFO, "Test method : testMaskValidityPartTemplate");
+        userManagerBean.testWorkspaceCreation("user1", "TEST_WORKSPACE");
+        partManagerBean.testPartMasterTemplateCreation("user1", "TEST_WORKSPACE", "template1", "", "ref_###", null, true, true);
+        partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "ref_1235", " ", true, null, "", "template1", null, null, null);
+        partManagerBean.testPartMasterCreation("user1", "TEST_WORKSPACE", "ref_125", " ", true, null, "", "template1", null, null, null);
+        assertTrue(partManagerBean.findPartMaster("user1", "TEST_WORKSPACE", "ref_1235") == 1);
+        assertEquals(partManagerBean.findPartMaster("user1", "TEST_WORKSPACE", "ref_125"), 1);
     }
 
 }
