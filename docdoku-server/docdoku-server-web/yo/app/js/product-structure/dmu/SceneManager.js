@@ -40,7 +40,7 @@ define([
         this.editedMeshes = [];
         this.editedMeshesLeft = [];
 
-        var oculusEffectActivated = true;
+        var oculusEffectActivated = false;
 
         // Stat
         this.switches = 0;
@@ -1015,8 +1015,8 @@ define([
             return editedMeshesColoured;
         };
 
-        this.toggleOculus = function(){
-            oculusEffectActivated =! oculusEffectActivated;
+        this.toggleOculus = function(state){
+            oculusEffectActivated = state;
             handleResize();
         };
 

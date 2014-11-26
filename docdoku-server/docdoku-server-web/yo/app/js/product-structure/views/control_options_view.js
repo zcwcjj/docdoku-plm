@@ -14,11 +14,12 @@ define(
             events: {
                 "click button#gridSwitch": "gridSwitch",
                 "click button#screenshot": "takeScreenShot",
-                "click button#show_edited_meshes": "show_edited_meshes"
+                "click button#show_edited_meshes": "show_edited_meshes",
+                "click button#oculus": "toggleOculus"
             },
 
             gridSwitch: function () {
-                var gridSwitch = $("#gridSwitch");
+                var gridSwitch = this.$("#gridSwitch");
                 gridSwitch.toggleClass("active");
                 App.SceneOptions.grid = !!gridSwitch.hasClass("active");
             },
@@ -33,12 +34,17 @@ define(
             },
 
             show_edited_meshes: function () {
-                $('#show_edited_meshes').toggleClass("active");
-                if ($('#show_edited_meshes').hasClass("active")) {
+                this.$('#show_edited_meshes').toggleClass("active");
+                if (this.$('#show_edited_meshes').hasClass("active")) {
                     App.sceneManager.colourEditedMeshes();
                 } else {
                     App.sceneManager.cancelColourEditedMeshes();
                 }
+            },
+
+            toggleOculus:function(){
+                this.$('#oculus').toggleClass("active");
+                App.sceneManager.toggleOculus(this.$('#oculus').hasClass("active"));
             }
 
 
