@@ -49,6 +49,24 @@ define([
 
         var effect;
 
+        var tmpQuaternion = new THREE.Quaternion();
+
+        function poll() {
+            $.get('http://localhost:50000', function (r) {
+                tmpQuaternion.set(r.quat.x, r.quat.y, r.quat.z, r.quat.w);
+                setTimeout(poll, 10);
+            });
+        }
+
+        function updateOculusCamera(){
+            if(oculusEffectActivated){
+                _this.cameraObject.quaternion.copy(tmpQuaternion);
+                _this.cameraObject.matrixWorldNeedsUpdate = true;
+            }
+        }
+
+        //poll();
+
         function render() {
             _this.scene.updateMatrixWorld();
             if(oculusEffectActivated){
@@ -74,7 +92,7 @@ define([
             _this.renderer.setSize(_this.$container.width(), _this.$container.height());
             _this.$container.append(_this.renderer.domElement);
             _this.renderer.setClearColor(new THREE.Color(0xbfd1e5));
-            effect = new THREE.OculusRiftEffect(_this.renderer, { worldScale: 100 , HMD:{
+            effect = new THREE.OculusRiftEffect(_this.renderer, { worldScale: 1000 , HMD:{
                 hResolution: 1920,
                 vResolution: 1080,
                 hScreenSize: 0.12576,
@@ -639,6 +657,8 @@ define([
 
             processLoadedStuff();
 
+            updateOculusCamera();
+
 
             // Update with SceneOptions
             watchSceneOptions();
@@ -1019,6 +1039,8 @@ define([
             oculusEffectActivated = state;
             handleResize();
         };
+
+
 
     };
 
