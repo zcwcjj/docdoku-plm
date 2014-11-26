@@ -44,9 +44,12 @@ define([
         this.adds = 0;
         this.onScene = 0;
 
+        var effect;
+
         function render() {
             _this.scene.updateMatrixWorld();
-            _this.renderer.render(_this.scene, _this.cameraObject);
+            effect.render(_this.scene, _this.cameraObject);
+            //_this.renderer.render(_this.scene, _this.cameraObject);
         }
 
         function initDOM() {
@@ -62,6 +65,19 @@ define([
             _this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
             _this.renderer.setSize(_this.$container.width(), _this.$container.height());
             _this.$container.append(_this.renderer.domElement);
+            _this.renderer.setClearColor(new THREE.Color(0xbfd1e5));
+            effect = new THREE.OculusRiftEffect(_this.renderer, { worldScale: 100 , HMD:{
+                hResolution: 1920,
+                vResolution: 1080,
+                hScreenSize: 0.12576,
+                vScreenSize: 0.07074,
+                interpupillaryDistance: 0.0635,
+                lensSeparationDistance: 0.0635,
+                eyeToScreenDistance: 0.041,
+                distortionK : [1.0, 0.22, 0.24, 0.0],
+                chromaAbParameter: [ 0.996, -0.004, 1.014, 0.0]
+            }});
+            effect.setSize(_this.$container.width(), _this.$container.height());
         }
         function initLayerManager() {
             if (!_.isUndefined(App.config.productId)) {
@@ -130,6 +146,7 @@ define([
             _this.cameraObject.aspect = _this.$container.innerWidth() / _this.$container.innerHeight();
             _this.cameraObject.updateProjectionMatrix();
             _this.renderer.setSize(_this.$container.innerWidth(), _this.$container.innerHeight());
+            effect.setSize(_this.$container.width(), _this.$container.height());
             controlsObject.handleResize();
             _this.reDraw();
         }
@@ -751,6 +768,7 @@ define([
                 (_this.renderer.domElement.parentNode.mozRequestFullScreen) ||
                 (_this.renderer.domElement.parentNode.webkitRequestFullScreen);
             _this.renderer.domElement.parentNode.requestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            handleResize();
         };
         this.explodeScene = function (v) {
             App.collaborativeController.sendExplodeValue(v);

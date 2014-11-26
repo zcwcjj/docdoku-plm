@@ -91,7 +91,8 @@ require.config({
         binaryloader:{deps:['threecore'],exports:'THREE'},
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
-        buffergeometryutils:{deps:['threecore'],exports:'THREE'}
+        buffergeometryutils:{deps:['threecore'],exports:'THREE'},
+        oculusRiftEffect:{deps:['threecore'],exports:'THREE'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -126,7 +127,8 @@ require.config({
         colladaloader:'dmu/loaders/ColladaLoader',
         stlloader:'dmu/loaders/STLLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
-        stats:'dmu/utils/Stats'
+        stats:'dmu/utils/Stats',
+        oculusRiftEffect:'dmu/utils/OculusRiftEffect'
     },
 
     deps:[
@@ -152,7 +154,8 @@ require.config({
         'buffergeometryutils',
         'stats',
         'dat',
-        'tween'
+        'tween',
+        'oculusRiftEffect'
     ],
     config: {
         i18n: {
