@@ -34,10 +34,13 @@ define([
         this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
         this.scene = new THREE.Scene();
         this.renderer = null;
+        this.oculusRenderer = null;
         this.cameraObject = null;                                                                                       // Represent the eye
         this.layerManager = null;
         this.editedMeshes = [];
         this.editedMeshesLeft = [];
+
+        var oculusEffectActivated = true;
 
         // Stat
         this.switches = 0;
@@ -48,8 +51,13 @@ define([
 
         function render() {
             _this.scene.updateMatrixWorld();
-            effect.render(_this.scene, _this.cameraObject);
-            //_this.renderer.render(_this.scene, _this.cameraObject);
+            if(oculusEffectActivated){
+                _this.renderer.autoClear = false;
+                effect.render(_this.scene, _this.cameraObject);
+            }else{
+                _this.renderer.autoClear = true;
+                _this.renderer.render(_this.scene, _this.cameraObject);
+            }
         }
 
         function initDOM() {
@@ -1005,6 +1013,11 @@ define([
         };
         this.getEditedMeshesColoured = function () {
             return editedMeshesColoured;
+        };
+
+        this.toggleOculus = function(){
+            oculusEffectActivated =! oculusEffectActivated;
+            handleResize();
         };
 
     };

@@ -37,7 +37,7 @@ THREE.OculusRiftEffect = function ( renderer, options ) {
     this.preLeftRender = function() {};
     this.preRightRender = function() {};
 
-    renderer.autoClear = false;
+    //renderer.autoClear = false;
     var emptyColor = new THREE.Color("black");
 
     // Render target
