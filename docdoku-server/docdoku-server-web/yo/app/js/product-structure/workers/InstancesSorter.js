@@ -27,7 +27,7 @@ var InstancesSorter = {};
 
         // Evaluate global
         _(instances).each(function (instance) {
-
+            instance.globalRating = 2; return;
 
             /*
              * No geometric data

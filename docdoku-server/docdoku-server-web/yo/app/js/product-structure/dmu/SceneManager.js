@@ -31,7 +31,7 @@ define([
         var materialEditedMesh = new THREE.MeshPhongMaterial({ transparent: false, color: new THREE.Color(0x08B000) });
 
         this.stateControl = null;
-        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2};
+        this.STATECONTROL = { PLC: 0, TBC: 1, ORB: 2, FP:3};
         this.scene = new THREE.Scene();
         this.renderer = null;
         this.oculusRenderer = null;
@@ -48,24 +48,6 @@ define([
         this.onScene = 0;
 
         var effect;
-
-        var tmpQuaternion = new THREE.Quaternion();
-
-        function poll() {
-            $.get('http://localhost:50000', function (r) {
-                tmpQuaternion.set(r.quat.x, r.quat.y, r.quat.z, r.quat.w);
-                setTimeout(poll, 10);
-            });
-        }
-
-        function updateOculusCamera(){
-            if(oculusEffectActivated){
-                _this.cameraObject.quaternion.copy(tmpQuaternion);
-                _this.cameraObject.matrixWorldNeedsUpdate = true;
-            }
-        }
-
-        //poll();
 
         function render() {
             _this.scene.updateMatrixWorld();
@@ -86,6 +68,7 @@ define([
             _this.$flyingModeButton = $('#flying_mode_view_btn');
             _this.$trackingModeButton = $('#tracking_mode_view_btn');
             _this.$orbitModeButton = $('#orbit_mode_view_btn');
+            _this.$firstPersonModeButton = $('#oculus_mode_view_btn');
         }
         function initRenderer() {
             _this.renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
@@ -205,10 +188,19 @@ define([
             _this.trackBallControls = new THREE.TrackballControls(_this.trackBallCamera, _this.$container[0]);
             _this.trackBallControls.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
         }
+        function createFirstPersonControls() {
+            _this.firstPersonCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
+            _this.firstPersonControls = new THREE.FirstPersonControls(_this.firstPersonCamera);
+            addLightsToCamera(_this.firstPersonCamera);
+            _this.firstPersonControls.movementSpeed = 5x000;
+            _this.firstPersonControls.lookSpeed = 3.0;
+            _this.firstPersonControls.lookVertical = true;
+        }
         function initControls() {
             createPointerLockControls();
             createTrackBallControls();
             createOrbitControls();
+            createFirstPersonControls();
         }
         function createTransformControls() {
             transformControls = new THREE.TransformControls(_this.$container[0]);
@@ -268,6 +260,11 @@ define([
             _this.scene.remove(_this.orbitControls.getObject());
             _this.orbitControls.enabled = false;
             _this.orbitControls.unbindEvents();
+
+            _this.firstPersonControls.removeEventListener('change');
+            _this.firstPersonControls.unbindEvents();
+            _this.scene.remove(_this.firstPersonCamera);
+            _this.firstPersonControls.enabled = false;
 
             _this.deleteTransformControls();
         }
@@ -355,7 +352,11 @@ define([
         }
         function onKeyDown() {
         }
-        function onKeyUp() {
+        function onKeyUp(e) {
+
+            if(e.keyCode === '70'){
+                _this.requestFullScreen();
+            }
 
         }
         function onMouseDown() {
@@ -657,9 +658,6 @@ define([
 
             processLoadedStuff();
 
-            updateOculusCamera();
-
-
             // Update with SceneOptions
             watchSceneOptions();
 
@@ -930,6 +928,34 @@ define([
             handleResize();
             _this.reDraw();
         };
+
+        this.setFirstPersonControls = function () {
+
+            if (_this.stateControl === _this.STATECONTROL.FP && controlsObject.enabled) {
+                return;
+            }
+
+            _this.stateControl = _this.STATECONTROL.FP;
+            deleteAllControls();
+
+            _this.$firstPersonModeButton.addClass('active');
+
+            controlsObject = _this.firstPersonControls;
+            controlsObject.enabled = true;
+
+            _this.cameraObject = _this.firstPersonCamera;
+
+            controlsObject.addEventListener('change', onControlChange);
+            controlsObject.bindEvents();
+            controlsObject.oculusControls.connect();
+            _this.scene.add(_this.firstPersonCamera);
+
+            _this.firstPersonCamera.position.set(-90,138,592);
+
+            App.SceneOptions.grid = true;
+            handleResize();
+            _this.reDraw();
+        };
         this.setTransformControls = function (mesh, mode) {
             transformControls.setCamera(_this.cameraObject);
             controlsObject.enabled = false;
@@ -1028,9 +1054,11 @@ define([
         this.removeMeshById = function (meshId) {
             removeMesh(meshId);
         };
+
         this.getMesh = function (meshId) {
             return meshesIndexed[meshId];
         };
+
         this.getEditedMeshesColoured = function () {
             return editedMeshesColoured;
         };
@@ -1039,8 +1067,6 @@ define([
             oculusEffectActivated = state;
             handleResize();
         };
-
-
 
     };
 

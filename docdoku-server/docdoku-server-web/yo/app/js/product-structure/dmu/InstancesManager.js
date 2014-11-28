@@ -179,6 +179,7 @@ define(['dmu/LoaderManager', 'async'],
                 return q;
             }
             function findRadius(files) {
+                return 20000;
                 var r = 0;
                 _(files).each(function (f) {
                     if (f.radius) {

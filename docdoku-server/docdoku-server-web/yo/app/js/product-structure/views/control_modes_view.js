@@ -14,7 +14,8 @@ define(
             events: {
                 "click button#flying_mode_view_btn": "flyingView",
                 "click button#tracking_mode_view_btn": "trackingView",
-                "click button#orbit_mode_view_btn": "orbitView"
+                "click button#orbit_mode_view_btn": "orbitView",
+                "click button#oculus_mode_view_btn": "oculusView",
             },
 
             flyingView: function () {
@@ -27,6 +28,10 @@ define(
 
             orbitView: function () {
                 App.sceneManager.setOrbitControls();
+            },
+
+            oculusView: function () {
+                App.sceneManager.setFirstPersonControls();
             },
 
             render: function () {
