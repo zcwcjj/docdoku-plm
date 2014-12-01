@@ -190,9 +190,9 @@ define([
         }
         function createFirstPersonControls() {
             _this.firstPersonCamera = new THREE.PerspectiveCamera(45, _this.$container.width() / _this.$container.height(), App.SceneOptions.cameraNear, App.SceneOptions.cameraFar);
-            _this.firstPersonControls = new THREE.FirstPersonControls(_this.firstPersonCamera);
+            _this.firstPersonControls = new THREE.FirstPersonControls(_this.firstPersonCamera, _this.$container[0]);
             addLightsToCamera(_this.firstPersonCamera);
-            _this.firstPersonControls.movementSpeed = 5x000;
+            _this.firstPersonControls.movementSpeed = 5000;
             _this.firstPersonControls.lookSpeed = 3.0;
             _this.firstPersonControls.lookVertical = true;
         }
@@ -353,11 +353,9 @@ define([
         function onKeyDown() {
         }
         function onKeyUp(e) {
-
-            if(e.keyCode === '70'){
-                _this.requestFullScreen();
-            }
-
+           if(e.keyCode === 70){
+               _this.requestFullScreen();
+           }
         }
         function onMouseDown() {
             isMoving = false;
@@ -424,10 +422,10 @@ define([
             _this.$container[0].addEventListener('mouseup', onMouseUp, false);
             _this.$container[0].addEventListener('mouseover', onMouseEnter, false);
             _this.$container[0].addEventListener('mouseout', onMouseLeave, false);
-            _this.$container[0].addEventListener('keydown', onKeyDown, false);
-            _this.$container[0].addEventListener('keyup', onKeyUp, false);
             _this.$container[0].addEventListener('mousemove', onSceneMouseMove, false);
             _this.$container[0].addEventListener('mousewheel', onSceneMouseWheel, false);
+            window.addEventListener('keydown', onKeyDown, false);
+            window.addEventListener('keyup', onKeyUp, false);
         }
 
         /**
@@ -691,6 +689,7 @@ define([
             initRenderer();
             initStats();
             window.addEventListener('resize', handleResize, false);
+
             bindMouseAndKeyEvents();
 
             if (App.SceneOptions.transformControls) {
@@ -698,6 +697,7 @@ define([
             }
 
             _this.setTrackBallControls();
+
 
             animate();
         };

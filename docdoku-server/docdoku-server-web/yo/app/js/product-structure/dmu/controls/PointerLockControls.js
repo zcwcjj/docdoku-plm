@@ -153,14 +153,14 @@ THREE.PointerLockControls = function (camera) {
 
     this.unbindEvents = function () {
         document.removeEventListener('mousemove', onMouseMove, false);
-        document.removeEventListener('keydown', onKeyDown, false);
-        document.removeEventListener('keyup', onKeyUp, false);
+        window.removeEventListener('keydown', onKeyDown, false);
+        window.removeEventListener('keyup', onKeyUp, false);
     };
 
     this.bindEvents = function () {
         document.addEventListener('mousemove', onMouseMove, false);
-        document.addEventListener('keydown', onKeyDown, false);
-        document.addEventListener('keyup', onKeyUp, false);
+        window.addEventListener('keydown', onKeyDown, false);
+        window.addEventListener('keyup', onKeyUp, false);
     };
 
     this.enabled = false;

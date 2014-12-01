@@ -37,7 +37,7 @@ var App = {
         rotateSpeed: 1.0,
         panSpeed: 0.3,
         cameraNear: 1,
-        cameraFar: 5E4,
+        cameraFar: 2E5,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
         ambientLightColor:0x101030,
