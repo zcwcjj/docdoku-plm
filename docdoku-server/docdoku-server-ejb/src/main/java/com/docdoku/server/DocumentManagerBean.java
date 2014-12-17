@@ -217,7 +217,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         ListIterator<DocumentRevision> ite = docRs.listIterator();
         while (ite.hasNext()) {
             DocumentRevision docR = ite.next();
-            if (hasDocumentRevisionReadAccess(user,docR)) {
+            if (!hasDocumentRevisionReadAccess(user,docR)) {
                 ite.remove();
             }else if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
@@ -236,7 +236,7 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         ListIterator<DocumentRevision> ite = docRs.listIterator();
         while (ite.hasNext()) {
             DocumentRevision docR = ite.next();
-            if (hasDocumentRevisionReadAccess(user,docR)){
+            if (!hasDocumentRevisionReadAccess(user,docR)){
                 ite.remove();
             }else if (isCheckoutByAnotherUser(user,docR)) {
                 em.detach(docR);
