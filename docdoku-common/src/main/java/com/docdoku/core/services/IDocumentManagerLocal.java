@@ -157,5 +157,8 @@ public interface IDocumentManagerLocal {
 
     DocumentRevision removeTag(DocumentRevisionKey pDocMPK, String pTag) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, ESServerException;
 
-    boolean canAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
+    boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    boolean canAccess(DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException;
+    boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
+    boolean canUserAccess(User user, DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException;
 }

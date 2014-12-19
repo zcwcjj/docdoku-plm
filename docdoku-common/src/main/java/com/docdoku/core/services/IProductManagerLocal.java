@@ -125,6 +125,8 @@ public interface IProductManagerLocal{
 
     public User checkPartRevisionReadAccess(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException;
 
+    boolean canAccess(PartRevisionKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException;
+    boolean canAccess(PartIterationKey partRKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, PartIterationNotFoundException;
     /**
      * Check if a user can access to a PartRevision
      * [WARN] Don't check if the user exist and if he can access to the part workspace
@@ -132,8 +134,7 @@ public interface IProductManagerLocal{
      * @param partRKey The key of the specif part
      * @return TRUE if he can access, False otherwise
      */
-    boolean canAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException;
-
+    boolean canUserAccess(User user, PartRevisionKey partRKey) throws PartRevisionNotFoundException;
     /**
      * Check if a user can access to a PartIteration
      * [WARN] Don't check if the user exist and if he can access to the part iteration workspace
@@ -141,5 +142,5 @@ public interface IProductManagerLocal{
      * @param partIKey The key of the specif part iteration
      * @return TRUE if he can access, False otherwise
      */
-    boolean canAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException;
+    boolean canUserAccess(User user, PartIterationKey partIKey) throws PartRevisionNotFoundException, PartIterationNotFoundException;
 }
