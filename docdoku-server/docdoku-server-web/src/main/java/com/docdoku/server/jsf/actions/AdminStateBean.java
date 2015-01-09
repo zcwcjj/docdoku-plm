@@ -29,6 +29,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentTemplateManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 
@@ -45,6 +46,8 @@ public class AdminStateBean implements Serializable {
 
     @EJB
     private IDocumentManagerLocal documentService;
+    @EJB
+    private IDocumentTemplateManagerLocal documentTemplateService;
     @EJB
     private IProductManagerLocal productService;
     @EJB
@@ -138,14 +141,14 @@ public class AdminStateBean implements Serializable {
 
         long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
         long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
-        long documentTemplatesDiskUsage = documentService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
+        long documentTemplatesDiskUsage = documentTemplateService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
         long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
 
         return Json.createObjectBuilder()
-        .add("documents", documentDiskUsage)
-        .add("parts", partsDiskUsage)
-        .add("document-templates", documentTemplatesDiskUsage)
-        .add("part-templates", partTemplatesDiskUsage).build();
+                    .add("documents", documentDiskUsage)
+                    .add("parts", partsDiskUsage)
+                    .add("document-templates", documentTemplatesDiskUsage)
+                    .add("part-templates", partTemplatesDiskUsage).build();
     }
 
     public JsonObject getCheckedOutDocumentsStats() throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {

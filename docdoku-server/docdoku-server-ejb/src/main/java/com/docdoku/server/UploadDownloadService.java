@@ -59,7 +59,8 @@ public class UploadDownloadService implements IUploadDownloadWS {
 
     @EJB
     private IDocumentManagerLocal documentService;
-
+    @EJB
+    private IDocumentTemplateManagerLocal documentTemplateService;
     @EJB
     private IProductManagerLocal productService;
 
@@ -101,7 +102,7 @@ public class UploadDownloadService implements IUploadDownloadWS {
     @Override
     public DataHandler downloadFromTemplate(String workspaceId, String templateID, String fileName) throws NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException {
         String fullName = workspaceId + "/templates/" + templateID + "/" + fileName;
-        BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
+        BinaryResource binaryResource = documentTemplateService.getTemplateBinaryResource(fullName);
         return new DataHandler(getBinaryResourceDataSource(binaryResource));
     }
 
@@ -159,9 +160,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
             throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         DocumentMasterTemplateKey templatePK = new DocumentMasterTemplateKey(workspaceId, templateID);
-        BinaryResource binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
+        BinaryResource binaryResource = documentTemplateService.saveFileInTemplate(templatePK, fileName, 0);
         long length = uploadAFile(data,binaryResource);
-        documentService.saveFileInTemplate(templatePK, fileName, length);
+        documentTemplateService.saveFileInTemplate(templatePK, fileName, length);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

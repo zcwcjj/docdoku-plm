@@ -105,6 +105,7 @@ public class UploadDownloadTest {
                         GCMSenderBean.class,
                         IDataManagerLocal.class,
                         IDocumentManagerLocal.class,
+                        IDocumentTemplateManagerLocal.class,
                         IProductManagerLocal.class,
                         IGCMSenderLocal.class,
                         IMailerLocal.class,

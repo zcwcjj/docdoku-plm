@@ -29,6 +29,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.services.IDocumentManagerLocal;
+import com.docdoku.core.services.IDocumentTemplateManagerLocal;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
 
 import javax.ejb.EJB;
@@ -45,6 +46,8 @@ public class TestDocumentManagerBean {
 
     @EJB
     private IDocumentManagerLocal documentManagerLocal;
+    @EJB
+    private IDocumentTemplateManagerLocal documentTemplateManagerLocal;
 
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
@@ -66,7 +69,7 @@ public class TestDocumentManagerBean {
 
     public DocumentMasterTemplate createDocumentTemplate(String login,String pWorkspaceId, String pId, String pDocumentType, String pMask, InstanceAttributeTemplate[] instanceAttributeTemplates,boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, DocumentMasterTemplateAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        DocumentMasterTemplate masterTemplate = documentManagerLocal.createDocumentMasterTemplate(pWorkspaceId,pId,pDocumentType,pMask,instanceAttributeTemplates,idGenerated,attributesLocked);
+        DocumentMasterTemplate masterTemplate = documentTemplateManagerLocal.createDocumentMasterTemplate(pWorkspaceId,pId,pDocumentType,pMask,instanceAttributeTemplates,idGenerated,attributesLocked);
         loginP.logout();
         return masterTemplate;
     }

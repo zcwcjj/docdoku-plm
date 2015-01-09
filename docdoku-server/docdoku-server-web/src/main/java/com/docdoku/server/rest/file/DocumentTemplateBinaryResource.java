@@ -27,6 +27,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IDocumentTemplateManagerLocal;
 import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
@@ -62,6 +63,8 @@ public class DocumentTemplateBinaryResource {
     @EJB
     private IDocumentManagerLocal documentService;
     @EJB
+    private IDocumentTemplateManagerLocal documentTemplateService;
+    @EJB
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
 
     public DocumentTemplateBinaryResource() {
@@ -84,10 +87,10 @@ public class DocumentTemplateBinaryResource {
             for(Part formPart : formParts){
                 fileName = formPart.getSubmittedFileName();
                 // Init the binary resource with a null length
-                binaryResource= documentService.saveFileInTemplate(templatePK, fileName, 0);
+                binaryResource= documentTemplateService.saveFileInTemplate(templatePK, fileName, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-                documentService.saveFileInTemplate(templatePK, fileName, length);
+                documentTemplateService.saveFileInTemplate(templatePK, fileName, length);
             }
 
             if(formParts.size()==1) {
@@ -117,7 +120,7 @@ public class DocumentTemplateBinaryResource {
 
 
         String fullName = workspaceId + "/document-templates/" + templateId + "/" + fileName;
-        BinaryResource binaryResource = documentService.getTemplateBinaryResource(fullName);
+        BinaryResource binaryResource = documentTemplateService.getTemplateBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource);
 
         // Check cache precondition
