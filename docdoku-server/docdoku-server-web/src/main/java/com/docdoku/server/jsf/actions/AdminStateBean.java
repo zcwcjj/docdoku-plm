@@ -28,10 +28,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
 import com.docdoku.core.security.WorkspaceUserMembership;
-import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentTemplateManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -50,6 +47,8 @@ public class AdminStateBean implements Serializable {
     private IDocumentTemplateManagerLocal documentTemplateService;
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IPartTemplateManagerLocal partTemplateService;
     @EJB
     private IUserManagerLocal userManager;
 
@@ -142,7 +141,7 @@ public class AdminStateBean implements Serializable {
         long documentDiskUsage = documentService.getDiskUsageForDocumentsInWorkspace(selectedWorkspace);
         long partsDiskUsage = productService.getDiskUsageForPartsInWorkspace(selectedWorkspace);
         long documentTemplatesDiskUsage = documentTemplateService.getDiskUsageForDocumentTemplatesInWorkspace(selectedWorkspace);
-        long partTemplatesDiskUsage = productService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
+        long partTemplatesDiskUsage = partTemplateService.getDiskUsageForPartTemplatesInWorkspace(selectedWorkspace);
 
         return Json.createObjectBuilder()
                     .add("documents", documentDiskUsage)

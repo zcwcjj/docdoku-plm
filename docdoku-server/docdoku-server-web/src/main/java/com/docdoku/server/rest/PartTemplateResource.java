@@ -25,7 +25,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.PartMasterTemplate;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IProductManagerLocal;
+import com.docdoku.core.services.IPartTemplateManagerLocal;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
 import com.docdoku.server.rest.dto.PartMasterTemplateDTO;
 import com.docdoku.server.rest.dto.PartTemplateCreationDTO;
@@ -55,7 +55,7 @@ import java.util.Set;
 public class PartTemplateResource {
 
     @EJB
-    private IProductManagerLocal productService;
+    private IPartTemplateManagerLocal partTemplateService;
     private Mapper mapper;
 
     public PartTemplateResource() {
@@ -72,7 +72,7 @@ public class PartTemplateResource {
             throws EntityNotFoundException, UserNotActiveException {
 
 
-        PartMasterTemplate[] partMsTemplates = productService.getPartMasterTemplates(workspaceId);
+        PartMasterTemplate[] partMsTemplates = partTemplateService.getPartMasterTemplates(workspaceId);
         PartMasterTemplateDTO[] dtos = new PartMasterTemplateDTO[partMsTemplates.length];
 
         for (int i = 0; i < partMsTemplates.length; i++) {
@@ -88,7 +88,7 @@ public class PartTemplateResource {
     public PartMasterTemplateDTO getPartMasterTemplates(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        PartMasterTemplate partMsTemplate = productService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
+        PartMasterTemplate partMsTemplate = partTemplateService.getPartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
         return mapper.map(partMsTemplate, PartMasterTemplateDTO.class);
     }
     
@@ -98,7 +98,7 @@ public class PartTemplateResource {
     public TemplateGeneratedIdDTO generatePartMsId(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, UserNotActiveException {
 
-        String generatedId = productService.generateId(workspaceId, templateId);
+        String generatedId = partTemplateService.generateId(workspaceId, templateId);
         return new TemplateGeneratedIdDTO(generatedId);
     }
 
@@ -122,7 +122,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = productService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = partTemplateService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
     
@@ -146,7 +146,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = productService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = partTemplateService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
@@ -155,7 +155,7 @@ public class PartTemplateResource {
     public Response deletePartMasterTemplate(@PathParam("workspaceId") String workspaceId, @PathParam("templateId") String templateId)
             throws EntityNotFoundException, AccessRightException {
 
-        productService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
+        partTemplateService.deletePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId));
         return Response.ok().build();
     }
 
@@ -166,7 +166,7 @@ public class PartTemplateResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         String fileFullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
-        productService.removeFileFromTemplate(fileFullName);
+        partTemplateService.removeFileFromTemplate(fileFullName);
         return Response.ok().build();
     }
 

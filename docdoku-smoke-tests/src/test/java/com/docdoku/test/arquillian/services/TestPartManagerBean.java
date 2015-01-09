@@ -7,6 +7,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACLUserEntry;
 import com.docdoku.core.security.ACLUserGroupEntry;
+import com.docdoku.core.services.IPartTemplateManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.esindexer.ESIndexer;
 import com.sun.enterprise.security.ee.auth.login.ProgrammaticLogin;
@@ -25,6 +26,8 @@ public class TestPartManagerBean {
 
     @EJB
     private IProductManagerLocal productManagerLocal;
+    @EJB
+    private IPartTemplateManagerLocal partTemplateManagerLocal;
 
     @EJB
     private ESIndexer esIndexer;
@@ -34,7 +37,7 @@ public class TestPartManagerBean {
 
     public PartMasterTemplate createPartMasterTemplate(String login, String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws NotAllowedException, WorkspaceNotFoundException, CreationException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException {
         loginP.login(login, password.toCharArray());
-        PartMasterTemplate partMasterTemplate = productManagerLocal.createPartMasterTemplate(pWorkspaceId, pId, pPartType, pMask, pAttributeTemplates, idGenerated, attributesLocked);
+        PartMasterTemplate partMasterTemplate = partTemplateManagerLocal.createPartMasterTemplate(pWorkspaceId, pId, pPartType, pMask, pAttributeTemplates, idGenerated, attributesLocked);
         loginP.logout();
         return  partMasterTemplate;
     }

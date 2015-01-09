@@ -25,6 +25,7 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IPartTemplateManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
@@ -59,6 +60,8 @@ public class PartTemplateBinaryResource {
     private IDataManagerLocal dataManager;
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IPartTemplateManagerLocal partTemplateService;
 
     public PartTemplateBinaryResource() {
     }
@@ -80,10 +83,10 @@ public class PartTemplateBinaryResource {
             for(Part formPart : formParts){
                 fileName = formPart.getSubmittedFileName();
                 // Init the binary resource with a null length
-                binaryResource= productService.saveFileInTemplate(templatePK, fileName, 0);
+                binaryResource= partTemplateService.saveFileInTemplate(templatePK, fileName, 0);
                 OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
-                productService.saveFileInTemplate(templatePK, fileName, length);
+                partTemplateService.saveFileInTemplate(templatePK, fileName, length);
             }
 
             if(formParts.size()==1) {
@@ -109,7 +112,7 @@ public class PartTemplateBinaryResource {
 
 
         String fullName = workspaceId + "/part-templates/" + templateId + "/" + fileName;
-        BinaryResource binaryResource = productService.getTemplateBinaryResource(fullName);
+        BinaryResource binaryResource = partTemplateService.getTemplateBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource);
 
         // Check cache precondition

@@ -107,6 +107,7 @@ public class UploadDownloadTest {
                         IDocumentManagerLocal.class,
                         IDocumentTemplateManagerLocal.class,
                         IProductManagerLocal.class,
+                        IPartTemplateManagerLocal.class,
                         IGCMSenderLocal.class,
                         IMailerLocal.class,
                         InstanceAttributeTemplate.class,

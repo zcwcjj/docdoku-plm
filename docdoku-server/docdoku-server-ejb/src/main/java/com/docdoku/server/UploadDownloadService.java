@@ -63,6 +63,8 @@ public class UploadDownloadService implements IUploadDownloadWS {
     private IDocumentTemplateManagerLocal documentTemplateService;
     @EJB
     private IProductManagerLocal productService;
+    @EJB
+    private IPartTemplateManagerLocal partTemplateService;
 
     @EJB
     private IConverterManagerLocal converterService;
@@ -172,9 +174,9 @@ public class UploadDownloadService implements IUploadDownloadWS {
             throws IOException, CreationException, WorkspaceNotFoundException, NotAllowedException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, AccessRightException {
 
         PartMasterTemplateKey templateKey = new PartMasterTemplateKey(workspaceId,templateId);
-        BinaryResource binaryResource = productService.saveFileInTemplate(templateKey,fileName, 0);
+        BinaryResource binaryResource = partTemplateService.saveFileInTemplate(templateKey,fileName, 0);
         long length = uploadAFile(data,binaryResource);
-        productService.saveFileInTemplate(templateKey,fileName,length);
+        partTemplateService.saveFileInTemplate(templateKey, fileName, length);
     }
 
     private DataSource getBinaryResourceDataSource(final BinaryResource binaryResource) {

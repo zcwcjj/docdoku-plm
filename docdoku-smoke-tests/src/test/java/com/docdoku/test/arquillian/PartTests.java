@@ -114,6 +114,7 @@ public class PartTests {
                         IDataManagerLocal.class,
                         IDocumentManagerLocal.class,
                         IProductManagerLocal.class,
+                        IPartTemplateManagerLocal.class,
                         IGCMSenderLocal.class,
                         IMailerLocal.class,
                         InstanceAttributeTemplate.class,

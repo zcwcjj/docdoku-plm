@@ -21,6 +21,9 @@
             <ejb-name>DocumentTemplateManagerBean</ejb-name>
         </session>
         <session>
+            <ejb-name>PartTemplateManagerBean</ejb-name>
+        </session>
+        <session>
             <ejb-name>ProductManagerBean</ejb-name>
         </session>
         <session>
