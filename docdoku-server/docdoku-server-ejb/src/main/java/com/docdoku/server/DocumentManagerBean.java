@@ -152,9 +152,6 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         }
     }
 
-
-
-
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public String [] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException {

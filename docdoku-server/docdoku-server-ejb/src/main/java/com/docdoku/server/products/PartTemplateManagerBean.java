@@ -33,10 +33,9 @@ import com.docdoku.core.services.IPartTemplateManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
-import com.docdoku.server.dao.BinaryResourceDAO;
-import com.docdoku.server.dao.InstanceAttributeTemplateDAO;
-import com.docdoku.server.dao.PartMasterDAO;
-import com.docdoku.server.dao.PartMasterTemplateDAO;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.server.dao.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -101,7 +100,8 @@ public class PartTemplateManagerBean implements IPartTemplateManagerWS, IPartTem
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
+    public PartMasterTemplate createPartMasterTemplate(String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked,String workflowModelId, boolean workflowLocked)
+            throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId,locale);
@@ -114,6 +114,13 @@ public class PartTemplateManagerBean implements IPartTemplateManagerWS, IPartTem
         Set<InstanceAttributeTemplate> attrs = new HashSet<>();
         Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
+
+        if(workflowModelId!=null && !workflowModelId.isEmpty()){
+            template.setWorkflowLocked(workflowLocked);
+            WorkflowModelKey workflowKey = new WorkflowModelKey(pWorkspaceId,workflowModelId);
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale,em).loadWorkflowModel(workflowKey);
+            template.setWorkflowModel(workflowModel);
+        }
 
         new PartMasterTemplateDAO(locale, em).createPartMTemplate(template);
         return template;
@@ -128,10 +135,12 @@ public class PartTemplateManagerBean implements IPartTemplateManagerWS, IPartTem
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException {
+    public PartMasterTemplate updatePartMasterTemplate(PartMasterTemplateKey pKey, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked,String workflowModelId, boolean workflowLocked)
+            throws WorkspaceNotFoundException, AccessRightException, PartMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        Locale locale = new Locale(user.getLanguage());
 
-        PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        PartMasterTemplateDAO templateDAO = new PartMasterTemplateDAO(locale, em);
         PartMasterTemplate template = templateDAO.loadPartMTemplate(pKey);
         Date now = new Date();
         template.setCreationDate(now);
@@ -150,6 +159,16 @@ public class PartTemplateManagerBean implements IPartTemplateManagerWS, IPartTem
         InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
         for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
             attrDAO.removeAttribute(attrToRemove);
+        }
+
+        if(workflowModelId!=null && !workflowModelId.isEmpty()){
+            template.setWorkflowLocked(workflowLocked);
+            WorkflowModelKey workflowKey = new WorkflowModelKey(pKey.getWorkspaceId(),workflowModelId);
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale,em).loadWorkflowModel(workflowKey);
+            template.setWorkflowModel(workflowModel);
+        } else {
+            template.setWorkflowModel(null);
+            template.setWorkflowLocked(false);
         }
 
         template.setAttributeTemplates(attrs);

@@ -33,10 +33,9 @@ import com.docdoku.core.services.IDocumentTemplateManagerWS;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
-import com.docdoku.server.dao.BinaryResourceDAO;
-import com.docdoku.server.dao.DocumentMasterTemplateDAO;
-import com.docdoku.server.dao.DocumentRevisionDAO;
-import com.docdoku.server.dao.InstanceAttributeTemplateDAO;
+import com.docdoku.core.workflow.WorkflowModel;
+import com.docdoku.core.workflow.WorkflowModelKey;
+import com.docdoku.server.dao.*;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -103,8 +102,9 @@ public class DocumentTemplateManagerBean implements IDocumentTemplateManagerWS, 
     @Override
     public DocumentMasterTemplate createDocumentMasterTemplate(String pWorkspaceId, String pId, String pDocumentType,
                                                                String pMask, InstanceAttributeTemplate[] pAttributeTemplates,
-                                                               boolean idGenerated, boolean attributesLocked)
-            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException {
+                                                               boolean idGenerated, boolean attributesLocked,
+                                                               String workflowModelId, boolean workflowLocked)
+            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateAlreadyExistsException, UserNotFoundException, NotAllowedException, CreationException, WorkflowModelNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pId, locale);
@@ -118,6 +118,13 @@ public class DocumentTemplateManagerBean implements IDocumentTemplateManagerWS, 
         Set<InstanceAttributeTemplate> attrs = new HashSet<>();
         Collections.addAll(attrs, pAttributeTemplates);
         template.setAttributeTemplates(attrs);
+
+        if(workflowModelId!=null && !workflowModelId.isEmpty()){
+            template.setWorkflowLocked(workflowLocked);
+            WorkflowModelKey workflowKey = new WorkflowModelKey(pWorkspaceId,workflowModelId);
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale,em).loadWorkflowModel(workflowKey);
+            template.setWorkflowModel(workflowModel);
+        }
 
         new DocumentMasterTemplateDAO(locale, em).createDocMTemplate(template);
         return template;
@@ -136,11 +143,13 @@ public class DocumentTemplateManagerBean implements IDocumentTemplateManagerWS, 
     public DocumentMasterTemplate updateDocumentMasterTemplate(DocumentMasterTemplateKey pKey,
                                                                String pDocumentType, String pMask,
                                                                InstanceAttributeTemplate[] pAttributeTemplates,
-                                                               boolean idGenerated, boolean attributesLocked)
-            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException {
+                                                               boolean idGenerated, boolean attributesLocked,
+                                                               String workflowModelId, boolean workflowLocked)
+            throws WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, UserNotFoundException, WorkflowModelNotFoundException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
+        Locale locale = new Locale(user.getLanguage());
 
-        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(new Locale(user.getLanguage()), em);
+        DocumentMasterTemplateDAO templateDAO = new DocumentMasterTemplateDAO(locale, em);
         DocumentMasterTemplate template = templateDAO.loadDocMTemplate(pKey);
         Date now = new Date();
         template.setCreationDate(now);
@@ -159,6 +168,16 @@ public class DocumentTemplateManagerBean implements IDocumentTemplateManagerWS, 
         InstanceAttributeTemplateDAO attrDAO = new InstanceAttributeTemplateDAO(em);
         for (InstanceAttributeTemplate attrToRemove : attrsToRemove) {
             attrDAO.removeAttribute(attrToRemove);
+        }
+
+        if(workflowModelId!=null && !workflowModelId.isEmpty()){
+            template.setWorkflowLocked(workflowLocked);
+            WorkflowModelKey workflowKey = new WorkflowModelKey(pKey.getWorkspaceId(),workflowModelId);
+            WorkflowModel workflowModel = new WorkflowModelDAO(locale,em).loadWorkflowModel(workflowKey);
+            template.setWorkflowModel(workflowModel);
+        } else {
+            template.setWorkflowModel(null);
+            template.setWorkflowLocked(false);
         }
 
         template.setAttributeTemplates(attrs);

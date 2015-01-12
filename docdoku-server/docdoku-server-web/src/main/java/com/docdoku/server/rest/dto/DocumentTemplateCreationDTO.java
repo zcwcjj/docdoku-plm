@@ -39,6 +39,9 @@ public class DocumentTemplateCreationDTO implements Serializable{
     private List<String> attachedFiles;
     private Set<InstanceAttributeTemplateDTO> attributeTemplates;
     private boolean attributesLocked;
+
+    private String workflowModelId;
+    private boolean workflowLocked;
     
     public DocumentTemplateCreationDTO(){
         
@@ -48,11 +51,11 @@ public class DocumentTemplateCreationDTO implements Serializable{
         this.workspaceId=workspaceId;
         this.documentType=documentType;
     }
-    
+
+
     public String getDocumentType() {
         return documentType;
     }
-
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
@@ -60,21 +63,20 @@ public class DocumentTemplateCreationDTO implements Serializable{
     public String getMask() {
         return mask;
     }
-
     public void setMask(String mask) {
         this.mask = mask;
     }
 
-   
-
     public String getWorkspaceId() {
         return workspaceId;
+    }
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public List<String> getAttachedFiles() {
         return attachedFiles;
     }
-
     public void setAttachedFiles(List<String> attachedFiles) {
         this.attachedFiles = attachedFiles;
     }
@@ -82,27 +84,20 @@ public class DocumentTemplateCreationDTO implements Serializable{
     public boolean isIdGenerated() {
         return idGenerated;
     }
-
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
-        this.attributeTemplates = attributeTemplates;
     }
 
     public Set<InstanceAttributeTemplateDTO> getAttributeTemplates() {
         return attributeTemplates;
     }
+    public void setAttributeTemplates(Set<InstanceAttributeTemplateDTO> attributeTemplates) {
+        this.attributeTemplates = attributeTemplates;
+    }
 
     public String getReference() {
         return reference;
     }
-
     public void setReference(String reference) {
         this.reference = reference;
     }
@@ -110,8 +105,21 @@ public class DocumentTemplateCreationDTO implements Serializable{
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
-
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public String getWorkflowModelId() {
+        return workflowModelId;
+    }
+    public void setWorkflowModelId(String workflowModelId) {
+        this.workflowModelId = workflowModelId;
+    }
+
+    public boolean isWorkflowLocked() {
+        return workflowLocked;
+    }
+    public void setWorkflowLocked(boolean workflowLocked) {
+        this.workflowLocked = workflowLocked;
     }
 }

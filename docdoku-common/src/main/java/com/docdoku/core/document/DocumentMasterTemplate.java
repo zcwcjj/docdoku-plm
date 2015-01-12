@@ -25,6 +25,7 @@ import com.docdoku.core.common.FileHolder;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -74,7 +75,6 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     )
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
-
     @OneToMany(cascade={CascadeType.ALL}, fetch=FetchType.EAGER)
     @JoinTable(name="DOCUMENTMASTERTEMPLATE_ATTR",
             inverseJoinColumns={
@@ -87,7 +87,13 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
 
-    private boolean attributesLocked;
+    private boolean attributesLocked = false;
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    private WorkflowModel workflowModel;
+
+    private boolean workflowLocked = false;
     
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
@@ -113,27 +119,20 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         documentType=pDocumentType;
     }
 
+
     public String getDocumentType() {
         return documentType;
     }
-
     public void setDocumentType(String documentType) {
         this.documentType = documentType;
     }
-    
-    
+
     public String getMask(){
         return mask;
     }
-    
     public void setMask(String pMask){
         mask=pMask;
     }
-
-    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
-        this.attachedFiles = attachedFiles;
-    }
-
 
     public void setId(String id) {
         this.id = id;
@@ -142,27 +141,27 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public boolean isIdGenerated() {
         return idGenerated;
     }
-
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
     }
-    
-    public boolean removeFile(BinaryResource pBinaryResource){
-        return attachedFiles.remove(pBinaryResource);
-    }
-    
-    public void addFile(BinaryResource pBinaryResource){
-        attachedFiles.add(pBinaryResource);
-    }
-    
+
     public Set<BinaryResource> getAttachedFiles() {
         return attachedFiles;
     }
+    public void setAttachedFiles(Set<BinaryResource> attachedFiles) {
+        this.attachedFiles = attachedFiles;
+    }
+    public void addFile(BinaryResource pBinaryResource){
+        attachedFiles.add(pBinaryResource);
+    }
+    public boolean removeFile(BinaryResource pBinaryResource){
+        return attachedFiles.remove(pBinaryResource);
+    }
+
 
     public Set<InstanceAttributeTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
-    
     public void setAttributeTemplates(Set<InstanceAttributeTemplate> pAttributeTemplates) {
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
@@ -179,15 +178,27 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
-
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
+    }
+
+    public boolean isWorkflowLocked() {
+        return workflowLocked;
+    }
+    public void setWorkflowLocked(boolean workflowLocked) {
+        this.workflowLocked = workflowLocked;
     }
 
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }
-    
     public User getAuthor() {
         return author;
     }
@@ -195,7 +206,6 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     public void setCreationDate(Date pCreationDate) {
         creationDate = pCreationDate;
     }
-    
     public Date getCreationDate() {
         return creationDate;
     }
@@ -204,7 +214,6 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
         workspace=pWorkspace;
         workspaceId=workspace.getId();
     }
-    
     public Workspace getWorkspace(){
         return workspace;
     }

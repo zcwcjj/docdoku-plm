@@ -24,6 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -76,7 +77,13 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     )
     private Set<InstanceAttributeTemplate> attributeTemplates=new HashSet<>();
 
-    private boolean attributesLocked;
+    private boolean attributesLocked = false;
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    private WorkflowModel workflowModel;
+
+    private boolean workflowLocked = false;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumns({
@@ -106,7 +113,6 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public String getPartType() {
         return partType;
     }
-
     public void setPartType(String partType) {
         this.partType = partType;
     }
@@ -114,19 +120,13 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public String getMask(){
         return mask;
     }
-    
     public void setMask(String pMask){
         mask=pMask;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public boolean isIdGenerated() {
         return idGenerated;
     }
-
     public void setIdGenerated(boolean idGenerated) {
         this.idGenerated = idGenerated;
     }
@@ -134,7 +134,6 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public BinaryResource getAttachedFile() {
         return attachedFile;
     }
-
     public void setAttachedFile(BinaryResource attachedFile) {
         this.attachedFile = attachedFile;
     }
@@ -142,7 +141,6 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public Set<InstanceAttributeTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
-    
     public void setAttributeTemplates(Set<InstanceAttributeTemplate> pAttributeTemplates) {
         attributeTemplates.retainAll(pAttributeTemplates);
         for(InstanceAttributeTemplate currentAttr:attributeTemplates){
@@ -159,15 +157,27 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public boolean isAttributesLocked() {
         return attributesLocked;
     }
-
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public WorkflowModel getWorkflowModel() {
+        return workflowModel;
+    }
+    public void setWorkflowModel(WorkflowModel workflowModel) {
+        this.workflowModel = workflowModel;
+    }
+
+    public boolean isWorkflowLocked() {
+        return workflowLocked;
+    }
+    public void setWorkflowLocked(boolean workflowLocked) {
+        this.workflowLocked = workflowLocked;
     }
 
     public void setAuthor(User pAuthor) {
         author = pAuthor;
     }
-    
     public User getAuthor() {
         return author;
     }
@@ -175,7 +185,6 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     public void setCreationDate(Date pCreationDate) {
         creationDate = pCreationDate;
     }
-    
     public Date getCreationDate() {
         return creationDate;
     }
@@ -184,15 +193,17 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
         workspace=pWorkspace;
         workspaceId=workspace.getId();
     }
-    
     public Workspace getWorkspace(){
         return workspace;
     }
-    
+
     public String getId(){
         return id;
     }
-    
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getWorkspaceId(){
         return workspaceId;
     }

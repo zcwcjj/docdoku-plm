@@ -113,6 +113,8 @@ public class PartTemplateResource {
         String mask = templateCreationDTO.getMask();
         boolean idGenerated = templateCreationDTO.isIdGenerated();
         boolean attributesLocked = templateCreationDTO.isAttributesLocked();
+        String workflowModelId = templateCreationDTO.getWorkflowModelId();
+        boolean workflowLocked = templateCreationDTO.isWorkflowLocked();
 
         Set<InstanceAttributeTemplateDTO> attributeTemplates = templateCreationDTO.getAttributeTemplates();
         List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
@@ -122,7 +124,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = partTemplateService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = partTemplateService.createPartMasterTemplate(workspaceId, id, partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked,workflowModelId,workflowLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
     
@@ -137,6 +139,8 @@ public class PartTemplateResource {
         String mask = partMsTemplateDTO.getMask();
         boolean idGenerated = partMsTemplateDTO.isIdGenerated();
         boolean attributesLocked = partMsTemplateDTO.isAttributesLocked();
+        String workflowModelId = partMsTemplateDTO.getWorkflowModelId();
+        boolean workflowLocked = partMsTemplateDTO.isWorkflowLocked();
 
         Set<InstanceAttributeTemplateDTO> attributeTemplates = partMsTemplateDTO.getAttributeTemplates();
         List<InstanceAttributeTemplateDTO> attributeTemplatesList = new ArrayList<>(attributeTemplates);
@@ -146,7 +150,7 @@ public class PartTemplateResource {
             attributeTemplatesDtos[i] = attributeTemplatesList.get(i);
         }
 
-        PartMasterTemplate template = partTemplateService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked);
+        PartMasterTemplate template = partTemplateService.updatePartMasterTemplate(new PartMasterTemplateKey(workspaceId, templateId), partType, mask, createInstanceAttributeTemplateFromDto(attributeTemplatesDtos), idGenerated, attributesLocked,workflowModelId,workflowLocked);
         return mapper.map(template, PartMasterTemplateDTO.class);
     }
 
