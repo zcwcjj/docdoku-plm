@@ -45,6 +45,9 @@ import java.util.Set;
  */
 @Table(name="PARTMASTERTEMPLATE")
 @IdClass(PartMasterTemplateKey.class)
+@NamedQueries({
+        @NamedQuery(name="Workflow.findWorflowsInUseInPartTemplate", query="SELECT pt.workflowModel FROM PartMasterTemplate pt WHERE pt.workflowModel = :workflow")
+})
 @Entity
 public class PartMasterTemplate implements Serializable, Comparable<PartMasterTemplate> {
 
@@ -80,7 +83,10 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
     private boolean attributesLocked = false;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    @JoinColumns({
+        @JoinColumn(name="WORKFLOW_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+        @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    })
     private WorkflowModel workflowModel;
 
     private boolean workflowLocked = false;

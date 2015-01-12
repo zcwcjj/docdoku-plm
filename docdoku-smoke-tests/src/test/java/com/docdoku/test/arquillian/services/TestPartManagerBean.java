@@ -35,9 +35,9 @@ public class TestPartManagerBean {
     private ProgrammaticLogin loginP = new ProgrammaticLogin();
     private String password = "password";
 
-    public PartMasterTemplate createPartMasterTemplate(String login, String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws NotAllowedException, WorkspaceNotFoundException, CreationException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException {
+    public PartMasterTemplate createPartMasterTemplate(String login, String pWorkspaceId, String pId, String pPartType, String pMask, InstanceAttributeTemplate[] pAttributeTemplates, boolean idGenerated, boolean attributesLocked) throws NotAllowedException, WorkspaceNotFoundException, CreationException, AccessRightException, PartMasterTemplateAlreadyExistsException, UserNotFoundException, WorkflowModelNotFoundException {
         loginP.login(login, password.toCharArray());
-        PartMasterTemplate partMasterTemplate = partTemplateManagerLocal.createPartMasterTemplate(pWorkspaceId, pId, pPartType, pMask, pAttributeTemplates, idGenerated, attributesLocked);
+        PartMasterTemplate partMasterTemplate = partTemplateManagerLocal.createPartMasterTemplate(pWorkspaceId, pId, pPartType, pMask, pAttributeTemplates, idGenerated, attributesLocked, null, false);
         loginP.logout();
         return  partMasterTemplate;
     }

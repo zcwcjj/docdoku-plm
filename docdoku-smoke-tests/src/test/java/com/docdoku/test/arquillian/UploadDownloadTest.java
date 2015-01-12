@@ -203,7 +203,7 @@ public class UploadDownloadTest {
     public void test_uploadTo_downloadFrom_template() throws Exception {
         Logger.getLogger(PartTests.class.getName()).log(Level.INFO, "Test method : uploadTo_downloadFrom_template");
         PartMasterTemplate masterTemplate = partManagerBean.createPartMasterTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "planes", "plane_###", new InstanceAttributeTemplate[0], true, true);
-        DocumentMasterTemplate documentMasterTemplate = documentManagerBean.createDocumentTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "", "", new InstanceAttributeTemplate[0], false, false);
+        DocumentMasterTemplate documentMasterTemplate = documentManagerBean.createDocumentTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "", "", new InstanceAttributeTemplate[0], false, false,null,false);
         URL binURL = getClass().getResource("/com/docdoku/arquillian/tests/bike.bin");
         DataHandler data = new DataHandler(binURL);
         uploadDownloadManagerBean.uploadToTemplate(TestUtil.USER1_TEST, TestUtil.WORKSPACE_TEST, "template1", "bike.bin", data);

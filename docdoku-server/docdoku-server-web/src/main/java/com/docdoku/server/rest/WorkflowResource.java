@@ -91,7 +91,7 @@ public class WorkflowResource {
     @DELETE
     @Path("{workflowModelId}")
     public Response delWorkflowModel(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId)
-            throws EntityNotFoundException, AccessRightException {
+            throws EntityNotFoundException, AccessRightException, EntityConstraintException {
 
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return Response.status(Response.Status.OK).build();
@@ -101,7 +101,7 @@ public class WorkflowResource {
     @Path("{workflowModelId}")
     @Produces(MediaType.APPLICATION_JSON)
     public WorkflowModelDTO updateWorkflowModelInWorkspace(@PathParam("workspaceId") String workspaceId, @PathParam("workflowModelId") String workflowModelId, WorkflowModelDTO workflowModelDTOToPersist)
-            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException {
+            throws EntityNotFoundException, AccessRightException, EntityAlreadyExistsException, CreationException, UserNotActiveException, NotAllowedException, EntityConstraintException {
 
         workflowService.deleteWorkflowModel(new WorkflowModelKey(workspaceId, workflowModelId));
         return this.createWorkflowModelInWorkspace(workspaceId, workflowModelDTOToPersist);

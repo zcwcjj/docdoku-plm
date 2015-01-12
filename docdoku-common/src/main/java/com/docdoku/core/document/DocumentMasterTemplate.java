@@ -46,6 +46,9 @@ import java.util.Set;
  */
 @Table(name="DOCUMENTMASTERTEMPLATE")
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentMasterTemplateKey.class)
+@NamedQueries({
+        @NamedQuery(name="Workflow.findWorflowsInUseInDocumentTemplate", query="SELECT dt.workflowModel FROM DocumentMasterTemplate dt WHERE dt.workflowModel = :workflow")
+})
 @javax.persistence.Entity
 public class DocumentMasterTemplate implements Serializable, FileHolder, Comparable<DocumentMasterTemplate> {
 
@@ -90,7 +93,10 @@ public class DocumentMasterTemplate implements Serializable, FileHolder, Compara
     private boolean attributesLocked = false;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    @JoinColumns({
+            @JoinColumn(name="WORKFLOW_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
+    })
     private WorkflowModel workflowModel;
 
     private boolean workflowLocked = false;

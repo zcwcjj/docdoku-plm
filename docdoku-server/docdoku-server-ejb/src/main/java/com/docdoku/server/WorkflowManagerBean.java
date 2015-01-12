@@ -59,9 +59,17 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException {
+    public void deleteWorkflowModel(WorkflowModelKey pKey) throws WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, UserNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceWriteAccess(pKey.getWorkspaceId());
-        new WorkflowModelDAO(new Locale(user.getLanguage()), em).removeWorkflowModel(pKey);
+        Locale locale = new Locale(user.getLanguage());
+
+        WorkflowModelDAO workflowModelDAO = new WorkflowModelDAO(locale, em);
+        WorkflowModel workflowModel = workflowModelDAO.loadWorkflowModel(pKey);
+
+        if(workflowModelDAO.isWorkflowInTemplate(workflowModel)){
+            throw new EntityConstraintException(locale,"EntityConstraintException7");
+        }
+        workflowModelDAO.removeWorkflowModel(pKey);
         em.flush();
     }
 
@@ -153,11 +161,13 @@ public class WorkflowManagerBean implements IWorkflowManagerWS, IWorkflowManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     public void deleteRole(RoleKey roleKey) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, RoleNotFoundException, EntityConstraintException {
         User user = userManager.checkWorkspaceWriteAccess(roleKey.getWorkspace());
-        RoleDAO roleDAO = new RoleDAO(new Locale(user.getLanguage()),em);
+        Locale locale = new Locale(user.getLanguage());
+
+        RoleDAO roleDAO = new RoleDAO(locale,em);
         Role role = roleDAO.loadRole(roleKey);
 
         if(roleDAO.isRoleInUseInWorkflowModel(role)){
-            throw new EntityConstraintException(new Locale(user.getLanguage()),"EntityConstraintException3");
+            throw new EntityConstraintException(locale,"EntityConstraintException3");
         }
 
         roleDAO.deleteRole(role);

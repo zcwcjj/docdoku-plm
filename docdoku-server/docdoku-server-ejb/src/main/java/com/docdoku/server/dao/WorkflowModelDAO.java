@@ -87,4 +87,15 @@ public class WorkflowModelDAO {
             return model;
         }
     }
+
+    public boolean isWorkflowInTemplate(WorkflowModel workflow){
+        boolean isInADocumentMasterTemplate = em.createNamedQuery("Workflow.findWorflowsInUseInDocumentTemplate")
+                .setParameter("workflow",workflow)
+                .getResultList().size() > 0;
+        boolean isInAPartMasterTemplate = em.createNamedQuery("Workflow.findWorflowsInUseInPartTemplate")
+                .setParameter("workflow",workflow)
+                .getResultList().size() > 0;
+
+        return isInADocumentMasterTemplate || isInAPartMasterTemplate;
+    }
 }

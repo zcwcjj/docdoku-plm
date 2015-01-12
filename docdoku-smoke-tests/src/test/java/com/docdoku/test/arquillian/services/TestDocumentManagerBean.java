@@ -67,9 +67,10 @@ public class TestDocumentManagerBean {
         return documentRevision;
     }
 
-    public DocumentMasterTemplate createDocumentTemplate(String login,String pWorkspaceId, String pId, String pDocumentType, String pMask, InstanceAttributeTemplate[] instanceAttributeTemplates,boolean idGenerated, boolean attributesLocked) throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, DocumentMasterTemplateAlreadyExistsException {
+    public DocumentMasterTemplate createDocumentTemplate(String login,String pWorkspaceId, String pId, String pDocumentType, String pMask, InstanceAttributeTemplate[] instanceAttributeTemplates,boolean idGenerated, boolean attributesLocked,String workflowModel, boolean workflowLocked)
+            throws WorkspaceNotFoundException, RoleNotFoundException, AccessRightException, CreationException, FolderNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, DocumentMasterTemplateNotFoundException, WorkflowModelNotFoundException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, DocumentMasterTemplateAlreadyExistsException {
         loginP.login(login, password.toCharArray());
-        DocumentMasterTemplate masterTemplate = documentTemplateManagerLocal.createDocumentMasterTemplate(pWorkspaceId,pId,pDocumentType,pMask,instanceAttributeTemplates,idGenerated,attributesLocked);
+        DocumentMasterTemplate masterTemplate = documentTemplateManagerLocal.createDocumentMasterTemplate(pWorkspaceId,pId,pDocumentType,pMask,instanceAttributeTemplates,idGenerated,attributesLocked,workflowModel,workflowLocked);
         loginP.logout();
         return masterTemplate;
     }

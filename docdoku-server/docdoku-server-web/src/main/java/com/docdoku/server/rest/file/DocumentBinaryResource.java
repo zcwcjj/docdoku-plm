@@ -251,7 +251,6 @@ public class DocumentBinaryResource {
     }
 
     private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {
-        // Check shared entity expired
         if(sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()){
             shareService.deleteSharedEntityIfExpired(sharedEntity);
             throw new ExpiredLinkException();
