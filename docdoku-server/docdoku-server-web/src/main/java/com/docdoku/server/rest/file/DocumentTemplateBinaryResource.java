@@ -25,7 +25,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
-import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
 import com.docdoku.core.services.IDocumentTemplateManagerLocal;
 import com.docdoku.server.rest.exceptions.FileConversionException;
@@ -60,8 +59,6 @@ import java.util.Collection;
 public class DocumentTemplateBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
-    @EJB
-    private IDocumentManagerLocal documentService;
     @EJB
     private IDocumentTemplateManagerLocal documentTemplateService;
     @EJB

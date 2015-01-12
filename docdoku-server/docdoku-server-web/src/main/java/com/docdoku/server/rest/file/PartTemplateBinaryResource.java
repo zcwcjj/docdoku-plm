@@ -26,7 +26,6 @@ import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDataManagerLocal;
 import com.docdoku.core.services.IPartTemplateManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
 import com.docdoku.server.rest.exceptions.PreconditionFailedException;
 import com.docdoku.server.rest.exceptions.RequestedRangeNotSatisfiableException;
@@ -58,8 +57,6 @@ import java.util.Collection;
 public class PartTemplateBinaryResource {
     @EJB
     private IDataManagerLocal dataManager;
-    @EJB
-    private IProductManagerLocal productService;
     @EJB
     private IPartTemplateManagerLocal partTemplateService;
 
