@@ -22,6 +22,7 @@ package com.docdoku.core.product;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -64,7 +65,6 @@ public class PartMaster implements Serializable {
     })
     private User author;
     
-    
     @OrderColumn(name="ALTERNATE_ORDER")
     @CollectionTable(name="PARTMASTER_ALTERNATE",joinColumns={
         @JoinColumn(name="PARTMASTER_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
@@ -80,8 +80,6 @@ public class PartMaster implements Serializable {
 
     private String type;
 
-    
-    
     @OneToMany(mappedBy = "partMaster", cascade = CascadeType.ALL, fetch = FetchType.EAGER)    
     @OrderBy("version ASC")
     private List<PartRevision> partRevisions = new ArrayList<>();
@@ -89,6 +87,15 @@ public class PartMaster implements Serializable {
     private boolean standardPart;
 
     private boolean attributesLocked;
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name="DEFAULT_WORKFLOW_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            @JoinColumn(name="DEFAULT_WORKFLOW_ID", referencedColumnName="ID")
+    })
+    private WorkflowModel defaultWorkflowModel;
+
+    private boolean workflowLocked = false;
     
     public PartMaster() {
     }
@@ -227,6 +234,20 @@ public class PartMaster implements Serializable {
     }
     public void setAttributesLocked(boolean attributesLocked) {
         this.attributesLocked = attributesLocked;
+    }
+
+    public WorkflowModel getDefaultWorkflowModel() {
+        return defaultWorkflowModel;
+    }
+    public void setDefaultWorkflowModel(WorkflowModel defaultWorkflowModel) {
+        this.defaultWorkflowModel = defaultWorkflowModel;
+    }
+
+    public boolean isWorkflowLocked() {
+        return workflowLocked;
+    }
+    public void setWorkflowLocked(boolean workflowLocked) {
+        this.workflowLocked = workflowLocked;
     }
 
     @Override

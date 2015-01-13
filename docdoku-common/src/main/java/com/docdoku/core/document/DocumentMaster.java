@@ -23,6 +23,7 @@ package com.docdoku.core.document;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.workflow.WorkflowModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -72,6 +73,15 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
     private List<DocumentRevision> documentRevisions = new ArrayList<>();
 
     private boolean attributesLocked;
+
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumns({
+            @JoinColumn(name="DEFAULT_WORKFLOW_WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+            @JoinColumn(name="DEFAULT_WORKFLOW_ID", referencedColumnName="ID")
+    })
+    private WorkflowModel defaultWorkflowModel;
+
+    private boolean workflowLocked = false;
 
     public DocumentMaster() {
     }
@@ -124,7 +134,9 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
         }
         return null;
     }
-
+    public void removeRevision(DocumentRevision documentRevision) {
+        documentRevisions.remove(documentRevision);
+    }
 
     public DocumentRevision getLastRevision() {
         int index = documentRevisions.size()-1;
@@ -142,10 +154,6 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
         } else {
             return documentRevisions.remove(index);
         }
-    }
-
-    public void removeRevision(DocumentRevision documentRevision) {
-        documentRevisions.remove(documentRevision);
     }
 
     public DocumentRevision createNextRevision(User pUser){
@@ -178,18 +186,34 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
         return workspace == null ? "" : workspace.getId();
     }
 
-
-
-    public void setWorkspace(Workspace pWorkspace){
-        workspace=pWorkspace;
-    }
     public Workspace getWorkspace(){
         return workspace;
     }
+    public void setWorkspace(Workspace pWorkspace){
+        workspace=pWorkspace;
+    }
 
+    public boolean isAttributesLocked() {
+        return attributesLocked;
+    }
+    public void setAttributesLocked(boolean attributesLocked) {
+        this.attributesLocked = attributesLocked;
+    }
 
+    public WorkflowModel getDefaultWorkflowModel() {
+        return defaultWorkflowModel;
+    }
+    public void setDefaultWorkflowModel(WorkflowModel defaultWorkflowModel) {
+        this.defaultWorkflowModel = defaultWorkflowModel;
+    }
 
-    
+    public boolean isWorkflowLocked() {
+        return workflowLocked;
+    }
+    public void setWorkflowLocked(boolean workflowLocked) {
+        this.workflowLocked = workflowLocked;
+    }
+
     @Override
     public String toString() {
         return id;
@@ -225,13 +249,5 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
             return id.compareTo(pDocM.id);
         }
 
-    }
-
-    public boolean isAttributesLocked() {
-        return attributesLocked;
-    }
-
-    public void setAttributesLocked(boolean attributesLocked) {
-        this.attributesLocked = attributesLocked;
     }
 }

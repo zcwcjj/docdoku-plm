@@ -467,9 +467,10 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException {
-
-        User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
+        String workspaceId = Folder.parseWorkspaceId(pParentFolder);
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
+        Date now = new Date();
         checkNameValidity(pDocMId, locale);
 
         Folder folder = new FolderDAO(locale, em).loadFolder(pParentFolder);
@@ -479,105 +480,193 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
         DocumentRevision docR;
         DocumentIteration newDoc;
 
-        DocumentMasterDAO docMDAO = new DocumentMasterDAO(locale, em);
-        if (pDocMTemplateId == null) {
-            docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
-            //specify an empty type instead of null
-            //so the search will find it with the % character
-            docM.setType("");
-            docMDAO.createDocM(docM);
-            docR = docM.createNextRevision(user);
-            newDoc = docR.createNextIteration(user);
-        } else {
-            DocumentMasterTemplate template = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId));
-            docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
-            docM.setType(template.getDocumentType());
-            docM.setAttributesLocked(template.isAttributesLocked());
+        //Todo check pDocMId matching template id
 
-            docMDAO.createDocM(docM);
-            docR = docM.createNextRevision(user);
-            newDoc = docR.createNextIteration(user);
+        docM = new DocumentMaster(user.getWorkspace(), pDocMId, user);
+        new DocumentMasterDAO(locale, em).createDocM(docM);
+        docM.setCreationDate(now);
 
-
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
-                InstanceAttribute attr = attrTemplate.createInstanceAttribute();
-                attrs.put(attr.getName(), attr);
-            }
-            newDoc.setInstanceAttributes(attrs);
-
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
-            for (BinaryResource sourceFile : template.getAttachedFiles()) {
-                String fileName = sourceFile.getName();
-                long length = sourceFile.getContentLength();
-                Date lastModified = sourceFile.getLastModified();
-                String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/A/1/" + fileName;
-                BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
-                binDAO.createBinaryResource(targetFile);
-
-                newDoc.addFile(targetFile);
-                try {
-                    dataManager.copyData(sourceFile, targetFile);
-                } catch (StorageException e) {
-                    LOGGER.log(Level.INFO, null, e);
-                }
-            }
-        }
-
-        if (pWorkflowModelId != null) {
-
-            UserDAO userDAO = new UserDAO(locale,em);
-            RoleDAO roleDAO = new RoleDAO(locale,em);
-
-            Map<Role,User> roleUserMap = new HashMap<>();
-
-            for (Object o : roleMappings.entrySet()) {
-                Map.Entry pairs = (Map.Entry) o;
-                String roleName = (String) pairs.getKey();
-                String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder), userLogin));
-                Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
-                roleUserMap.put(role, worker);
-            }
-
-            WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
-            docR.setWorkflow(workflow);
-
-            Collection<Task> runningTasks = workflow.getRunningTasks();
-            for (Task runningTask : runningTasks) {
-                runningTask.start();
-            }
-            mailer.sendApproval(runningTasks, docR);
-        }
-
+        docR = docM.createNextRevision(user);
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
-
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
-            docR.setACL(acl);
-        }
-        Date now = new Date();
-        docM.setCreationDate(now);
         docR.setCreationDate(now);
         docR.setLocation(folder);
         docR.setCheckOutUser(user);
         docR.setCheckOutDate(now);
+
+        newDoc = docR.createNextIteration(user);
         newDoc.setCreationDate(now);
+
+        if (pDocMTemplateId != null && !pDocMTemplateId.isEmpty()) {
+            applyTemplateToDocumentMaster(user, docM, pDocMTemplateId);
+        }
+
+        WorkflowModel workflowModel=checkWorkflowId(docM,pWorkflowModelId,locale);
+        if (workflowModel != null) {
+            createDocumentRevisionWorkflow(docR,workflowModel,roleMappings, locale);
+        }
+
+        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
+            createDocumentRevisionACLEntries(docR, pACLUserEntries, pACLUserGroupEntries);
+        }
+
         new DocumentRevisionDAO(locale, em).createDocR(docR);
         return docR;
+    }
+
+    private void applyTemplateToDocumentMaster(User user, DocumentMaster docM, String pDocMTemplateId)
+            throws DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException {
+        Locale locale = new Locale(user.getLanguage());
+
+        DocumentMasterTemplateKey docMTK= new DocumentMasterTemplateKey(user.getWorkspaceId(), pDocMTemplateId);
+        DocumentMasterTemplate template = new DocumentMasterTemplateDAO(locale, em).loadDocMTemplate(docMTK);
+
+        DocumentRevision docR = docM.getLastRevision();
+        DocumentIteration newDoc = docR.getLastIteration();
+
+        docM.setType(template.getDocumentType());
+        docM.setAttributesLocked(template.isAttributesLocked());
+
+        Map<String, InstanceAttribute> attrs = new HashMap<>();
+        for (InstanceAttributeTemplate attrTemplate : template.getAttributeTemplates()) {
+            InstanceAttribute attr = attrTemplate.createInstanceAttribute();
+            attrs.put(attr.getName(), attr);
+        }
+        newDoc.setInstanceAttributes(attrs);
+
+        for (BinaryResource sourceFile : template.getAttachedFiles()) {
+            copyBinaryResource(sourceFile,newDoc,locale);
+        }
+
+        WorkflowModel workflowModel = template.getWorkflowModel();
+        if(workflowModel!=null){
+            docM.setDefaultWorkflowModel(workflowModel);
+            docM.setWorkflowLocked(template.isWorkflowLocked());
+        }
+
+    }
+
+    private WorkflowModel checkWorkflowId(DocumentMaster docM, String workflowModelId, Locale locale)
+            throws NotAllowedException, WorkflowModelNotFoundException {
+
+        WorkflowModel workflowModel=null;
+        WorkflowModel defaultWorkflowModel = docM.getDefaultWorkflowModel();
+        if(docM.isWorkflowLocked() && defaultWorkflowModel!=null){
+            if(defaultWorkflowModel.getId().equals(workflowModelId)){
+                throw new NotAllowedException(locale,"NotAllowedException29");
+            }
+            workflowModel = defaultWorkflowModel;
+        }else if(workflowModelId!=null){
+            WorkflowModelKey workflowModelKey =  new WorkflowModelKey(docM.getWorkspaceId(), workflowModelId);
+            workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(workflowModelKey);
+        }else if(defaultWorkflowModel!=null){
+            workflowModel = defaultWorkflowModel;
+        }
+
+        return workflowModel;
+    }
+
+    private void createDocumentRevisionWorkflow(DocumentRevision docR, WorkflowModel workflowModel, Map<String, String> roleMappings,Locale locale)
+            throws UserNotFoundException, RoleNotFoundException {
+
+        String workspaceId = workflowModel.getWorkspaceId();
+
+        UserDAO userDAO = new UserDAO(locale,em);
+        RoleDAO roleDAO = new RoleDAO(locale,em);
+
+        Map<Role,User> roleUserMap = new HashMap<>();
+
+        for (Object o : roleMappings.entrySet()) {
+            Map.Entry pairs = (Map.Entry) o;
+            String roleName = (String) pairs.getKey();
+            String userLogin = (String) pairs.getValue();
+            User worker = userDAO.loadUser(new UserKey(workspaceId, userLogin));
+            Role role = roleDAO.loadRole(new RoleKey(workspaceId, roleName));
+            roleUserMap.put(role, worker);
+        }
+
+        Workflow workflow = workflowModel.createWorkflow(roleUserMap);
+        docR.setWorkflow(workflow);
+
+        Collection<Task> runningTasks = workflow.getRunningTasks();
+        for (Task runningTask : runningTasks) {
+            runningTask.start();
+        }
+        mailer.sendApproval(runningTasks, docR);
+    }
+
+    private void createDocumentRevisionACLEntries(DocumentRevision docR, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries){
+        String workspaceId = docR.getWorkspaceId();
+
+        ACL acl = new ACL();
+        if (pACLUserEntries != null) {
+            for (ACLUserEntry entry : pACLUserEntries) {
+                acl.addEntry(em.getReference(User.class, new UserKey(workspaceId, entry.getPrincipalLogin())), entry.getPermission());
+            }
+        }
+
+        if (pACLUserGroupEntries != null) {
+            for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
+                acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(workspaceId, entry.getPrincipalId())), entry.getPermission());
+            }
+        }
+        docR.setACL(acl);
+    }
+
+    private void copyBinaryResource(BinaryResource sourceFile, DocumentIteration destination, Locale locale)
+            throws FileAlreadyExistsException, CreationException {
+        String fullName = destination.getWorkspaceId() +
+                          "/documents/" +
+                          destination.getDocumentMasterId() +"/"+
+                          destination.getDocumentVersion() +"/"+
+                          destination.getIteration() +"/"+
+                          sourceFile.getName();
+        BinaryResource targetFile = new BinaryResource(fullName,
+                                                       sourceFile.getContentLength(),
+                                                       sourceFile.getLastModified());
+        new BinaryResourceDAO(locale, em).createBinaryResource(targetFile);
+        destination.addFile(targetFile);
+
+        try {
+            dataManager.copyData(sourceFile, targetFile);
+        } catch (StorageException e) {
+            LOGGER.log(Level.INFO, null, e);
+        }
+    }
+
+    private void duplicateDocumentIteration(DocumentIteration fromDocI, DocumentIteration toDocI, Locale locale)
+            throws FileAlreadyExistsException, CreationException {
+        DocumentRevision toDocR = toDocI.getDocumentRevision();
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+        for (BinaryResource sourceFile : fromDocI.getAttachedFiles()) {
+            String fileName = sourceFile.getName();
+            long length = sourceFile.getContentLength();
+            Date lastModified = sourceFile.getLastModified();
+            String fullName = toDocR.getWorkspaceId() + "/documents/" + toDocR.getId() + "/" + toDocR.getVersion() + "/1/" + fileName;
+            BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
+            binDAO.createBinaryResource(targetFile);
+            toDocI.addFile(targetFile);
+            try {
+                dataManager.copyData(sourceFile, targetFile);
+            } catch (StorageException e) {
+                LOGGER.log(Level.INFO, null, e);
+            }
+        }
+
+        Set<DocumentLink> links = new HashSet<>();
+        for (DocumentLink link : fromDocI.getLinkedDocuments()) {
+            DocumentLink newLink = link.clone();
+            links.add(newLink);
+        }
+        toDocI.setLinkedDocuments(links);
+
+        Map<String, InstanceAttribute> attrs = new HashMap<>();
+        for (InstanceAttribute attr : fromDocI.getInstanceAttributes().values()) {
+            InstanceAttribute clonedAttribute = attr.clone();
+            attrs.put(clonedAttribute.getName(), clonedAttribute);
+        }
+        toDocI.setInstanceAttributes(attrs);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
@@ -1022,13 +1111,13 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String,String> roleMappings) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException {
-        User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getWorkspaceId());
+        String workspaceId = pOriginalDocRPK.getWorkspaceId();
+        User user = userManager.checkWorkspaceWriteAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
+        Date now = new Date();
+
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
         DocumentRevision originalDocR = docRDAO.loadDocR(pOriginalDocRPK);
-        DocumentMaster docM = originalDocR.getDocumentMaster();
-        Folder folder = originalDocR.getLocation();
-        checkFolderWritingRight(user, folder);
 
         if (originalDocR.isCheckedOut()) {
             throw new NotAllowedException(userLocale, "NotAllowedException26");
@@ -1038,93 +1127,36 @@ public class DocumentManagerBean implements IDocumentManagerWS, IDocumentManager
             throw new NotAllowedException(userLocale, "NotAllowedException27");
         }
 
+        DocumentMaster docM = originalDocR.getDocumentMaster();
+        Folder folder = originalDocR.getLocation();
+        checkFolderWritingRight(user, folder);
+
         DocumentRevision docR = docM.createNextRevision(user);
-
-        //create the first iteration which is a copy of the last one of the original docR
-        //of course we duplicate the iteration only if it exists !
-        DocumentIteration lastDoc = originalDocR.getLastIteration();
-        DocumentIteration firstIte = docR.createNextIteration(user);
-        if (lastDoc != null) {
-            BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
-            for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {
-                String fileName = sourceFile.getName();
-                long length = sourceFile.getContentLength();
-                Date lastModified = sourceFile.getLastModified();
-                String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/1/" + fileName;
-                BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
-                binDAO.createBinaryResource(targetFile);
-                firstIte.addFile(targetFile);
-                try {
-                    dataManager.copyData(sourceFile, targetFile);
-                } catch (StorageException e) {
-                    LOGGER.log(Level.INFO, null, e);
-                }
-            }
-
-            Set<DocumentLink> links = new HashSet<>();
-            for (DocumentLink link : lastDoc.getLinkedDocuments()) {
-                DocumentLink newLink = link.clone();
-                links.add(newLink);
-            }
-            firstIte.setLinkedDocuments(links);
-
-            Map<String, InstanceAttribute> attrs = new HashMap<>();
-            for (InstanceAttribute attr : lastDoc.getInstanceAttributes().values()) {
-                InstanceAttribute clonedAttribute = attr.clone();
-                attrs.put(clonedAttribute.getName(), clonedAttribute);
-            }
-            firstIte.setInstanceAttributes(attrs);
-        }
-
-        if (pWorkflowModelId != null) {
-
-            UserDAO userDAO = new UserDAO(userLocale,em);
-            RoleDAO roleDAO = new RoleDAO(userLocale,em);
-
-            Map<Role,User> roleUserMap = new HashMap<>();
-
-            for (Object o : roleMappings.entrySet()) {
-                Map.Entry pairs = (Map.Entry) o;
-                String roleName = (String) pairs.getKey();
-                String userLogin = (String) pairs.getValue();
-                User worker = userDAO.loadUser(new UserKey(pOriginalDocRPK.getWorkspaceId(), userLogin));
-                Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getWorkspaceId(), roleName));
-                roleUserMap.put(role, worker);
-            }
-
-            WorkflowModel workflowModel = new WorkflowModelDAO(userLocale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow(roleUserMap);
-            docR.setWorkflow(workflow);
-
-            Collection<Task> runningTasks = workflow.getRunningTasks();
-            for (Task runningTask : runningTasks) {
-                runningTask.start();
-            }
-            mailer.sendApproval(runningTasks, docR);
-        }
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
-
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
-            docR.setACL(acl);
-        }
-        Date now = new Date();
         docR.setCreationDate(now);
         docR.setLocation(folder);
         docR.setCheckOutUser(user);
         docR.setCheckOutDate(now);
+
+        DocumentIteration lastDoc = originalDocR.getLastIteration();
+        DocumentIteration firstIte = docR.createNextIteration(user);
         firstIte.setCreationDate(now);
+
+        //create the first iteration which is a copy of the last one of the original docR
+        //of course we duplicate the iteration only if it exists !
+        if (lastDoc != null) {
+            duplicateDocumentIteration(lastDoc,firstIte, userLocale);
+        }
+
+        WorkflowModel workflowModel=checkWorkflowId(docM,pWorkflowModelId,userLocale);
+        if (workflowModel != null) {
+            createDocumentRevisionWorkflow(docR,workflowModel,roleMappings, userLocale);
+        }
+
+        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
+            createDocumentRevisionACLEntries(docR, pACLUserEntries, pACLUserGroupEntries);
+        }
 
         docRDAO.createDocR(docR);
         return new DocumentRevision[]{originalDocR, docR};
