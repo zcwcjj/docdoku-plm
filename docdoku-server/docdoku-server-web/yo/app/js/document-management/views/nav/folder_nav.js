@@ -3,7 +3,7 @@ define([
     'mustache',
     'common-objects/common/singleton_decorator',
     'views/folder_list_item',
-    'text!templates/folder_nav.html'
+    'text!templates/nav/folder_nav.html'
 ], function (Mustache, singletonDecorator, FolderListItemView, template) {
     'use strict';
 	var FolderNavView = FolderListItemView.extend({

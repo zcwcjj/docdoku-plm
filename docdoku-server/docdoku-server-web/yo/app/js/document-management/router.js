@@ -2,12 +2,12 @@
 define([
     'backbone',
     'common-objects/common/singleton_decorator',
-    'views/folder_nav',
-    'views/tag_nav',
-    'views/search_nav',
-    'views/template_nav',
-    'views/checkedout_nav',
-    'views/task_nav'
+    'views/nav/folder_nav',
+    'views/nav/tag_nav',
+    'views/nav/search_nav',
+    'views/nav/template_nav',
+    'views/nav/checkedout_nav',
+    'views/nav/task_nav'
 ],
 function (Backbone, singletonDecorator, FolderNavView, TagNavView, SearchNavView, TemplateNavView, CheckedoutNavView, TaskNavView) {
     'use strict';

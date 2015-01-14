@@ -1,7 +1,7 @@
 /*global define,bootbox,App*/
 define([
     'common-objects/views/components/list_item',
-    'views/tag_document_list',
+    'views/tag/tag_document_list',
     'text!templates/tag_list_item.html'
 ], function (ListItemView, TagDocumentListView, template) {
     'use strict';

@@ -2,15 +2,15 @@
 (function ($) {
     'use strict';
 
+    function removePopovers(){
+        $('.popover').remove();
+    }
+
     function removePopoversIfClickOutside(e){
         var $elem = $(e.target);
         if (!$elem.parents('.popover').length && !$elem.hasClass('popover') ) {
             removePopovers();
         }
-    }
-
-    function removePopovers(){
-        $('.popover').remove();
     }
 
     addEventListener('mousewheel',removePopovers);

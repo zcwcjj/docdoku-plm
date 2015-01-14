@@ -8,7 +8,7 @@ define([
     'text!common-objects/templates/buttons/new_version_button.html',
     'text!common-objects/templates/buttons/ACL_button.html',
     'text!templates/search_document_form.html',
-    'text!templates/tag_document_list.html'
+    'text!templates/tag/tag_document_list.html'
 ], function (TagDocumentList, ContentDocumentListView, deleteButton, checkoutButtonGroup, tagsButton, newVersionButton, aclButton, searchForm, template) {
 	'use strict';
 	var TagDocumentListView = ContentDocumentListView.extend({

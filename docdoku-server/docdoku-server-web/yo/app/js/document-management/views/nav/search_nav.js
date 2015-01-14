@@ -4,7 +4,7 @@ define([
     'common-objects/views/base',
     'views/search_document_list',
     'views/advanced_search',
-    'text!templates/search_nav.html'
+    'text!templates/nav/search_nav.html'
 ], function (singletonDecorator, BaseView, SearchDocumentListView, AdvancedSearchView, template) {
 	'use strict';
     var SearchNavView = BaseView.extend({
