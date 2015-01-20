@@ -101,7 +101,6 @@ require.config({
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
         objloader:{deps:['threecore'],exports:'THREE'},
-        buffergeometryutils:{deps:['threecore'],exports:'THREE'}
         buffergeometryutils:{deps:['threecore'],exports:'THREE'},
         oculusRiftEffect:{deps:['threecore'],exports:'THREE'}
     },
@@ -178,7 +177,7 @@ require.config({
         'stats',
         'dat',
         'tween',
-        'oculusRiftEffect'
+        'oculusRiftEffect',
         'tween',
         'inputValidity'
     ],
