@@ -77,13 +77,13 @@ define([
             App.$ControlsContainer.append(new ControlLayersView().render().$el);
             App.$ControlsContainer.append(new ControlMeasureView().render().$el);
 
-            try {
+          //  try {
                 App.sceneManager.init();
-            } catch (ex) {
-                console.error('Got exception in dmu');
-                App.log(ex);
-                this.onNoWebGLSupport();
-            }
+           // } catch (ex) {
+              //  console.error('Got exception in dmu');
+               // App.log(ex);
+             //   this.onNoWebGLSupport();
+            //}
 
             this.listenEvents();
             this.bindDatGUIControls();

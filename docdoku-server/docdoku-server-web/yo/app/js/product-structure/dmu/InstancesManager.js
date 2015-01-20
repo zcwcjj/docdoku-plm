@@ -172,6 +172,24 @@ define(['dmu/LoaderManager', 'async'],
                 });
             }
 
+            function findQualities(files) {
+                var q = [];
+                _(files).each(function (f) {
+                    q[f.quality] = App.config.contextPath + '/files/' + f.fullName;
+                });
+                return q;
+            }
+            function findRadius(files) {
+                return 20000;
+                var r = 0;
+                _(files).each(function (f) {
+                    if (f.radius) {
+                        r = f.radius;
+                    }
+                });
+                return r || 1;
+            }
+
             function adaptMatrix(matrix) {
                 return new THREE.Matrix4(matrix[0], matrix[1], matrix[2], matrix[3],
                     matrix[4], matrix[5], matrix[6], matrix[7],

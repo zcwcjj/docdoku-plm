@@ -42,7 +42,7 @@ var App = {
         rotateSpeed: 1.0,
         panSpeed: 0.3,
         cameraNear: 1,
-        cameraFar: 5E4,
+        cameraFar: 2E5,
         defaultCameraPosition: {x: -1000, y: 800, z: 1100},
         defaultTargetPosition: {x: 0, y: 0, z: 0},
         ambientLightColor:0x101030,
@@ -95,11 +95,15 @@ require.config({
         trackballcontrols:{deps:['threecore'],exports:'THREE'},
         orbitcontrols:{deps:['threecore'],exports:'THREE'},
         transformcontrols:{deps:['threecore'],exports:'THREE'},
+        firstPersonControls:{deps:['threecore'],exports:'THREE'},
+        oculusControls:{deps:['threecore'],exports:'THREE'},
         binaryloader:{deps:['threecore'],exports:'THREE'},
         colladaloader:{deps:['threecore'],exports:'THREE'},
         stlloader:{deps:['threecore'],exports:'THREE'},
         objloader:{deps:['threecore'],exports:'THREE'},
         buffergeometryutils:{deps:['threecore'],exports:'THREE'}
+        buffergeometryutils:{deps:['threecore'],exports:'THREE'},
+        oculusRiftEffect:{deps:['threecore'],exports:'THREE'}
     },
     paths: {
         jquery: '../../bower_components/jquery/jquery',
@@ -135,12 +139,15 @@ require.config({
         trackballcontrols:'dmu/controls/TrackballControls',
         orbitcontrols:'dmu/controls/OrbitControls',
         transformcontrols:'dmu/controls/TransformControls',
+        firstPersonControls:'dmu/controls/FirstPersonControls',
+        oculusControls:'dmu/controls/OculusControls',
         binaryloader:'dmu/loaders/BinaryLoader',
         colladaloader:'dmu/loaders/ColladaLoader',
         stlloader:'dmu/loaders/STLLoader',
         objloader:'dmu/loaders/OBJLoader',
         buffergeometryutils: 'dmu/utils/BufferGeometryUtils',
-        stats:'dmu/utils/Stats'
+        stats:'dmu/utils/Stats',
+        oculusRiftEffect:'dmu/utils/OculusRiftEffect'
     },
 
     deps:[
@@ -161,6 +168,8 @@ require.config({
         'trackballcontrols',
         'orbitcontrols',
         'transformcontrols',
+        'firstPersonControls',
+        'oculusControls',
         'binaryloader',
         'colladaloader',
         'stlloader',
@@ -168,6 +177,8 @@ require.config({
         'buffergeometryutils',
         'stats',
         'dat',
+        'tween',
+        'oculusRiftEffect'
         'tween',
         'inputValidity'
     ],
