@@ -45,6 +45,7 @@ public class InstanceAttributeDAO {
             //the EntityExistsException is thrown only when flush occurs
             em.persist(pAttr);
             em.flush();
+
         }catch(EntityExistsException pEEEx){
             //already created
             LOGGER.log(Level.FINER,null,pEEEx);

@@ -121,13 +121,13 @@ public class DocumentRevisionDAO {
             em.persist(pDocumentRevision);
             em.flush();
         } catch (EntityExistsException pEEEx) {
-            LOGGER.log(Level.FINEST,null,pEEEx);
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new DocumentRevisionAlreadyExistsException(mLocale, pDocumentRevision);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
-            LOGGER.log(Level.FINEST,null,pPEx);
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

@@ -37,9 +37,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class PartRevisionDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(PartRevisionDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -135,11 +139,13 @@ public class PartRevisionDAO {
             em.persist(partR);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new PartRevisionAlreadyExistsException(mLocale, partR);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
 

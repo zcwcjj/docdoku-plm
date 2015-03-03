@@ -67,13 +67,13 @@ public class FolderDAO {
             em.persist(pFolder);
             em.flush();
         }catch(EntityExistsException pEEEx){
-            LOGGER.log(Level.FINEST,null,pEEEx);
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new FolderAlreadyExistsException(mLocale, pFolder);
         }catch(PersistenceException pPEx){
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
-            LOGGER.log(Level.FINEST,null,pPEx);
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

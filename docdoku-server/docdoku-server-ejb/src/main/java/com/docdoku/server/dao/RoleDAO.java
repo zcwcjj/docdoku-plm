@@ -76,10 +76,10 @@ public class RoleDAO {
             em.persist(pRole);
             em.flush();
         } catch (EntityExistsException pEEEx) {
-            LOGGER.log(Level.FINEST,null,pEEEx);
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new RoleAlreadyExistsException(mLocale, pRole);
         } catch (PersistenceException pPEx) {
-            LOGGER.log(Level.FINEST,null,pPEx);
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

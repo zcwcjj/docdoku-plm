@@ -30,8 +30,12 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GCMAccountDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(GCMAccountDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -60,11 +64,13 @@ public class GCMAccountDAO {
             em.persist(gcmAccount);
             em.flush();
         }catch(EntityExistsException pEEEx){
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new GCMAccountAlreadyExistsException(mLocale, gcmAccount.getAccount().getLogin());
         }catch(PersistenceException pPEx){
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

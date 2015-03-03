@@ -31,8 +31,12 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TagDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(TagDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -77,11 +81,13 @@ public class TagDAO {
             em.persist(pTag);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new TagAlreadyExistsException(mLocale, pTag);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

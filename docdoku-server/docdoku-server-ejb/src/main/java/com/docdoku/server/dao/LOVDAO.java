@@ -28,8 +28,12 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class LOVDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(LOVDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -59,11 +63,13 @@ public class LOVDAO {
             em.persist(pLov);
             em.flush();
         }catch(EntityExistsException pEEEx){
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new ListOfValuesAlreadyExistsException(mLocale, pLov);
         }catch(PersistenceException pPEx){
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

@@ -34,9 +34,13 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AccountDAO {
-    
+
+    private static final Logger LOGGER = Logger.getLogger(AccountDAO.class.getName());
+
     private EntityManager em;
     private Locale mLocale;
     
@@ -59,11 +63,13 @@ public class AccountDAO {
             em.persist(credential);
             em.persist(new UserGroupMapping(pAccount.getLogin()));            
         }catch(EntityExistsException pEEEx){
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new AccountAlreadyExistsException(mLocale, pAccount.getLogin());
         }catch(PersistenceException pPEx){
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

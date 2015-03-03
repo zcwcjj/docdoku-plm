@@ -33,8 +33,12 @@ import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigurationItemDAO {
+
+    private static final Logger LOGGER = Logger.getLogger(ConfigurationItemDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -106,11 +110,13 @@ public class ConfigurationItemDAO {
             em.persist(pCI);
             em.flush();
         } catch (EntityExistsException pEEEx) {
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new ConfigurationItemAlreadyExistsException(mLocale, pCI);
         } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }

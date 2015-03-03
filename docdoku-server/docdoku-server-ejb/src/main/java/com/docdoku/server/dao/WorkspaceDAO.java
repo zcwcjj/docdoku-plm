@@ -41,9 +41,12 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WorkspaceDAO {
 
+    private static final Logger LOGGER = Logger.getLogger(WorkspaceDAO.class.getName());
 
     private EntityManager em;
     private Locale mLocale;
@@ -75,11 +78,13 @@ public class WorkspaceDAO {
             em.flush();
             new FolderDAO(mLocale, em).createFolder(new Folder(pWorkspace.getId()));
         }catch(EntityExistsException pEEEx){
+            LOGGER.log(Level.FINER,null,pEEEx);
             throw new WorkspaceAlreadyExistsException(mLocale, pWorkspace);
         }catch(PersistenceException pPEx){
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
+            LOGGER.log(Level.WARNING,null,pPEx);
             throw new CreationException(mLocale);
         }
     }
